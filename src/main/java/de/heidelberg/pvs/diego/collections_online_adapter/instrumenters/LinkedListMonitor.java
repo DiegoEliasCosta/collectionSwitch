@@ -10,16 +10,17 @@ public class LinkedListMonitor<E> extends LinkedList<E> {
 	private static final long serialVersionUID = 20170101L;
 	
 	// Monitor
-	private ListAllocationContext context;
+	private ListAllocationContext<E> context;
 	private int indexOp;
 	private int midListOp;
+	private int containsOp;
 	
-	public LinkedListMonitor(ListAllocationContext context) {
+	public LinkedListMonitor(ListAllocationContext<E> context) {
 		super();
 		this.context = context;
 	}
 
-	public LinkedListMonitor(Collection<? extends E> c, ListAllocationContext context) {
+	public LinkedListMonitor(Collection<? extends E> c, ListAllocationContext<E> context) {
 		super(c);
 		this.context = context;
 	}
@@ -40,6 +41,12 @@ public class LinkedListMonitor<E> extends LinkedList<E> {
 	public void add(int index, E element) {
 		midListOp++;
 		super.add(index, element);
+	}
+	
+	@Override
+	public boolean contains(Object o) {
+		containsOp++;
+		return super.contains(o);
 	}
 	
 	@Override

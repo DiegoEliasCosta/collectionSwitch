@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.ArrayListMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.LinkedListMonitor;
 
-public class FirstSamplesAllocationContext implements ListAllocationContext{
+public class FirstSamplesAllocationContext<E> implements ListAllocationContext<E> {
 
 	private int initialCapacity = 10;
 	private static int SAMPLES = 10;
@@ -27,17 +28,16 @@ public class FirstSamplesAllocationContext implements ListAllocationContext{
 		this.initialCapacity = specifiedInitialCapacity;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public List<?> createList() {
+	public List<E> createList() {
 		
 		switch(collectionType){
 		case ARRAY:
-			return isOnline() ? new ArrayListMonitor(initialCapacity, this) : new ArrayList(initialCapacity);
+			return isOnline() ? new ArrayListMonitor<E>(initialCapacity, this) : new ArrayList<E>(initialCapacity);
 		case LINKED:
-			return isOnline()? new LinkedListMonitor(this) : new LinkedList();
+			return isOnline()? new LinkedListMonitor<E>(this) : new LinkedList<E>();
 		case HASH:
-			// FIXME: Not available at the moment
-			return null;
+			// At this point the algorithm won't be online anymore
+			return new HashArrayList<E>(initialCapacity); 
 		}
 			 
 		return null;
@@ -58,13 +58,15 @@ public class FirstSamplesAllocationContext implements ListAllocationContext{
 			// This needs to be synchronized?
 			this.initialCapacity = summedSize / SAMPLES;
 		}
-		
 	}
 
 	public boolean isOnline() {
 		return count < SAMPLES;
 	}
-	
-	
+
+	public void updateOperations(int getOp, int containsOp, int removeOp, int size) {
+		// TODO: To be implemented
+		
+	}
 
 }

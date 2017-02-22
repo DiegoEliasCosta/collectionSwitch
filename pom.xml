@@ -35,5 +35,39 @@
 			<version>7.0.10</version>
 		</dependency>
 
+		<!-- APACHE COMMONS -->
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-collections4 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>4.1</version>
+		</dependency>
+
+		<!-- ECLIPSE COLLECTIONS -->
+		<dependency>
+			<groupId>org.eclipse.collections</groupId>
+			<artifactId>eclipse-collections-api</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.collections</groupId>
+			<artifactId>eclipse-collections</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.collections</groupId>
+			<artifactId>eclipse-collections-testutils</artifactId>
+			<version>8.0.0</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.collections</groupId>
+			<artifactId>eclipse-collections-forkjoin</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+
 	</dependencies>
 </project>
