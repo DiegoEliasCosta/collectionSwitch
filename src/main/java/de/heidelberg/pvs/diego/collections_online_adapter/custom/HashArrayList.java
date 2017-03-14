@@ -1,65 +1,124 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.custom;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.function.Predicate;
 
-public class HashArrayList<E> extends ArrayList<E> {
-	
-	private static final long serialVersionUID = 20170101;
-	
-	private HashMap<E, Integer> map;
+import org.eclipse.collections.impl.bag.mutable.HashBag;
 
+
+public class HashArrayList<E> extends ArrayList<E> implements Serializable {
+
+	private static final long serialVersionUID = 20170101L;
+	
+	private HashBag<E> bag;
+
+	
 	public HashArrayList() {
-		map = new HashMap<E, Integer>();
+		super();
+		bag = new HashBag<>();
 	}
-
-	public HashArrayList(Collection<? extends E> c) {
-		map = new HashMap<E, Integer>(c.size());
-		for (E e : c) {
-			add(e);
-		}
-	}
-
+	
 	public HashArrayList(int initialCapacity) {
 		super(initialCapacity);
-		new HashMap<E, Integer>(initialCapacity);
+		bag = new HashBag<>(initialCapacity);
 	}
+	
 
+	public HashArrayList(Collection<? extends E> c) {
+		super();
+		bag = new HashBag<>();
+		bag.addAll(c);
+	}
+	
+	
+	/* ---------------------------------------------------------- */
+	/* ------------------------   CONTAINS----------------------- */
+	/* ---------------------------------------------------------- */
+	
 	@Override
-	public void ensureCapacity(int minCapacity) {
-		super.ensureCapacity(minCapacity);
-		HashMap<E, Integer> oldMap = map;
-		map = new HashMap<E, Integer>(minCapacity * 10 / 7);
-		map.putAll(oldMap);
+	public boolean containsAll(Collection<?> c) {
+		return bag.containsAll(c);
 	}
-
-	@Override
-	public boolean add(E e) {
-		map.put(e, size());
-		return super.add(e);
-	}
-
-	@Override
-	public E set(int index, E element) {
-		map.remove(get(index));
-		map.put(element, index);
-		return super.set(index, element);
-	}
-
-	@Override
-	public int indexOf(Object o) {
-		Integer index = map.get(o);
-		if (index == null) {
-			return -1;
-		}
-
-		return index;
-	}
-
+	
 	@Override
 	public boolean contains(Object o) {
-		return map.containsKey(o);
+		return bag.contains(o);
+	}
+	
+	/* ---------------------------------------------------------- */
+	/* ------------------------   ADD   ------------------------- */
+	/* ---------------------------------------------------------- */
+	
+	@Override
+	public boolean add(E e) {
+		bag.add(e);
+		return super.add(e);
+	}
+	
+	
+	@Override
+	public void add(int index, E element) {
+		bag.add(element);
+		super.add(index, element);
+	}
+
+	
+	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		bag.addAll(bag);
+		return super.addAll(c);
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends E> c) {
+		bag.addAll(c);
+		return super.addAll(index, c);
+	}
+	
+	@Override
+	public E set(int index, E element) {
+		E obj = super.set(index, element);
+		bag.remove(obj);
+		bag.add(element);
+		return obj;
+	}
+	
+	/* ---------------------------------------------------------- */
+	/* ------------------------  REMOVE  ------------------------ */
+	/* ---------------------------------------------------------- */
+	
+	@Override
+	public boolean remove(Object o) {
+		bag.remove(o);
+		return super.remove(o);
+	}
+
+	
+	@Override
+	public E remove(int index) {
+		bag.remove(super.get(index));
+		return super.remove(index);
+	}
+	
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		bag.remove(c);
+		return super.removeAll(c);
+	}
+	
+	@Override
+	public boolean removeIf(Predicate<? super E> filter) {
+		bag.removeIf(filter);
+		return super.removeIf(filter);
+	}
+	
+	
+	@Override
+	public void clear() {
+		bag.clear();
+		super.clear();
 	}
 	
 }
