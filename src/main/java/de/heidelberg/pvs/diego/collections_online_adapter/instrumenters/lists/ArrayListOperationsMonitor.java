@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters;
+package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists;
 
 import java.util.ArrayList;
 import java.util.Collection;

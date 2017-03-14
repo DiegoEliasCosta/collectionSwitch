@@ -1,18 +1,27 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters;
+package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists;
+
+import java.util.Collection;
+import java.util.LinkedList;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 
-public class HashArrayListOperationsMonitor<E> extends HashArrayList<E>{
-	
+public class LinkedListOperationsMonitor<E> extends LinkedList<E> {
+
 	private static final long serialVersionUID = 20170101L;
+	
+	// Monitor
 	private ListAllocationContext<E> context;
 	private int indexOp;
 	private int midListOp;
 	private int containsOp;
+	
+	public LinkedListOperationsMonitor(ListAllocationContext<E> context) {
+		super();
+		this.context = context;
+	}
 
-	public HashArrayListOperationsMonitor(int initialCapacity, ListAllocationContext<E> context) {
-		super(initialCapacity);
+	public LinkedListOperationsMonitor(Collection<? extends E> c, ListAllocationContext<E> context) {
+		super(c);
 		this.context = context;
 	}
 
@@ -45,6 +54,4 @@ public class HashArrayListOperationsMonitor<E> extends HashArrayList<E>{
 		super.finalize();
 		context.updateOperationsAndSize(indexOp, midListOp, containsOp, size());
 	}
-
-
 }

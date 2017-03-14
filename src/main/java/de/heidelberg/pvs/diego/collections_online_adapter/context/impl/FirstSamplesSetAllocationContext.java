@@ -32,8 +32,18 @@ public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext
 	@Override
 	public Set<E> createSet() {
 
-
-		
+//		switch(collectionType){
+//		case ARRAY:
+//			return isOnline() ? new ArrayListOperationsMonitor<E>(initialCapacity, this) : new ArrayList<E>(initialCapacity);
+//		case LINKED:
+//			return isOnline()? new LinkedListOperationsMonitor<E>(this) : new LinkedList<E>();
+//		case HASH:
+//			// At this point the algorithm won't be online anymore
+//			return new HashArrayList<E>(initialCapacity); 
+//		}
+//			 
+//		return null;
+//		
 		return null;
 	}
 	

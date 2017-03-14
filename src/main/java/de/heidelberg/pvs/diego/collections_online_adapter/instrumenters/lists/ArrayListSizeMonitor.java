@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters;
+package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,10 @@ public class ArrayListSizeMonitor<E> extends ArrayList<E> {
 	private static final long serialVersionUID = 20170101L;
 	private ListAllocationContext<E> context;
 	
+	public ArrayListSizeMonitor(ListAllocationContext<E> context) {
+		super();
+		this.context = context;
+	}
 
 	public ArrayListSizeMonitor(int initialCapacity, ListAllocationContext<E> context) {
 		super(initialCapacity);

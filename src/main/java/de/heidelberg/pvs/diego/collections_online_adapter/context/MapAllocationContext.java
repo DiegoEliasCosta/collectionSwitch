@@ -10,4 +10,6 @@ public interface MapAllocationContext<K, V> {
 
 	Map<K, V> createMap(Map<K, V> map);
 
+	void updateSize(int size);
+
 }

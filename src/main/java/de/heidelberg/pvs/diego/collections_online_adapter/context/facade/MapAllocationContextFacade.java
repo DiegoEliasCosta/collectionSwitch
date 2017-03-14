@@ -19,6 +19,11 @@ public class MapAllocationContextFacade<K, V> implements MapAllocationContext<K,
 	public Map<K, V> createMap(Map<K, V> map) {
 		return context.createMap(map);
 	}
+
+	@Override
+	public void updateSize(int size) {
+		context.updateSize(size);
+	}
 	
 	
 

@@ -8,8 +8,8 @@ import java.util.List;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.ArrayListOperationsMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.LinkedListOperationsMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListOperationsMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListOperationsMonitor;
 
 public class FirstSamplesListAllocationContext<E> implements ListAllocationContext<E> {
 
