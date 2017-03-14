@@ -1,7 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 public class SetAllocationContextStub<E> implements SetAllocationContext<E> {
