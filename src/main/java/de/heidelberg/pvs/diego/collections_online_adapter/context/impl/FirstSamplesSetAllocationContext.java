@@ -1,25 +1,31 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetSizeMonitor;
 
 public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext<E> {
 
 	private int initialCapacity = 10;
 	private static int SAMPLES = 10;
-	
+
 	// Monitored data
-	private int[] size = new int[SAMPLES];
+	private int[] sizes = new int[SAMPLES];
 	private int[] contains = new int[SAMPLES];
 	private int[] interations = new int[SAMPLES];
-	
+
 	private volatile int count = 0;
-	
+
 	private CollectionTypeEnum collectionType;
-	
+
 	public FirstSamplesSetAllocationContext(CollectionTypeEnum collectionType) {
 		super();
 		this.collectionType = collectionType;
@@ -31,33 +37,35 @@ public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext
 
 	@Override
 	public Set<E> createSet() {
-
-//		switch(collectionType){
-//		case ARRAY:
-//			return isOnline() ? new ArrayListOperationsMonitor<E>(initialCapacity, this) : new ArrayList<E>(initialCapacity);
-//		case LINKED:
-//			return isOnline()? new LinkedListOperationsMonitor<E>(this) : new LinkedList<E>();
-//		case HASH:
-//			// At this point the algorithm won't be online anymore
-//			return new HashArrayList<E>(initialCapacity); 
-//		}
-//			 
-//		return null;
-//		
-		return null;
+		return createSet(10);
 	}
-	
 
 	@Override
 	public Set<E> createSet(int initialCapacity) {
-		// TODO Auto-generated method stub
+		
+		switch (collectionType) {
+		case ARRAY:
+			return isOnline() ? new SetSizeMonitor<E>(new UnifiedSet<E>(initialCapacity), this): new UnifiedSet<E>(this.initialCapacity);
+		case LINKED:
+			return isOnline() ? new SetSizeMonitor<E>(new LinkedHashSet<E>(initialCapacity), this): new LinkedHashSet<E>(this.initialCapacity);
+		case HASH:
+			return isOnline() ? new SetSizeMonitor<E>(new HashSet<E>(initialCapacity), this): new HashSet<E>(this.initialCapacity);
+		}
+		
 		return null;
 	}
 
-
 	@Override
-	public Set<E> createSet(Collections collections) {
-		// TODO Auto-generated method stub
+	public Set<E> createSet(Collection<? extends E> set) {
+		switch (collectionType) {
+		case ARRAY:
+			return isOnline() ? new SetSizeMonitor<E>(new UnifiedSet<E>(set), this): new UnifiedSet<E>(set);
+		case LINKED:
+			return isOnline() ? new SetSizeMonitor<E>(new LinkedHashSet<E>(set), this): new LinkedHashSet<E>(set);
+		case HASH:
+			return isOnline() ? new SetSizeMonitor<E>(new HashSet<E>(set), this): new HashSet<E>(set);
+		}
+		
 		return null;
 	}
 
@@ -65,8 +73,12 @@ public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext
 	public void updateSize(int size) {
 		// FIXME: This needs to be thread-safe
 		int copyCount = count++;
-		this.size[copyCount] = size;
+		this.sizes[copyCount] = size;
 		
+		if(copyCount >= SAMPLES) {
+			updateContext();
+		}
+
 	}
 
 	@Override
@@ -76,9 +88,25 @@ public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext
 		this.interations[copyCount] = iterations;
 		this.contains[copyCount] = contains;
 		
-		
-		
+		if(copyCount >= SAMPLES) {
+			updateContext();
+		}
+
 	}
 
+	private synchronized void updateContext() {
+
+		int summedSize = 0;
+		for (int i = 0; i < SAMPLES; i++) {
+			summedSize += this.sizes [i];
+		}
+		this.initialCapacity = summedSize / SAMPLES;
+
+		// FIXME: This is too arbitrary
+		if (this.initialCapacity < 30) {
+			collectionType = CollectionTypeEnum.ARRAY;
+		}
+
+	}
 
 }

@@ -12,7 +12,7 @@ public class SetSizeMonitor<E> implements Set<E> {
 	
 	private Set<E> set;
 	
-	public SetSizeMonitor(SetAllocationContext<E> context, Set<E> set) {
+	public SetSizeMonitor(Set<E> set, SetAllocationContext<E> context) {
 		super();
 		this.context = context;
 		this.set = set;

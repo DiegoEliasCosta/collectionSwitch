@@ -13,7 +13,7 @@ public class ListSizeMonitor<E> implements List<E> {
 	
 	private List<E> list;
 	
-	public ListSizeMonitor(ListAllocationContext<E> context, List<E> list) {
+	public ListSizeMonitor(List<E> list, ListAllocationContext<E> context) {
 		super();
 		this.context = context;
 		this.list = list;

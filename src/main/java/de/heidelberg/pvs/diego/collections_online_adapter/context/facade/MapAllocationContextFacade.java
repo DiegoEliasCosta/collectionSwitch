@@ -24,6 +24,12 @@ public class MapAllocationContextFacade<K, V> implements MapAllocationContext<K,
 	public void updateSize(int size) {
 		context.updateSize(size);
 	}
+
+	@Override
+	public boolean isOnline() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 	
 	
 

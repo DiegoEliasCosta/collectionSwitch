@@ -12,7 +12,7 @@ public class MapSizeMonitor<K, V> implements Map<K, V> {
 	
 	private Map<K, V> map;
 	
-	public MapSizeMonitor(MapAllocationContext<K, V> context, Map<K, V> map) {
+	public MapSizeMonitor(Map<K, V> map, MapAllocationContext<K, V> context) {
 		super();
 		this.context = context;
 		this.map = map;

@@ -4,12 +4,14 @@ import java.util.Map;
 
 public interface MapAllocationContext<K, V> {
 	
-	Map<K, V> createMap();
+	public Map<K, V> createMap();
 
-	Map<K, V> createMap(int initialCapacity);
+	public Map<K, V> createMap(int initialCapacity);
 
-	Map<K, V> createMap(Map<K, V> map);
+	public Map<K, V> createMap(Map<K, V> map);
 
-	void updateSize(int size);
+	public void updateSize(int size);
+	
+	public boolean isOnline();
 
 }

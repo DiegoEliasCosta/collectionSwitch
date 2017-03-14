@@ -28,6 +28,12 @@ public class MapAllocationContextStub<K, V> implements MapAllocationContext<K, V
 		
 	}
 
+	@Override
+	public boolean isOnline() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 	
 

@@ -10,82 +10,92 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocation
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListOperationsMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListOperationsMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ListSizeMonitor;
 
 public class FirstSamplesListAllocationContext<E> implements ListAllocationContext<E> {
 
-	private int initialCapacity = 10;
-	private static int SAMPLES = 10;
+	private static final int SAMPLES = 10;
 	
-	// Monitored data
-	private int[] indexOp = new int[SAMPLES];
-	private int[] midListOp = new int[SAMPLES];
-	private int[] size = new int[SAMPLES];
-	private int[] containsOp = new int[SAMPLES];
-	
+	// Volatile
+	private volatile int initialCapacity = 10;
 	private volatile int count = 0;
-	
+
+	// Monitored data
+	private int[] sizes = new int[SAMPLES];
+
 	private CollectionTypeEnum collectionType;
-	
+
 	public FirstSamplesListAllocationContext(CollectionTypeEnum collectionType) {
 		super();
 		this.collectionType = collectionType;
 	}
 
 	public List<E> createList() {
-		
-		switch(collectionType){
+
+		switch (collectionType) {
 		case ARRAY:
-			return isOnline() ? new ArrayListOperationsMonitor<E>(initialCapacity, this) : new ArrayList<E>(initialCapacity);
+			return isOnline() ? new ArrayListOperationsMonitor<E>(initialCapacity, this)
+					: new ArrayList<E>(initialCapacity);
 		case LINKED:
-			return isOnline()? new LinkedListOperationsMonitor<E>(this) : new LinkedList<E>();
+			return isOnline() ? new LinkedListOperationsMonitor<E>(this) : new LinkedList<E>();
 		case HASH:
 			// At this point the algorithm won't be online anymore
-			return new HashArrayList<E>(initialCapacity); 
+			return new HashArrayList<E>(initialCapacity);
 		}
-			 
+
 		return null;
 	}
-	
+
 	@Override
 	public List<E> createList(int initialCapacity) {
-		this.initialCapacity = initialCapacity;
-		return createList();
 		
+		if(isOnline()) {
+			this.initialCapacity = initialCapacity;
+		}
+		return createList();
+
 	}
 
 	@Override
 	public List<E> createList(Collection<? extends E> c) {
-		
-		switch(collectionType){
+
+		switch (collectionType) {
 		case ARRAY:
-			return isOnline() ? new ArrayListOperationsMonitor<E>(c, this) : new ArrayList<E>(c);
+			return isOnline() ? new ListSizeMonitor<E>(new ArrayList<E>(c), this) : new ArrayList<E>(c);
 		case LINKED:
-			return isOnline()? new LinkedListOperationsMonitor<E>(c, this) : new LinkedList<E>();
+			return isOnline() ? new ListSizeMonitor<E>(new LinkedList<E>(c), this) : new LinkedList<E>();
 		case HASH:
 			// At this point the algorithm won't be online anymore
-			return new HashArrayList<E>(c); 
+			return new HashArrayList<E>(c);
 		}
 		return null;
 	}
 
 	public void updateOperationsAndSize(int indexOp, int midListOp, int containsOp, int size) {
-		
+
 		// FIXME: This needs to be thread-safe
 		int copyCount = count++;
-		
-		this.indexOp[copyCount] = indexOp;
-		this.midListOp[copyCount] = midListOp;
-		this.containsOp[copyCount] = containsOp;
-		this.size[copyCount] = size;
-		
-		if(copyCount == SAMPLES) {
-			int summedSize = 0;
-			for(int i = 0; i < SAMPLES; i++) {
-				summedSize += this.size[i];
-			}
-			// This needs to be synchronized?
-			this.initialCapacity = summedSize / SAMPLES;
+		this.sizes[copyCount] = size;
+
+		if (copyCount >= SAMPLES) {
+			updateContext();
 		}
+
+	}
+
+	private synchronized void updateContext() {
+		int summedSize = 0;
+		for (int i = 0; i < SAMPLES; i++) {
+			summedSize += this.sizes[i];
+		}
+		// This needs to be synchronized?
+		this.initialCapacity = summedSize / SAMPLES;
+		
+		// FIXME: This is too arbitrary
+		if(this.initialCapacity < 30) {
+			collectionType = CollectionTypeEnum.ARRAY;
+		}
+		
 	}
 
 	public boolean isOnline() {
@@ -94,12 +104,15 @@ public class FirstSamplesListAllocationContext<E> implements ListAllocationConte
 
 	@Override
 	public void updateSize(int size) {
-		
+
 		// FIXME: This needs to be thread-safe
 		int copyCount = count++;
-		this.size[copyCount] = size;
+		this.sizes[copyCount] = size;
 		
-	}
+		if (copyCount >= SAMPLES) {
+			updateContext();
+		}
 
+	}
 
 }

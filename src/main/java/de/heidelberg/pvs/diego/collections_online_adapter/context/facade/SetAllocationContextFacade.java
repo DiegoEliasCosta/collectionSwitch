@@ -1,6 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.facade;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
@@ -32,8 +32,14 @@ public class SetAllocationContextFacade<E> implements SetAllocationContext<E> {
 		return context.createSet(initialCapacity);
 	}
 
-	public Set<E> createSet(Collections collections) {
+	public Set<E> createSet(Collection<? extends E> collections) {
 		return context.createSet(collections);
+	}
+
+	@Override
+	public boolean isOnline() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	
