@@ -13,6 +13,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.Set
 
 public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext<E> {
 
+	private static final int ARRAY_THRESHOLD = 30;
 	private int initialCapacity = 10;
 	private static int SAMPLES = 10;
 
@@ -102,7 +103,7 @@ public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext
 		this.initialCapacity = summedSize / SAMPLES;
 
 		// FIXME: This is too arbitrary
-		if (this.initialCapacity < 30) {
+		if (this.initialCapacity < ARRAY_THRESHOLD) {
 			collectionType = CollectionTypeEnum.ARRAY;
 		}
 
