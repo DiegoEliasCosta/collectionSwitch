@@ -2,11 +2,18 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context.facade;
 
 import java.util.Map;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesMapAllocationContext;
 
 public class MapAllocationContextFacade<K, V> implements MapAllocationContext<K, V> {
 	
 	private MapAllocationContext<K, V> context;
+	
+	public MapAllocationContextFacade(CollectionTypeEnum collectionType) {
+		super();
+		this.context = new FirstSamplesMapAllocationContext<K, V>(collectionType);
+	}
 
 	public Map<K, V> createMap() {
 		return context.createMap();
@@ -27,8 +34,7 @@ public class MapAllocationContextFacade<K, V> implements MapAllocationContext<K,
 
 	@Override
 	public boolean isOnline() {
-		// TODO Auto-generated method stub
-		return false;
+		return context.isOnline();
 	}
 	
 	

@@ -14,6 +14,8 @@ import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.Li
 
 public class FirstSamplesListAllocationContext<E> implements ListAllocationContext<E> {
 
+	private static final int ARRAY_THRESHOLD = 30;
+
 	private static final int SAMPLES = 10;
 	
 	// Volatile
@@ -92,7 +94,7 @@ public class FirstSamplesListAllocationContext<E> implements ListAllocationConte
 		this.initialCapacity = summedSize / SAMPLES;
 		
 		// FIXME: This is too arbitrary
-		if(this.initialCapacity < 30) {
+		if(this.initialCapacity < ARRAY_THRESHOLD) {
 			collectionType = CollectionTypeEnum.ARRAY;
 		}
 		

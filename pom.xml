@@ -28,25 +28,19 @@
 			<version>4.11</version>
 		</dependency>
 
-		<!-- ANDROID UTILS -->
-		<!-- https://mvnrepository.com/artifact/com.google.android/android -->
-		<!-- <dependency> <groupId>com.google.android</groupId> <artifactId>android</artifactId> 
-			<version>2.1_r1</version> </dependency> -->
-		<!-- https://mvnrepository.com/artifact/com.google.android/android -->
+		<!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client -->
 		<dependency>
-			<groupId>com.google.android</groupId>
-			<artifactId>android</artifactId>
-			<version>4.1.1.4</version>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.22.0</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.google.android/support-v4 -->
+		<!-- COMPACT HASH MAP -->
 		<dependency>
-			<groupId>com.google.android</groupId>
-			<artifactId>support-v4</artifactId>
-			<version>r7</version>
+			<groupId>com.github.vlsi.compactmap</groupId>
+			<artifactId>compactmap</artifactId>
+			<version>1.2.1</version>
 		</dependency>
-
-
 
 		<!-- FAST UTIL -->
 		<dependency>

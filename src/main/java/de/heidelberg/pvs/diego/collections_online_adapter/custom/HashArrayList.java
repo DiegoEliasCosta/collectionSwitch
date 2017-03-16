@@ -14,7 +14,6 @@ public class HashArrayList<E> extends ArrayList<E> implements Serializable {
 	
 	private HashBag<E> bag;
 
-	
 	public HashArrayList() {
 		super();
 		bag = new HashBag<>();

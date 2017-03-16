@@ -38,8 +38,7 @@ public class SetAllocationContextFacade<E> implements SetAllocationContext<E> {
 
 	@Override
 	public boolean isOnline() {
-		// TODO Auto-generated method stub
-		return false;
+		return context.isOnline();
 	}
 	
 	

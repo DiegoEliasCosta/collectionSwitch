@@ -8,9 +8,12 @@ import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapSizeMonitor;
 
 public class FirstSamplesMapAllocationContext<K, V> implements MapAllocationContext<K, V> {
+
+	private static final int ARRAY_THRESHOLD = 30;
 
 	private static final int SAMPLES = 10;
 	
@@ -61,13 +64,13 @@ public class FirstSamplesMapAllocationContext<K, V> implements MapAllocationCont
 		switch (collectionType) {
 
 		case ARRAY:
-			return isOnline() ? new MapSizeMonitor<>(new UnifiedMap<K, V>(map), this) : new UnifiedMap<K, V>(map);
+			return isOnline() ? new MapSizeMonitor<K, V>(new UnifiedMap<K, V>(map), this) : new UnifiedMap<K, V>(map);
 
 		case HASH:
-			return isOnline() ? new MapSizeMonitor<>(new HashMap<K, V>(map), this) : new HashMap<K, V>(map);
+			return isOnline() ? new HashMapSizeMonitor<K, V>(this) : new HashMap<K, V>(map);
 
 		case LINKED:
-			return isOnline() ? new MapSizeMonitor<>(new LinkedHashMap<K, V>(map), this) : new LinkedHashMap<K, V>(map);
+			return isOnline() ? new MapSizeMonitor<K, V>(new LinkedHashMap<K, V>(map), this) : new LinkedHashMap<K, V>(map);
 
 		}
 
@@ -96,7 +99,7 @@ public class FirstSamplesMapAllocationContext<K, V> implements MapAllocationCont
 		this.initialCapacity = summedSize / SAMPLES;
 		
 		// FIXME: This is too arbitrary
-		if(this.initialCapacity < 30) {
+		if(this.initialCapacity < ARRAY_THRESHOLD) {
 			collectionType = CollectionTypeEnum.ARRAY;
 		}
 		
