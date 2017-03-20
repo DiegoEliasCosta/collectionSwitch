@@ -85,6 +85,7 @@ public class AdaptiveListOptimizer<E> implements ListAllocationOptimizer<E> {
 			this.fullAnalysis = true;
 		} else if (this.initialCapacity < ARRAY_THRESHOLD) {
 			championCollectionType = CollectionTypeEnum.ARRAY;
+			this.context.updateCollectionType(CollectionTypeEnum.ARRAY);
 			this.isSleeping = true;
 		}
 

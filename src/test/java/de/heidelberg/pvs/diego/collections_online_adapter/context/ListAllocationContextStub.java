@@ -38,5 +38,17 @@ public class ListAllocationContextStub<E> implements ListAllocationContext<E> {
 		
 	}
 
+	@Override
+	public void updateCollectionType(CollectionTypeEnum collectionTypeEnum) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateInitialCapacity(int analyzedInitialCapacity) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
