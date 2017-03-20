@@ -1,6 +1,7 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 
@@ -18,8 +19,13 @@ public class HashMapSizeMonitor<K, V> extends HashMap<K, V> {
 	
 	private MapAllocationContext<K, V> context;
 	
-	public HashMapSizeMonitor(MapAllocationContext<K, V> context) {
-		super();
+	public HashMapSizeMonitor(int initialCapacity, MapAllocationContext<K, V> context) {
+		super(initialCapacity);
+		this.context = context;
+	}
+	
+	public HashMapSizeMonitor(Map<? extends K, ? extends V> map, MapAllocationContext<K, V> context) {
+		super(map);
 		this.context = context;
 	}
 	

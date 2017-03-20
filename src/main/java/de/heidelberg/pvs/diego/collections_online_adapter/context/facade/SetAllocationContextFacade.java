@@ -5,7 +5,7 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesSetMemoryOptimizer;
 
 public class SetAllocationContextFacade<E> implements SetAllocationContext<E> {
 	
@@ -13,7 +13,7 @@ public class SetAllocationContextFacade<E> implements SetAllocationContext<E> {
 	
 	public SetAllocationContextFacade(CollectionTypeEnum collectionType) {
 		super();
-		this.context = new FirstSamplesSetAllocationContext<E>(collectionType);
+		this.context = new FirstSamplesSetMemoryOptimizer<E>(collectionType);
 	}
 
 	public Set<E> createSet() {

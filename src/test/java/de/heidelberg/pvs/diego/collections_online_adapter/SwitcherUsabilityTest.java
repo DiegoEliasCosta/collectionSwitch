@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesListMemporyOptimizer;
 
 public class SwitcherUsabilityTest {
 
@@ -15,7 +15,7 @@ public class SwitcherUsabilityTest {
 	
 	@Test
 	public void testWithContext() throws Exception {
-		ListAllocationContext<Integer> context = new FirstSamplesListAllocationContext<Integer>(CollectionTypeEnum.ARRAY);
+		ListAllocationContext<Integer> context = new FirstSamplesListMemporyOptimizer<Integer>(CollectionTypeEnum.ARRAY);
 		list = context.createList();
 		
 	}

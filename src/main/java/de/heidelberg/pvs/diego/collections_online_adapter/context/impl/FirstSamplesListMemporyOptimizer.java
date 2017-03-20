@@ -9,10 +9,12 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionType
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListOperationsMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListOperationsMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ListSizeMonitor;
 
-public class FirstSamplesListAllocationContext<E> implements ListAllocationContext<E> {
+public class FirstSamplesListMemporyOptimizer<E> implements ListAllocationContext<E> {
 
 	private static final int ARRAY_THRESHOLD = 30;
 
@@ -27,7 +29,7 @@ public class FirstSamplesListAllocationContext<E> implements ListAllocationConte
 
 	private CollectionTypeEnum collectionType;
 
-	public FirstSamplesListAllocationContext(CollectionTypeEnum collectionType) {
+	public FirstSamplesListMemporyOptimizer(CollectionTypeEnum collectionType) {
 		super();
 		this.collectionType = collectionType;
 	}
@@ -36,13 +38,15 @@ public class FirstSamplesListAllocationContext<E> implements ListAllocationConte
 
 		switch (collectionType) {
 		case ARRAY:
-			return isOnline() ? new ArrayListOperationsMonitor<E>(initialCapacity, this)
+			return isOnline() ? new ArrayListSizeMonitor<>(initialCapacity, this)
 					: new ArrayList<E>(initialCapacity);
 		case LINKED:
-			return isOnline() ? new LinkedListOperationsMonitor<E>(this) : new LinkedList<E>();
+			return isOnline() ? new LinkedListSizeMonitor<>(this) : new LinkedList<E>();
 		case HASH:
 			// At this point the algorithm won't be online anymore
 			return new HashArrayList<E>(initialCapacity);
+		default:
+			break;
 		}
 
 		return null;
@@ -63,7 +67,7 @@ public class FirstSamplesListAllocationContext<E> implements ListAllocationConte
 
 		switch (collectionType) {
 		case ARRAY:
-			return isOnline() ? new ListSizeMonitor<E>(new ArrayList<E>(c), this) : new ArrayList<E>(c);
+			return isOnline() ? new ArrayListSizeMonitor<E>(c, this) : new ArrayList<E>(c);
 		case LINKED:
 			return isOnline() ? new ListSizeMonitor<E>(new LinkedList<E>(c), this) : new LinkedList<E>();
 		case HASH:

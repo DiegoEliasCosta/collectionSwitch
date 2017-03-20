@@ -6,14 +6,18 @@ import java.util.Map;
 
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 
+import com.google.api.client.util.ArrayMap;
+
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapSizeMonitor;
 
-public class FirstSamplesMapAllocationContext<K, V> implements MapAllocationContext<K, V> {
+public class FirstSamplesMapMemoryOptimizer<K, V> implements MapAllocationContext<K, V> {
 
+	// Threshold
 	private static final int ARRAY_THRESHOLD = 30;
+	private static final int ARRAY_HASH_THRESHOLD = 1000;
 
 	private static final int SAMPLES = 10;
 	
@@ -25,7 +29,7 @@ public class FirstSamplesMapAllocationContext<K, V> implements MapAllocationCont
 	// Monitored data
 	private int[] sizes = new int[SAMPLES];
 
-	public FirstSamplesMapAllocationContext(CollectionTypeEnum type) {
+	public FirstSamplesMapMemoryOptimizer(CollectionTypeEnum type) {
 		super();
 		this.collectionType = type;
 	}
@@ -34,15 +38,18 @@ public class FirstSamplesMapAllocationContext<K, V> implements MapAllocationCont
 	public Map<K, V> createMap() {
 
 		switch (collectionType) {
-
+		
 		case ARRAY:
-			return isOnline() ? new MapSizeMonitor<>(new UnifiedMap<K, V>(), this) : new UnifiedMap<K, V>();
+			return isOnline() ? new MapSizeMonitor<>(ArrayMap.create(initialCapacity), this) : ArrayMap.create(initialCapacity);
+
+		case ARRAY_HASH:
+			return isOnline() ? new MapSizeMonitor<>(new UnifiedMap<K, V>(initialCapacity), this) : new UnifiedMap<K, V>(initialCapacity);
 
 		case HASH:
-			return isOnline() ? new MapSizeMonitor<>(new HashMap<K, V>(), this) : new HashMap<K, V>();
+			return isOnline() ? new HashMapSizeMonitor<>(initialCapacity, this) : new HashMap<K, V>(initialCapacity);
 
 		case LINKED:
-			return isOnline() ? new MapSizeMonitor<>(new LinkedHashMap<K, V>(), this) : new LinkedHashMap<K, V>();
+			return isOnline() ? new MapSizeMonitor<>(new LinkedHashMap<K, V>(initialCapacity), this) : new LinkedHashMap<K, V>(initialCapacity);
 
 		}
 
@@ -62,12 +69,15 @@ public class FirstSamplesMapAllocationContext<K, V> implements MapAllocationCont
 	@Override
 	public Map<K, V> createMap(Map<K, V> map) {
 		switch (collectionType) {
-
+		
 		case ARRAY:
-			return isOnline() ? new MapSizeMonitor<K, V>(new UnifiedMap<K, V>(map), this) : new UnifiedMap<K, V>(map);
+			// ArrayMap does not have a constructor for copy - making it too slow for this operation
+			// We go for UnifiedMaps for those cases
+		case ARRAY_HASH:
+			return isOnline() ? new MapSizeMonitor<>(new UnifiedMap<K, V>(map), this) : new UnifiedMap<K, V>(map);
 
 		case HASH:
-			return isOnline() ? new HashMapSizeMonitor<K, V>(this) : new HashMap<K, V>(map);
+			return isOnline() ? new HashMapSizeMonitor<K, V>(map, this) : new HashMap<K, V>(map);
 
 		case LINKED:
 			return isOnline() ? new MapSizeMonitor<K, V>(new LinkedHashMap<K, V>(map), this) : new LinkedHashMap<K, V>(map);
@@ -101,6 +111,8 @@ public class FirstSamplesMapAllocationContext<K, V> implements MapAllocationCont
 		// FIXME: This is too arbitrary
 		if(this.initialCapacity < ARRAY_THRESHOLD) {
 			collectionType = CollectionTypeEnum.ARRAY;
+		} else if(this.initialCapacity < ARRAY_HASH_THRESHOLD) {
+			collectionType = CollectionTypeEnum.ARRAY_HASH;
 		}
 		
 	}

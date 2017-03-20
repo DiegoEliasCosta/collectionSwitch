@@ -9,11 +9,16 @@ import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.custom.ArraySet;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.HashSetSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetSizeMonitor;
 
-public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext<E> {
+public class FirstSamplesSetMemoryOptimizer<E> implements SetAllocationContext<E> {
 
+	// Threshold
 	private static final int ARRAY_THRESHOLD = 30;
+	private static final int ARRAY_HASH_THRESHOLD = 1000;
+	
 	private int initialCapacity = 10;
 	private static int SAMPLES = 10;
 
@@ -26,7 +31,7 @@ public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext
 
 	private CollectionTypeEnum collectionType;
 
-	public FirstSamplesSetAllocationContext(CollectionTypeEnum collectionType) {
+	public FirstSamplesSetMemoryOptimizer(CollectionTypeEnum collectionType) {
 		super();
 		this.collectionType = collectionType;
 	}
@@ -44,10 +49,13 @@ public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext
 	public Set<E> createSet(int initialCapacity) {
 		
 		switch (collectionType) {
+		
 		case ARRAY:
+			return isOnline() ? new SetSizeMonitor<>(new ArraySet(), this): new ArraySet();
+		case ARRAY_HASH:
 			return isOnline() ? new SetSizeMonitor<E>(new UnifiedSet<E>(initialCapacity), this): new UnifiedSet<E>(this.initialCapacity);
 		case LINKED:
-			return isOnline() ? new SetSizeMonitor<E>(new LinkedHashSet<E>(initialCapacity), this): new LinkedHashSet<E>(this.initialCapacity);
+			return isOnline() ? new HashSetSizeMonitor<E>(this): new LinkedHashSet<E>(this.initialCapacity);
 		case HASH:
 			return isOnline() ? new SetSizeMonitor<E>(new HashSet<E>(initialCapacity), this): new HashSet<E>(this.initialCapacity);
 		}
@@ -105,6 +113,8 @@ public class FirstSamplesSetAllocationContext<E> implements SetAllocationContext
 		// FIXME: This is too arbitrary
 		if (this.initialCapacity < ARRAY_THRESHOLD) {
 			collectionType = CollectionTypeEnum.ARRAY;
+		} else if (this.initialCapacity < ARRAY_HASH_THRESHOLD) {
+			collectionType = CollectionTypeEnum.ARRAY_HASH;
 		}
 
 	}

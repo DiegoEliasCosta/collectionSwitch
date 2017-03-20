@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesListMemporyOptimizer;
 
 /**
  * Facade created add flexibility to the {@link ListAllocationContext} creation.
@@ -18,11 +18,11 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamp
  */
 public class ListAllocationContextFacade<E>  implements ListAllocationContext<E> {
 	
-	FirstSamplesListAllocationContext<E> context;
+	FirstSamplesListMemporyOptimizer<E> context;
 	
 	public ListAllocationContextFacade(CollectionTypeEnum collectionType) {
 		super();
-		this.context = new FirstSamplesListAllocationContext<>(collectionType);
+		this.context = new FirstSamplesListMemporyOptimizer<>(collectionType);
 	}
 
 

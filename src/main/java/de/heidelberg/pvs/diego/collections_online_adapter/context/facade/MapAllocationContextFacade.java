@@ -4,7 +4,7 @@ import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesMapMemoryOptimizer;
 
 public class MapAllocationContextFacade<K, V> implements MapAllocationContext<K, V> {
 	
@@ -12,7 +12,7 @@ public class MapAllocationContextFacade<K, V> implements MapAllocationContext<K,
 	
 	public MapAllocationContextFacade(CollectionTypeEnum collectionType) {
 		super();
-		this.context = new FirstSamplesMapAllocationContext<K, V>(collectionType);
+		this.context = new FirstSamplesMapMemoryOptimizer<K, V>(collectionType);
 	}
 
 	public Map<K, V> createMap() {
