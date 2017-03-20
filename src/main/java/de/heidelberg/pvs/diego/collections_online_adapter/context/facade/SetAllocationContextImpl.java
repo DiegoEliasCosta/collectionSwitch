@@ -7,11 +7,11 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionType
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesSetMemoryOptimizer;
 
-public class SetAllocationContextFacade<E> implements SetAllocationContext<E> {
+public class SetAllocationContextImpl<E> implements SetAllocationContext<E> {
 	
 	private SetAllocationContext<E> context;
 	
-	public SetAllocationContextFacade(CollectionTypeEnum collectionType) {
+	public SetAllocationContextImpl(CollectionTypeEnum collectionType) {
 		super();
 		this.context = new FirstSamplesSetMemoryOptimizer<E>(collectionType);
 	}

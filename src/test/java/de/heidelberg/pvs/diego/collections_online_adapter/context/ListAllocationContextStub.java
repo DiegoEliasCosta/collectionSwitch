@@ -38,10 +38,5 @@ public class ListAllocationContextStub<E> implements ListAllocationContext<E> {
 		
 	}
 
-	@Override
-	public boolean isOnline() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 }

@@ -13,6 +13,14 @@ import de.heidelberg.pvs.diego.collections_online_adapter.custom.ArraySet;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.HashSetSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetSizeMonitor;
 
+/**
+ * Simple optimizer that uses the first samples of the allocation-site to determine the best collection.
+ * Used only for memory optimizations.
+ * 
+ * @author Diego
+ *
+ * @param <E>
+ */
 public class FirstSamplesSetMemoryOptimizer<E> implements SetAllocationContext<E> {
 
 	// Threshold
@@ -42,11 +50,17 @@ public class FirstSamplesSetMemoryOptimizer<E> implements SetAllocationContext<E
 
 	@Override
 	public Set<E> createSet() {
-		return createSet(10);
+		return createSet(this.initialCapacity);
 	}
 
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Set<E> createSet(int initialCapacity) {
+		
+		if(!isOnline()) {
+			initialCapacity = this.initialCapacity;
+		}
 		
 		switch (collectionType) {
 		
@@ -67,6 +81,7 @@ public class FirstSamplesSetMemoryOptimizer<E> implements SetAllocationContext<E
 	public Set<E> createSet(Collection<? extends E> set) {
 		switch (collectionType) {
 		case ARRAY:
+		case ARRAY_HASH:
 			return isOnline() ? new SetSizeMonitor<E>(new UnifiedSet<E>(set), this): new UnifiedSet<E>(set);
 		case LINKED:
 			return isOnline() ? new SetSizeMonitor<E>(new LinkedHashSet<E>(set), this): new LinkedHashSet<E>(set);

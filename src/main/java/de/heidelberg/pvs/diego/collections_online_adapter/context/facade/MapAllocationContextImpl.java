@@ -6,11 +6,11 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionType
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesMapMemoryOptimizer;
 
-public class MapAllocationContextFacade<K, V> implements MapAllocationContext<K, V> {
+public class MapAllocationContextImpl<K, V> implements MapAllocationContext<K, V> {
 	
 	private MapAllocationContext<K, V> context;
 	
-	public MapAllocationContextFacade(CollectionTypeEnum collectionType) {
+	public MapAllocationContextImpl(CollectionTypeEnum collectionType) {
 		super();
 		this.context = new FirstSamplesMapMemoryOptimizer<K, V>(collectionType);
 	}

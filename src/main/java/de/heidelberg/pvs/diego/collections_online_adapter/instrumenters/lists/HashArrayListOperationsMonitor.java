@@ -1,5 +1,7 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists;
 
+import java.util.List;
+
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 
@@ -13,6 +15,11 @@ public class HashArrayListOperationsMonitor<E> extends HashArrayList<E>{
 
 	public HashArrayListOperationsMonitor(int initialCapacity, ListAllocationContext<E> context) {
 		super(initialCapacity);
+		this.context = context;
+	}
+	
+	public HashArrayListOperationsMonitor(List<? extends E> lists, ListAllocationContext<E> context) {
+		super(lists);
 		this.context = context;
 	}
 

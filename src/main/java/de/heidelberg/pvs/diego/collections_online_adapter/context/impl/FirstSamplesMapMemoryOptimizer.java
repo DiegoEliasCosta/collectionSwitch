@@ -13,9 +13,18 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationC
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapSizeMonitor;
 
+/**
+ * Simple optimizer that uses the first samples of the allocation-site to determine the best collection.
+ * Used only for memory optimizations.
+ * 
+ * @author Diego
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class FirstSamplesMapMemoryOptimizer<K, V> implements MapAllocationContext<K, V> {
 
-	// Threshold
+	// Thresholds
 	private static final int ARRAY_THRESHOLD = 30;
 	private static final int ARRAY_HASH_THRESHOLD = 1000;
 
@@ -32,6 +41,12 @@ public class FirstSamplesMapMemoryOptimizer<K, V> implements MapAllocationContex
 	public FirstSamplesMapMemoryOptimizer(CollectionTypeEnum type) {
 		super();
 		this.collectionType = type;
+	}
+	
+	public FirstSamplesMapMemoryOptimizer(CollectionTypeEnum type, int specifiedInitialCapacity) {
+		super();
+		this.collectionType = type;
+		this.initialCapacity = specifiedInitialCapacity;
 	}
 
 	@Override
