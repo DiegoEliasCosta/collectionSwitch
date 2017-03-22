@@ -1,10 +1,10 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.context.facade;
+package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesMapMemoryOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl.FirstSamplesMapMemoryOptimizer;
 
 public class MapAllocationContextImpl<K, V> implements MapAllocationContext<K, V> {
 	

@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.context.facade;
+package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,12 +8,12 @@ import java.util.List;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextUpdatable;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesListMemporyOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ListSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.ListAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl.FirstSamplesListMemporyOptimizer;
 
 /**
  * Facade created add flexibility to the {@link ListAllocationContext} creation.

@@ -1,11 +1,11 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.context.facade;
+package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Collection;
 import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FirstSamplesSetMemoryOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl.FirstSamplesSetMemoryOptimizer;
 
 public class SetAllocationContextImpl<E> implements SetAllocationContext<E> {
 	

@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
+package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

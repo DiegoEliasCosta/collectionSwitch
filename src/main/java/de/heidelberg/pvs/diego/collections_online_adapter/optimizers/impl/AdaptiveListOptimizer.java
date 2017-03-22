@@ -1,10 +1,9 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
+package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl;
 
 import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListOperationsMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListSizeMonitor;
@@ -12,6 +11,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.Ha
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListOperationsMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ListSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.ListAllocationOptimizer;
 
 public class AdaptiveListOptimizer<E> implements ListAllocationOptimizer<E> {
 
