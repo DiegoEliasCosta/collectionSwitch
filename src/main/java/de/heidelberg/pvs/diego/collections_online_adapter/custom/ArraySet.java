@@ -1,6 +1,7 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.custom;
 
 import java.util.AbstractSet;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -64,7 +65,18 @@ public class ArraySet extends AbstractSet {
     private int version = 0;
     private Object[] values = EMPTY_ARRAY;
     
-    public ArraySet() { }
+    public ArraySet() { 
+    	
+    }
+    
+    public ArraySet(int initialCapacity) {
+    	values = new Object[initialCapacity];
+    }
+    
+    public ArraySet(Collection<?> set) {
+    	this.add(set);
+    	
+    }
     
     public Object[] toArray() {
         return values;

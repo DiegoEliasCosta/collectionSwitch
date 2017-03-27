@@ -2,11 +2,14 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Map;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl.FirstSamplesMapMemoryOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.FirstSamplesMapMemoryOptimizer;
 
 public class MapAllocationContextImpl<K, V> implements MapAllocationContext<K, V> {
+	
+	AllocationContextState state; 
 	
 	private MapAllocationContext<K, V> context;
 	

@@ -7,7 +7,7 @@ import org.junit.Test;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ListAllocationContextImpl;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl.FirstSamplesListMemporyOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.FirstSamplesListMemoryOptimizer;
 
 public class SwitcherUsabilityTest {
 

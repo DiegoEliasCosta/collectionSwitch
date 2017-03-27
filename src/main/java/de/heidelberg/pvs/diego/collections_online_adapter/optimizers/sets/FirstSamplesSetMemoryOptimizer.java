@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl;
+package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets;
 
 import java.util.Collection;
 import java.util.HashSet;

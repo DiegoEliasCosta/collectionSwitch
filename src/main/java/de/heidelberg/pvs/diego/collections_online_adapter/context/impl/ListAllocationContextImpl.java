@@ -1,19 +1,14 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextUpdatable;
-import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ListSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.ListAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl.FirstSamplesListMemporyOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.factories.ListsFactory;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
 /**
  * Facade created add flexibility to the {@link ListAllocationContext} creation.
@@ -24,18 +19,27 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl.FirstS
  *
  * @param <E>
  */
-public class ListAllocationContextImpl<E> implements ListAllocationContext<E>, ListAllocationContextUpdatable {
+public class ListAllocationContextImpl<E> implements ListAllocationContext<E>, AllocationContextUpdatable {
+
+	private static final int SLEEPING_FREQ = 10;
+
+	AllocationContextState state;
 
 	ListAllocationOptimizer<E> optimizer;
 
-	CollectionTypeEnum championCollectionType;
+	private CollectionTypeEnum championCollectionType;
+	private CollectionTypeEnum defaultCollectionType;
 
 	int analyzedInitialCapacity = 10;
 
+	private int sleepingMonitoringCount;
+
 	public ListAllocationContextImpl(CollectionTypeEnum collectionType) {
 		super();
-		this.optimizer = new FirstSamplesListMemporyOptimizer<>(this, collectionType);
 		this.championCollectionType = collectionType;
+		this.defaultCollectionType = collectionType;
+		// First State
+		this.state = AllocationContextState.ACTIVE_MEMORY;
 	}
 
 	public List<E> createList() {
@@ -45,55 +49,74 @@ public class ListAllocationContextImpl<E> implements ListAllocationContext<E>, L
 	@Override
 	public List<E> createList(int initialCapacity) {
 
-		if (optimizer.isOnline()) {
-			return optimizer.createListMonitor(initialCapacity);
+		int n_alloc;
+		switch (state) {
+
+		case INACTIVE:
+			return ListsFactory.createNormalLists(defaultCollectionType, initialCapacity);
+
+		case OPTIMIZED:
+			return ListsFactory.createNormalLists(championCollectionType, initialCapacity);
 			
-		} else {
-			switch (championCollectionType) {
-			case ARRAY:
-				return new ArrayList<>(initialCapacity);
-			case LINKED:
-				return new LinkedList<>();
-			case HASH:
-				return new HashArrayList<>(initialCapacity);
-			default:
-				break;
-			}
+		case SLEEPING_MEMORY:
+			// Only creates with monitor in certain frequencies
+			n_alloc = sleepingMonitoringCount++;
+			if (n_alloc % SLEEPING_FREQ == 0)
+				return ListsFactory.createSizeMonitor(championCollectionType, this, initialCapacity);
+			else
+				return ListsFactory.createNormalLists(championCollectionType, initialCapacity);
+
+		case SLEEPING_FULL:
+			// Only creates with monitor in certain frequencies
+			n_alloc = sleepingMonitoringCount++;
+			if (n_alloc % SLEEPING_FREQ == 0)
+				return ListsFactory.createFullMonitor(championCollectionType, this, initialCapacity);
+			else
+				return ListsFactory.createNormalLists(championCollectionType, initialCapacity);
+
+		case ACTIVE_MEMORY:
+			return ListsFactory.createSizeMonitor(defaultCollectionType, this, initialCapacity);
+
+		case ACTIVE_FULL:
+			return ListsFactory.createFullMonitor(defaultCollectionType, this, initialCapacity);
 		}
-
 		return null;
-
 	}
 
 	@Override
-	public List<E> createList(Collection<? extends E> c) {
+	public List<E> createList(Collection<? extends E> list) {
+		
+		int n_alloc;
+		switch (state) {
 
-		if (optimizer.isOnline()) {
+		case INACTIVE:
+			return ListsFactory.createNormalLists(defaultCollectionType, list);
 
-			switch (championCollectionType) {
-			case ARRAY:
-				return new ArrayListSizeMonitor<>(c, this);
-			case LINKED:
-				return new LinkedListSizeMonitor<>(this);
-			case HASH:
-				return new ListSizeMonitor<>(new HashArrayList<>(c), this);
-			default:
-				break;
-			}
+		case OPTIMIZED:
+			return ListsFactory.createNormalLists(championCollectionType, list);
+			
+		case SLEEPING_MEMORY:
+			// Only creates with monitor in certain frequencies
+			n_alloc = sleepingMonitoringCount++;
+			if (n_alloc % SLEEPING_FREQ == 0)
+				return ListsFactory.createSizeMonitor(championCollectionType, this, list);
+			else
+				return ListsFactory.createNormalLists(championCollectionType, list);
 
-		} else {
-			switch (championCollectionType) {
-			case ARRAY:
-				return new ArrayList<>(c);
-			case LINKED:
-				return new LinkedList<>();
-			case HASH:
-				return new HashArrayList<>(c);
-			default:
-				break;
-			}
+		case SLEEPING_FULL:
+			// Only creates with monitor in certain frequencies
+			n_alloc = sleepingMonitoringCount++;
+			if (n_alloc % SLEEPING_FREQ == 0)
+				return ListsFactory.createFullMonitor(championCollectionType, this, list);
+			else
+				return ListsFactory.createNormalLists(championCollectionType, list);
+
+		case ACTIVE_MEMORY:
+			return ListsFactory.createSizeMonitor(defaultCollectionType, this, list);
+
+		case ACTIVE_FULL:
+			return ListsFactory.createFullMonitor(defaultCollectionType, this, list);
 		}
-
 		return null;
 	}
 
@@ -106,15 +129,10 @@ public class ListAllocationContextImpl<E> implements ListAllocationContext<E>, L
 	}
 
 	@Override
-	public void updateCollectionType(CollectionTypeEnum collectionTypeEnum) {
-		this.championCollectionType = collectionTypeEnum;
-
-	}
-
-	@Override
-	public void updateInitialCapacity(int analyzedInitialCapacity) {
-		this.analyzedInitialCapacity = analyzedInitialCapacity;
-
+	public void optimizeAllocationContext(CollectionTypeEnum championCollectionTypeEnum, int analyzedInitialCapacity) {
+		
+		// TODO: Implement the machine-state transition
+		
 	}
 
 }

@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.impl;
+package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +13,6 @@ import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.Ar
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListOperationsMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ListSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.ListAllocationOptimizer;
 
 /**
  * Simple optimizer that uses the first samples of the allocation-site to determine the best collection.
@@ -23,7 +22,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.ListAllocat
  *
  * @param <E>
  */
-public class FirstSamplesListMemporyOptimizer<E> implements ListAllocationOptimizer<E> {
+public class FirstSamplesListMemoryOptimizer<E> implements ListAllocationOptimizer<E> {
 
 	private static final int ARRAY_THRESHOLD = 30;
 
@@ -40,7 +39,7 @@ public class FirstSamplesListMemporyOptimizer<E> implements ListAllocationOptimi
 
 	private ListAllocationContext<E> context;
 
-	public FirstSamplesListMemporyOptimizer(ListAllocationContext<E> context, CollectionTypeEnum collectionType) {
+	public FirstSamplesListMemoryOptimizer(ListAllocationContext<E> context, CollectionTypeEnum collectionType) {
 		super();
 		this.championCollectionType = collectionType;
 		this.context = context;
@@ -90,14 +89,9 @@ public class FirstSamplesListMemporyOptimizer<E> implements ListAllocationOptimi
 
 	}
 
-	@Override
-	public boolean isSleeping() {
-		// No sleeping behavior
-		return false;
-	}
 
 	@Override
-	public List<E> createListMonitor(List<? extends E> list) {
+	public List<E> createListMonitor(Collection<? extends E> list, CollectionTypeEnum collectionType) {
 
 		switch (championCollectionType) {
 		case ARRAY:
@@ -114,8 +108,19 @@ public class FirstSamplesListMemporyOptimizer<E> implements ListAllocationOptimi
 	}
 
 	@Override
-	public List<E> createListMonitor(int inicialCapacity) {
-		// TODO Auto-generated method stub
+	public List<E> createListMonitor(int inicialCapacity, CollectionTypeEnum collectionType) {
+		
+		switch (championCollectionType) {
+		case ARRAY:
+			return new ArrayListSizeMonitor<>(inicialCapacity, this.context);
+		case LINKED:
+			return new LinkedListSizeMonitor<>(this.context);
+		case HASH:
+			return new ListSizeMonitor<>(new HashArrayList<>(inicialCapacity), this.context);
+		default:
+			break;
+		}
+		
 		return null;
 	}
 
