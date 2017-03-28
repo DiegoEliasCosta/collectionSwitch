@@ -19,7 +19,9 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListA
  *
  * @param <E>
  */
-public class ListAllocationContextImpl<E> implements ListAllocationContext<E>, AllocationContextUpdatable {
+public class AdaptiveListAllocationContext<E> implements ListAllocationContext<E>, AllocationContextUpdatable {
+
+	private static final int FULL_ANALYSIS_THRESHOLD = 100;
 
 	private static final int SLEEPING_FREQ = 10;
 
@@ -30,16 +32,18 @@ public class ListAllocationContextImpl<E> implements ListAllocationContext<E>, A
 	private CollectionTypeEnum championCollectionType;
 	private CollectionTypeEnum defaultCollectionType;
 
-	int analyzedInitialCapacity = 10;
+	private int analyzedInitialCapacity;
 
 	private int sleepingMonitoringCount;
 
-	public ListAllocationContextImpl(CollectionTypeEnum collectionType) {
+	public AdaptiveListAllocationContext(CollectionTypeEnum collectionType) {
 		super();
 		this.championCollectionType = collectionType;
 		this.defaultCollectionType = collectionType;
+		
 		// First State
 		this.state = AllocationContextState.ACTIVE_MEMORY;
+		analyzedInitialCapacity = 10;
 	}
 
 	public List<E> createList() {
@@ -129,9 +133,33 @@ public class ListAllocationContextImpl<E> implements ListAllocationContext<E>, A
 	}
 
 	@Override
-	public void optimizeAllocationContext(CollectionTypeEnum championCollectionTypeEnum, int analyzedInitialCapacity) {
+	public void optimizeInitialCapacity(int analyzedInitialCapacity) {
+		this.analyzedInitialCapacity = analyzedInitialCapacity;
 		
-		// TODO: Implement the machine-state transition
+		if(this.analyzedInitialCapacity > FULL_ANALYSIS_THRESHOLD) {
+			this.state = AllocationContextState.ACTIVE_FULL;
+		} else {
+			this.state = AllocationContextState.SLEEPING_MEMORY;
+		}
+		
+	}
+
+	@Override
+	public void noInitialCapacityConvergence() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void optimizeCollectionType(CollectionTypeEnum collection) {
+		this.championCollectionType = collection;
+		this.state = AllocationContextState.SLEEPING_FULL;
+		
+	}
+
+	@Override
+	public void noCollectionTypeConvergence() {
+		// TODO Auto-generated method stub
 		
 	}
 

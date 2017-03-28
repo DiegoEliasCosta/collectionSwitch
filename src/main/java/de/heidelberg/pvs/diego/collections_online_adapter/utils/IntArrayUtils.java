@@ -34,7 +34,7 @@ public class IntArrayUtils {
 		
 	}
 	
-	public static int mode(final int[] array) {
+	public static int calculateMode(final int[] array) {
 		
 	    int maxKey = 0;
 	    int maxCounts = 0;

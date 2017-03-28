@@ -36,10 +36,28 @@ public class SetAllocationContextStub<E> implements SetAllocationContext<E> {
 	}
 
 	@Override
-	public boolean isOnline() {
+	public void optimizeInitialCapacity(int analyzedInitialCapacity) {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
-	
+
+	@Override
+	public void noInitialCapacityConvergence() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void optimizeCollectionType(CollectionTypeEnum collecton) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noCollectionTypeConvergence() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

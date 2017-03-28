@@ -1,17 +1,11 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListOperationsMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.HashArrayListOperationsMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListOperationsMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
 public class AdaptiveListOptimizer<E> implements ListAllocationOptimizer<E> {
@@ -21,7 +15,7 @@ public class AdaptiveListOptimizer<E> implements ListAllocationOptimizer<E> {
 	private ObjectIntHashMap<CollectionTypeEnum> votedCollections;
 	
 	private int sizes[] = new int[WINDOW_SIZE];
-	private transient AtomicInteger count = new AtomicInteger(0);
+	private AtomicInteger index = new AtomicInteger(0);
 
 	ListAllocationContext<E> context;
 
@@ -37,15 +31,15 @@ public class AdaptiveListOptimizer<E> implements ListAllocationOptimizer<E> {
 	public void updateSize(int size) {
 		
 		// This is our only thread-safe control
-		int copyCount = count.getAndIncrement();
+		int myIndex = index.getAndIncrement();
 		
-		if(copyCount < WINDOW_SIZE) {
-			sizes[copyCount] = size;
+		if(myIndex < WINDOW_SIZE) {
+			sizes[myIndex] = size;
 			
 			// Always vote for array list before analyzing the operations
 			this.votedCollections.addToValue(CollectionTypeEnum.ARRAY, 1);
 			
-			if(copyCount == WINDOW_SIZE) {
+			if(myIndex == WINDOW_SIZE) {
 				
 				this.updateContext();
 			}
@@ -54,66 +48,10 @@ public class AdaptiveListOptimizer<E> implements ListAllocationOptimizer<E> {
 	}
 
 
-	private void updateContext() {
-
-		int medianSizes = IntArrayUtils.calculateMedian(sizes);
-		
-		if(votedCollections.get(CollectionTypeEnum.ARRAY) > CONVERGENCE_RATE) {
-			this.context.optimizeAllocationContext(CollectionTypeEnum.ARRAY, medianSizes);
-		}
-
-		else if(votedCollections.get(CollectionTypeEnum.LINKED) > CONVERGENCE_RATE) {
-			this.context.optimizeAllocationContext(CollectionTypeEnum.LINKED, medianSizes);
-		}
-		 
-		else if(votedCollections.get(CollectionTypeEnum.HASH) > CONVERGENCE_RATE) {
-			this.context.optimizeAllocationContext(CollectionTypeEnum.HASH, medianSizes);
-		}
-		
-		else {
-			this.context.optimizeAllocationContext(CollectionTypeEnum.DEFAULT, medianSizes);
-		}
-		
-	}
-
-	@Override
-	public List<E> createListMonitor(Collection<? extends E> list, CollectionTypeEnum collectionType) {
-
-		switch (collectionType) {
-		case ARRAY:
-			return new ArrayListOperationsMonitor<>(list, this.context);
-		case LINKED:
-			return new LinkedListOperationsMonitor<>(list, this.context);
-		case HASH:
-			return new HashArrayListOperationsMonitor<>(new HashArrayList<>(list), this.context);
-		default:
-			break;
-		}
-
-		return null;
-	}
-
-	@Override
-	public List<E> createListMonitor(int inicialCapacity, CollectionTypeEnum championCollectionType) {
-
-		switch (championCollectionType) {
-		case ARRAY:
-			return new ArrayListOperationsMonitor<>(inicialCapacity, this.context);
-		case LINKED:
-			return new LinkedListOperationsMonitor<>(this.context);
-		case HASH:
-			return new HashArrayListOperationsMonitor<>(new HashArrayList<>(inicialCapacity), this.context);
-		default:
-			break;
-		}
-
-		return null;
-	}
-	
 	@Override
 	public void updateOperationsAndSize(int indexOp, int midListOp, int containsOp, int size) {
 
-		int copyCount = count.getAndIncrement();
+		int copyCount = index.getAndIncrement();
 		
 		if(copyCount < WINDOW_SIZE) {
 			sizes[copyCount] = size;
@@ -139,13 +77,41 @@ public class AdaptiveListOptimizer<E> implements ListAllocationOptimizer<E> {
 			
 			votedCollections.addToValue(vote, 1);
 			
-			if (copyCount == WINDOW_SIZE) {
+			if (copyCount == WINDOW_SIZE - 1) { 
 				updateContext();
 			}
 			
-			count.set(0);
+			index.set(0);
 		}
 
+	}
+	
+	private void updateContext() {
+
+		// FIXME: Add the adaptive aspect to the size as well
+		int median = IntArrayUtils.calculateMedian(sizes);
+		this.context.optimizeInitialCapacity(median);
+		
+		// FIXME: To add here the no convergence initial capacity as well
+		
+		// Inform the Allocation Context
+		if(votedCollections.get(CollectionTypeEnum.ARRAY) > CONVERGENCE_RATE) {
+			this.context.optimizeCollectionType(CollectionTypeEnum.ARRAY);
+		}
+
+		else if(votedCollections.get(CollectionTypeEnum.LINKED) > CONVERGENCE_RATE) {
+			this.context.optimizeCollectionType(CollectionTypeEnum.LINKED);
+		}
+		 
+		else if(votedCollections.get(CollectionTypeEnum.HASH) > CONVERGENCE_RATE) {
+			this.context.optimizeCollectionType(CollectionTypeEnum.HASH);
+		}
+		
+		else {
+			// No clear convergence for one collection type - more analysis might be needed
+			this.context.noCollectionTypeConvergence();
+		}
+		
 	}
 
 }

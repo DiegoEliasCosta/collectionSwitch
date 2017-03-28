@@ -3,7 +3,7 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context;
 import java.util.Collection;
 import java.util.List;
 
-public interface ListAllocationContext<E> extends ListAllocationContextBase<E>, AllocationContextUpdatable {
+public interface ListAllocationContext<E> extends ListAllocationContextBase, AllocationContextUpdatable {
 	
 	List<E> createList();
 	

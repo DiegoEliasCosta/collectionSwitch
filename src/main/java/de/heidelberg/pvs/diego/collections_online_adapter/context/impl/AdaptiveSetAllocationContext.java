@@ -4,14 +4,16 @@ import java.util.Collection;
 import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.SetsFactory;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.AdaptiveSetMemoryOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.AdaptiveSetOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
-public class SetAllocationContextImpl<E> implements SetAllocationContext<E> {
+public class AdaptiveSetAllocationContext<E> implements SetAllocationContext<E>, AllocationContextUpdatable {
 
+	private static final int FULL_ANALYSIS_THRESHOLD = 100;
 	private static final int SLEEPING_FREQ = 50;
 
 	private SetAllocationOptimizer<E> optimizer;
@@ -25,14 +27,17 @@ public class SetAllocationContextImpl<E> implements SetAllocationContext<E> {
 
 	private int analyzedInitialCapacity;
 
-	public SetAllocationContextImpl(CollectionTypeEnum collectionType) {
+	public AdaptiveSetAllocationContext(CollectionTypeEnum collectionType) {
 		super();
 		this.championCollectionType = collectionType;
-		this.optimizer = new AdaptiveSetMemoryOptimizer<>(this);
+		this.optimizer = new AdaptiveSetOptimizer<>(this);
+		
+		// First State
+		this.state = AllocationContextState.ACTIVE_MEMORY;
+		this.analyzedInitialCapacity = 10;
 	}
 
 	public Set<E> createSet() {
-
 		return this.createSet(this.analyzedInitialCapacity);
 	}
 
@@ -47,7 +52,6 @@ public class SetAllocationContextImpl<E> implements SetAllocationContext<E> {
 
 	public Set<E> createSet(int initialCapacity) {
 		
-		int n_alloc;
 		switch (state) {
 
 		case INACTIVE:
@@ -58,16 +62,14 @@ public class SetAllocationContextImpl<E> implements SetAllocationContext<E> {
 			
 		case SLEEPING_MEMORY:
 			// Only creates with monitor in certain frequencies
-			n_alloc = sleepingMonitoringCount++;
-			if (n_alloc % SLEEPING_FREQ == 0)
+			if (shouldMonitor())
 				return SetsFactory.createSizeMonitor(championCollectionType, this, initialCapacity);
 			else
 				return SetsFactory.createNormalSet(championCollectionType, initialCapacity);
 
 		case SLEEPING_FULL:
 			// Only creates with monitor in certain frequencies
-			n_alloc = sleepingMonitoringCount++;
-			if (n_alloc % SLEEPING_FREQ == 0)
+			if (shouldMonitor())
 				return SetsFactory.createFullMonitor(championCollectionType, this, initialCapacity);
 			else
 				return SetsFactory.createNormalSet(championCollectionType, initialCapacity);
@@ -80,6 +82,11 @@ public class SetAllocationContextImpl<E> implements SetAllocationContext<E> {
 		}
 		return null;
 			
+	}
+
+	private boolean shouldMonitor() {
+		// FIXME: This is NOT thread-safe
+		return sleepingMonitoringCount++ % SLEEPING_FREQ == 0;
 	}
 
 	public Set<E> createSet(Collection<? extends E> set) {
@@ -116,6 +123,38 @@ public class SetAllocationContextImpl<E> implements SetAllocationContext<E> {
 			return SetsFactory.createFullMonitor(defaultCollectionType, this, set);
 		}
 		return null;
+	}
+
+	@Override
+	public void optimizeInitialCapacity(int analyzedInitialCapacity) {
+		this.analyzedInitialCapacity = analyzedInitialCapacity;
+		
+		if(this.analyzedInitialCapacity > FULL_ANALYSIS_THRESHOLD) {
+			this.state = AllocationContextState.ACTIVE_FULL;
+		} else {
+			this.state = AllocationContextState.SLEEPING_MEMORY;
+		}
+	
+		
+	}
+
+	@Override
+	public void noInitialCapacityConvergence() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void optimizeCollectionType(CollectionTypeEnum collection) {
+		
+		this.championCollectionType = collection;
+		
+	}
+
+	@Override
+	public void noCollectionTypeConvergence() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

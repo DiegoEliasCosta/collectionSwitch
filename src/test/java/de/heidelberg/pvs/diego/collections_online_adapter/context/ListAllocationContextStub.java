@@ -39,7 +39,25 @@ public class ListAllocationContextStub<E> implements ListAllocationContext<E> {
 	}
 
 	@Override
-	public void optimizeAllocationContext(CollectionTypeEnum championCollectionTypeEnum, int analyzedInitialCapacity) {
+	public void optimizeInitialCapacity(int analyzedInitialCapacity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noInitialCapacityConvergence() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void optimizeCollectionType(CollectionTypeEnum collecton) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noCollectionTypeConvergence() {
 		// TODO Auto-generated method stub
 		
 	}

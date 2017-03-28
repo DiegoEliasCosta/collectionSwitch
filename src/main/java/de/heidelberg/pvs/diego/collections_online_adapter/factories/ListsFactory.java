@@ -7,7 +7,7 @@ import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ListAllocationContextImpl;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListOperationsMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListSizeMonitor;
@@ -70,7 +70,7 @@ public class ListsFactory {
 
 	}
 
-	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationContextImpl<E> context,
+	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationContext<E> context,
 			Collection<? extends E> list) {
 
 		switch (type) {
@@ -87,7 +87,7 @@ public class ListsFactory {
 		return null;
 	}
 
-	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationContextImpl<E> context,
+	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationContext<E> context,
 			int initialCapacity) {
 
 		switch (type) {
@@ -104,7 +104,7 @@ public class ListsFactory {
 		return null;
 	}
 
-	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationContextImpl<E> context,
+	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationContext<E> context,
 			Collection<? extends E> list) {
 		switch (type) {
 		case ARRAY:

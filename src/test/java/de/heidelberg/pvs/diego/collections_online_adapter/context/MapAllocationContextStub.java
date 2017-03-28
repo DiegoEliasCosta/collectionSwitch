@@ -29,9 +29,33 @@ public class MapAllocationContextStub<K, V> implements MapAllocationContext<K, V
 	}
 
 	@Override
-	public boolean isOnline() {
+	public void updateOperationsAndSize(int containsOp, int iterationOp, int size) {
 		// TODO Auto-generated method stub
-		return false;
+		
+	}
+
+	@Override
+	public void optimizeInitialCapacity(int analyzedInitialCapacity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noInitialCapacityConvergence() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void optimizeCollectionType(CollectionTypeEnum collecton) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noCollectionTypeConvergence() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	
