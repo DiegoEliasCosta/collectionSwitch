@@ -15,11 +15,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>net.bytebuddy</groupId>
-			<artifactId>byte-buddy</artifactId>
-			<version>1.6.6</version>
-		</dependency>
 
 		<!-- JUNIT -->
 		<dependency>
@@ -81,6 +76,21 @@
 			<groupId>org.eclipse.collections</groupId>
 			<artifactId>eclipse-collections-forkjoin</artifactId>
 			<version>8.0.0</version>
+		</dependency>
+		
+		<!-- JOL -->
+		<dependency>
+			<groupId>org.openjdk.jol</groupId>
+			<artifactId>jol-core</artifactId>
+			<version>0.5</version>
+		</dependency>
+		
+		<!-- JLIBS -->
+		<!-- http://mvnrepository.com/artifact/in.jlibs/jlibs-core -->
+		<dependency>
+			<groupId>in.jlibs</groupId>
+			<artifactId>jlibs-core</artifactId>
+			<version>2.1</version>
 		</dependency>
 
 	</dependencies>
