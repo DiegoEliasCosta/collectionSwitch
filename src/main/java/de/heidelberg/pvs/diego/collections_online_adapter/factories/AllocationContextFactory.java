@@ -10,16 +10,34 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveS
 
 public class AllocationContextFactory {
 	
-	public static <E> ListAllocationContext<E> buildListContext(CollectionTypeEnum type) {
-		return new AdaptiveListAllocationContext<>(type);
+	// Default Values
+	public static final int WINDOW_SIZE = 10;
+	public static final int CONVERGENCE_RATE = 7;
+	public static final int FULL_ANALYSIS_THRESHOLD = 100;
+	public static final int SLEEPING_FREQUENCY = 10;
+	public static final int DIVERGENCE_ROUNDS_THRESHOLD = 2;
+
+	/*
+	 * LISTS
+	 */
+	public static ListAllocationContext buildListContext(CollectionTypeEnum type) {
+		return new AdaptiveListAllocationContext(type, WINDOW_SIZE, FULL_ANALYSIS_THRESHOLD, SLEEPING_FREQUENCY, CONVERGENCE_RATE, DIVERGENCE_ROUNDS_THRESHOLD);
 	}
 	
-	public static <E> SetAllocationContext<E> buildSetContext(CollectionTypeEnum type) {
-		return new AdaptiveSetAllocationContext<>(type);
+
+	/*
+	 * SETS
+	 */
+	public static <E> SetAllocationContext buildSetContext(CollectionTypeEnum type) {
+		return new AdaptiveSetAllocationContext(type, WINDOW_SIZE, FULL_ANALYSIS_THRESHOLD, SLEEPING_FREQUENCY, CONVERGENCE_RATE, DIVERGENCE_ROUNDS_THRESHOLD);
 	}
 	
-	public static <K, V> MapAllocationContext<K, V> buildMapContext(CollectionTypeEnum type) {
-		return new AdaptiveMapAllocationContext<>(type);
+	/*
+	 * MAPS
+	 */
+	public static <K, V> MapAllocationContext buildMapContext(CollectionTypeEnum type) {
+		return new AdaptiveMapAllocationContext(type, WINDOW_SIZE, FULL_ANALYSIS_THRESHOLD, SLEEPING_FREQUENCY, CONVERGENCE_RATE, DIVERGENCE_ROUNDS_THRESHOLD);
 	}
+	
 
 }

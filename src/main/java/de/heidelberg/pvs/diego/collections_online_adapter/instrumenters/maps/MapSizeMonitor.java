@@ -4,15 +4,15 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
 public class MapSizeMonitor<K, V> implements Map<K, V> {
 	
-	private MapAllocationContext<K, V> context;
+	private MapAllocationOptimizer context;
 	
 	private Map<K, V> map;
 	
-	public MapSizeMonitor(Map<K, V> map, MapAllocationContext<K, V> context) {
+	public MapSizeMonitor(Map<K, V> map, MapAllocationOptimizer context) {
 		super();
 		this.context = context;
 		this.map = map;

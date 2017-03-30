@@ -8,6 +8,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationCont
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.ListsFactory;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.RuleBasedListOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
 /**
@@ -19,39 +20,24 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListA
  *
  * @param <E>
  */
-public class AdaptiveListAllocationContext<E> implements ListAllocationContext<E>, AllocationContextUpdatable {
+public class AdaptiveListAllocationContext extends AbstractAdaptiveAllocationContext implements ListAllocationContext, AllocationContextUpdatable {
 
-	private static final int FULL_ANALYSIS_THRESHOLD = 100;
+	ListAllocationOptimizer optimizer;
 
-	private static final int SLEEPING_FREQ = 10;
-
-	AllocationContextState state;
-
-	ListAllocationOptimizer<E> optimizer;
-
-	private CollectionTypeEnum championCollectionType;
-	private CollectionTypeEnum defaultCollectionType;
-
-	private int analyzedInitialCapacity;
-
-	private int sleepingMonitoringCount;
-
-	public AdaptiveListAllocationContext(CollectionTypeEnum collectionType) {
-		super();
-		this.championCollectionType = collectionType;
-		this.defaultCollectionType = collectionType;
+	public AdaptiveListAllocationContext(CollectionTypeEnum collectionType, int windowSize, int fullAnalysisThreshold, int sleepingFrequency, int convergencyRate, int divergentRoundsThreshold) {
+		super(collectionType, convergencyRate, convergencyRate, convergencyRate, convergencyRate, divergentRoundsThreshold);
 		
-		// First State
-		this.state = AllocationContextState.ACTIVE_MEMORY;
-		analyzedInitialCapacity = 10;
+		// Create the Optimizer
+		this.optimizer = new RuleBasedListOptimizer(this, windowSize, convergencyRate);
+
 	}
 
-	public List<E> createList() {
+	public <E> List<E> createList() {
 		return this.createList(this.analyzedInitialCapacity);
 	}
 
 	@Override
-	public List<E> createList(int initialCapacity) {
+	public <E> List<E> createList(int initialCapacity) {
 
 		int n_alloc;
 		switch (state) {
@@ -61,36 +47,34 @@ public class AdaptiveListAllocationContext<E> implements ListAllocationContext<E
 
 		case OPTIMIZED:
 			return ListsFactory.createNormalLists(championCollectionType, initialCapacity);
-			
+
 		case SLEEPING_MEMORY:
 			// Only creates with monitor in certain frequencies
-			n_alloc = sleepingMonitoringCount++;
-			if (n_alloc % SLEEPING_FREQ == 0)
-				return ListsFactory.createSizeMonitor(championCollectionType, this, initialCapacity);
+			if(shouldMonitor())
+				return ListsFactory.createSizeMonitor(championCollectionType, optimizer, initialCapacity);
 			else
 				return ListsFactory.createNormalLists(championCollectionType, initialCapacity);
 
 		case SLEEPING_FULL:
 			// Only creates with monitor in certain frequencies
 			n_alloc = sleepingMonitoringCount++;
-			if (n_alloc % SLEEPING_FREQ == 0)
-				return ListsFactory.createFullMonitor(championCollectionType, this, initialCapacity);
+			if (n_alloc % sleepingFrequency == 0)
+				return ListsFactory.createFullMonitor(championCollectionType, optimizer, initialCapacity);
 			else
 				return ListsFactory.createNormalLists(championCollectionType, initialCapacity);
 
 		case ACTIVE_MEMORY:
-			return ListsFactory.createSizeMonitor(defaultCollectionType, this, initialCapacity);
+			return ListsFactory.createSizeMonitor(defaultCollectionType, optimizer, initialCapacity);
 
 		case ACTIVE_FULL:
-			return ListsFactory.createFullMonitor(defaultCollectionType, this, initialCapacity);
+			return ListsFactory.createFullMonitor(defaultCollectionType, optimizer, initialCapacity);
 		}
 		return null;
 	}
 
 	@Override
-	public List<E> createList(Collection<? extends E> list) {
-		
-		int n_alloc;
+	public <E> List<E> createList(Collection<? extends E> list) {
+
 		switch (state) {
 
 		case INACTIVE:
@@ -98,28 +82,26 @@ public class AdaptiveListAllocationContext<E> implements ListAllocationContext<E
 
 		case OPTIMIZED:
 			return ListsFactory.createNormalLists(championCollectionType, list);
-			
+
 		case SLEEPING_MEMORY:
 			// Only creates with monitor in certain frequencies
-			n_alloc = sleepingMonitoringCount++;
-			if (n_alloc % SLEEPING_FREQ == 0)
-				return ListsFactory.createSizeMonitor(championCollectionType, this, list);
+			if(shouldMonitor())
+				return ListsFactory.createSizeMonitor(championCollectionType, optimizer, list);
 			else
 				return ListsFactory.createNormalLists(championCollectionType, list);
 
 		case SLEEPING_FULL:
 			// Only creates with monitor in certain frequencies
-			n_alloc = sleepingMonitoringCount++;
-			if (n_alloc % SLEEPING_FREQ == 0)
-				return ListsFactory.createFullMonitor(championCollectionType, this, list);
+			if(shouldMonitor())
+				return ListsFactory.createFullMonitor(championCollectionType, optimizer, list);
 			else
 				return ListsFactory.createNormalLists(championCollectionType, list);
 
 		case ACTIVE_MEMORY:
-			return ListsFactory.createSizeMonitor(defaultCollectionType, this, list);
+			return ListsFactory.createSizeMonitor(defaultCollectionType, optimizer, list);
 
 		case ACTIVE_FULL:
-			return ListsFactory.createFullMonitor(defaultCollectionType, this, list);
+			return ListsFactory.createFullMonitor(defaultCollectionType, optimizer, list);
 		}
 		return null;
 	}
@@ -131,36 +113,6 @@ public class AdaptiveListAllocationContext<E> implements ListAllocationContext<E
 	public void updateSize(int size) {
 		optimizer.updateSize(size);
 	}
-
-	@Override
-	public void optimizeInitialCapacity(int analyzedInitialCapacity) {
-		this.analyzedInitialCapacity = analyzedInitialCapacity;
-		
-		if(this.analyzedInitialCapacity > FULL_ANALYSIS_THRESHOLD) {
-			this.state = AllocationContextState.ACTIVE_FULL;
-		} else {
-			this.state = AllocationContextState.SLEEPING_MEMORY;
-		}
-		
-	}
-
-	@Override
-	public void noInitialCapacityConvergence() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void optimizeCollectionType(CollectionTypeEnum collection) {
-		this.championCollectionType = collection;
-		this.state = AllocationContextState.SLEEPING_FULL;
-		
-	}
-
-	@Override
-	public void noCollectionTypeConvergence() {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 }

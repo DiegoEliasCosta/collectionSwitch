@@ -4,15 +4,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
 public class SetSizeMonitor<E> implements Set<E> {
 	
-	private SetAllocationContext<E> context;
+	private SetAllocationOptimizer context;
 	
 	private Set<E> set;
 	
-	public SetSizeMonitor(Set<E> set, SetAllocationContext<E> context) {
+	public SetSizeMonitor(Set<E> set, SetAllocationOptimizer context) {
 		super();
 		this.context = context;
 		this.set = set;

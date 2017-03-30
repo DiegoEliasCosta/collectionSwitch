@@ -8,11 +8,12 @@ import java.util.Set;
 import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.ArraySet;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.HashSetFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.HashSetSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetOperationMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
 public class SetsFactory {
 
@@ -67,7 +68,7 @@ public class SetsFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> Set<E> createSizeMonitor(CollectionTypeEnum type, SetAllocationContext<E> context,
+	public static <E> Set<E> createSizeMonitor(CollectionTypeEnum type, SetAllocationOptimizer context,
 			int initialCapacity) {
 
 		switch (type) {
@@ -94,7 +95,7 @@ public class SetsFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> Set<E> createSizeMonitor(CollectionTypeEnum type, SetAllocationContext<E> context,
+	public static <E> Set<E> createSizeMonitor(CollectionTypeEnum type, SetAllocationOptimizer context,
 			Collection<? extends E> set) {
 
 		switch (type) {
@@ -121,22 +122,22 @@ public class SetsFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> Set<E> createFullMonitor(CollectionTypeEnum type, SetAllocationContext<E> context,
+	public static <E> Set<E> createFullMonitor(CollectionTypeEnum type, SetAllocationOptimizer context,
 			int initialCapacity) {
 
 		switch (type) {
 
 		case HASH:
-			return new SetOperationMonitor<>(new HashSet<>(initialCapacity), context);
+			return new HashSetFullMonitor<>(initialCapacity, context);
 
 		case ARRAY:
-			return new SetOperationMonitor<>(new ArraySet(initialCapacity), context);
+			return new SetFullMonitor<>(new ArraySet(initialCapacity), context);
 
 		case ARRAY_HASH:
-			return new SetOperationMonitor<>(new UnifiedSet<>(initialCapacity), context);
+			return new SetFullMonitor<>(new UnifiedSet<>(initialCapacity), context);
 
 		case LINKED:
-			return new SetOperationMonitor<>(new LinkedHashSet<>(initialCapacity), context);
+			return new SetFullMonitor<>(new LinkedHashSet<>(initialCapacity), context);
 
 		default:
 			break;
@@ -147,22 +148,22 @@ public class SetsFactory {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <E> Set<E> createFullMonitor(CollectionTypeEnum type, SetAllocationContext<E> context,
+	public static <E> Set<E> createFullMonitor(CollectionTypeEnum type, SetAllocationOptimizer context,
 			Collection<? extends E> set) {
 
 		switch (type) {
 
 		case HASH:
-			return new SetOperationMonitor<>(new HashSet<>(set), context);
+			return new HashSetFullMonitor<>(set, context);
 
 		case ARRAY:
-			return new SetOperationMonitor<>(new ArraySet(set), context);
+			return new SetFullMonitor<>(new ArraySet(set), context);
 
 		case ARRAY_HASH:
-			return new SetOperationMonitor<>(new UnifiedSet<>(set), context);
+			return new SetFullMonitor<>(new UnifiedSet<>(set), context);
 
 		case LINKED:
-			return new SetOperationMonitor<>(new LinkedHashSet<>(set), context);
+			return new SetFullMonitor<>(new LinkedHashSet<>(set), context);
 
 		default:
 			break;

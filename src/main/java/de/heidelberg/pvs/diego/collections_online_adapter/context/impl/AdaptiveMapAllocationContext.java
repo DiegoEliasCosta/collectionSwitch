@@ -6,42 +6,26 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationCont
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.MapFactory;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.AdaptiveMapOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.RuleBasedMapOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
-public class AdaptiveMapAllocationContext<K, V> implements MapAllocationContext<K, V> {
+public class AdaptiveMapAllocationContext extends AbstractAdaptiveAllocationContext implements MapAllocationContext {
 
-	private static final int FULL_ANALYSIS_THRESHOLD = 100;
-	private static final int SLEEPING_FREQ = 50;
+	private MapAllocationOptimizer optimizer;
 
-	private MapAllocationOptimizer<K, V> optimizer;
-	private AllocationContextState state;
+	public AdaptiveMapAllocationContext(CollectionTypeEnum collectionType, int windowSize, int fullAnalysisThreshold,
+			int sleepingFrequency, int convergencyRate, int divergentRoundsThreshold) {
+		super(collectionType, windowSize, fullAnalysisThreshold, sleepingFrequency, convergencyRate, divergentRoundsThreshold);
 
-	private CollectionTypeEnum championCollectionType;
-	private CollectionTypeEnum defaultCollectionType;
-
-	private int analyzedInitialCapacity;
-	private int sleepingMonitoringCount;
-
-	public AdaptiveMapAllocationContext(CollectionTypeEnum collectionType) {
-		super();
-
-		this.defaultCollectionType = collectionType;
-		this.championCollectionType = collectionType;
-		this.optimizer = new AdaptiveMapOptimizer<>(this);
-
-		// First State
-		this.state = AllocationContextState.ACTIVE_MEMORY;
-		this.analyzedInitialCapacity = 10;
-		this.sleepingMonitoringCount = 0;
+		this.optimizer = new RuleBasedMapOptimizer(this, windowSize, convergencyRate);
 	}
 
-	public Map<K, V> createMap() {
+	public <K, V> Map<K, V> createMap() {
 		return this.createMap(this.analyzedInitialCapacity);
 
 	}
 
-	public Map<K, V> createMap(int initialCapacity) {
+	public <K, V> Map<K, V> createMap(int initialCapacity) {
 
 		switch (state) {
 
@@ -54,7 +38,7 @@ public class AdaptiveMapAllocationContext<K, V> implements MapAllocationContext<
 		case SLEEPING_MEMORY:
 
 			if (shouldMonitor()) {
-				return MapFactory.createSizeMonitor(championCollectionType, this, initialCapacity);
+				return MapFactory.createSizeMonitor(championCollectionType, optimizer, initialCapacity);
 			} else {
 				return MapFactory.createNormalMap(championCollectionType, initialCapacity);
 			}
@@ -62,28 +46,23 @@ public class AdaptiveMapAllocationContext<K, V> implements MapAllocationContext<
 		case SLEEPING_FULL:
 
 			if (shouldMonitor()) {
-				return MapFactory.createFullMonitor(championCollectionType, this, initialCapacity);
+				return MapFactory.createFullMonitor(championCollectionType, optimizer, initialCapacity);
 			} else {
 				return MapFactory.createNormalMap(championCollectionType, initialCapacity);
 			}
 
 		case ACTIVE_MEMORY:
-			return MapFactory.createSizeMonitor(defaultCollectionType, this, initialCapacity);
+			return MapFactory.createSizeMonitor(defaultCollectionType, optimizer, initialCapacity);
 
 		case ACTIVE_FULL:
-			return MapFactory.createFullMonitor(defaultCollectionType, this, initialCapacity);
+			return MapFactory.createFullMonitor(defaultCollectionType, optimizer, initialCapacity);
 
 		}
 
 		return null;
 	}
 
-	private boolean shouldMonitor() {
-		// FIXME: This is NOT thread-safe
-		return sleepingMonitoringCount++ % SLEEPING_FREQ == 0;
-	}
-
-	public Map<K, V> createMap(Map<K, V> initialCapacity) {
+	public <K, V> Map<K, V> createMap(Map<K, V> initialCapacity) {
 		switch (state) {
 
 		case INACTIVE:
@@ -95,7 +74,7 @@ public class AdaptiveMapAllocationContext<K, V> implements MapAllocationContext<
 		case SLEEPING_MEMORY:
 
 			if (shouldMonitor()) {
-				return MapFactory.createSizeMonitor(championCollectionType, this, initialCapacity);
+				return MapFactory.createSizeMonitor(championCollectionType, optimizer, initialCapacity);
 			} else {
 				return MapFactory.createNormalMap(championCollectionType, initialCapacity);
 			}
@@ -103,61 +82,21 @@ public class AdaptiveMapAllocationContext<K, V> implements MapAllocationContext<
 		case SLEEPING_FULL:
 
 			if (shouldMonitor()) {
-				return MapFactory.createFullMonitor(championCollectionType, this, initialCapacity);
+				return MapFactory.createFullMonitor(championCollectionType, optimizer, initialCapacity);
 			} else {
 				return MapFactory.createNormalMap(championCollectionType, initialCapacity);
 			}
 
 		case ACTIVE_MEMORY:
-			return MapFactory.createSizeMonitor(defaultCollectionType, this, initialCapacity);
+			return MapFactory.createSizeMonitor(defaultCollectionType, optimizer, initialCapacity);
 
 		case ACTIVE_FULL:
-			return MapFactory.createFullMonitor(defaultCollectionType, this, initialCapacity);
+			return MapFactory.createFullMonitor(defaultCollectionType, optimizer, initialCapacity);
 
 		}
 
 		return null;
 	}
-
-	@Override
-	public void updateSize(int size) {
-		this.optimizer.updateSize(size);
-	}
-
-	@Override
-	public void updateOperationsAndSize(int containsOp, int iterationOp, int size) {
-		this.optimizer.updateOperationsAndSize(containsOp, iterationOp, size);
-	}
-
-	@Override
-	public void optimizeInitialCapacity(int analyzedInitialCapacity) {
-		this.analyzedInitialCapacity = analyzedInitialCapacity;
-		
-		if(this.analyzedInitialCapacity > FULL_ANALYSIS_THRESHOLD) {
-			this.state = AllocationContextState.ACTIVE_FULL;
-		} else {
-			this.state = AllocationContextState.SLEEPING_MEMORY;
-		}
 	
-
-	}
-
-	@Override
-	public void noInitialCapacityConvergence() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void optimizeCollectionType(CollectionTypeEnum collecton) {
-		this.championCollectionType = collecton;
-
-	}
-
-	@Override
-	public void noCollectionTypeConvergence() {
-		// TODO Auto-generated method stub
-
-	}
 
 }

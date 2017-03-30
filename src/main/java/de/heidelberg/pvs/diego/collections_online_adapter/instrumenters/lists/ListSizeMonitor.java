@@ -5,15 +5,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
 public class ListSizeMonitor<E> implements List<E> {
 	
-	private ListAllocationContext<E> context;
+	private ListAllocationOptimizer context;
 	
 	private List<E> list;
 	
-	public ListSizeMonitor(List<E> list, ListAllocationContext<E> context) {
+	public ListSizeMonitor(List<E> list, ListAllocationOptimizer context) {
 		super();
 		this.context = context;
 		this.list = list;

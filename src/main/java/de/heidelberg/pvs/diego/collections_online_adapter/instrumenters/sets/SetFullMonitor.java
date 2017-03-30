@@ -4,16 +4,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
-public class SetOperationMonitor<E> implements Set<E> {
+public class SetFullMonitor<E> implements Set<E> {
 	
 	private Set<E> set;
 	private int containsOp;
 	private int iterateOp;
-	private SetAllocationContext<E> context;
+	private SetAllocationOptimizer context;
 
-	public SetOperationMonitor(Set<E> set, SetAllocationContext<E> context) {
+	public SetFullMonitor(Set<E> set, SetAllocationOptimizer context) {
 		super();
 		this.set = set;
 		this.context = context;

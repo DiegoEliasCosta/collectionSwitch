@@ -4,23 +4,23 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
-public class HashSetOperationMonitor<E> extends HashSet<E> {
+public class HashSetFullMonitor<E> extends HashSet<E> {
 
 	private static final long serialVersionUID = 20170101L;
 	
-	SetAllocationContext<E> context;
+	SetAllocationOptimizer context;
 
 	private int containsOp;
 	private int iterateOp;
 	
-	public HashSetOperationMonitor(int initialCapacity, SetAllocationContext<E> context) {
+	public HashSetFullMonitor(int initialCapacity, SetAllocationOptimizer context) {
 		super(initialCapacity);
 		this.context = context;
 	}
 	
-	public HashSetOperationMonitor(Collection<? extends E> set, SetAllocationContext<E> context) {
+	public HashSetFullMonitor(Collection<? extends E> set, SetAllocationOptimizer context) {
 		super(set);
 		this.context = context;
 	}

@@ -5,24 +5,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
 public class HashMapFullMonitor<K, V> extends HashMap<K, V> implements Map<K, V> {
 
 	private static final long serialVersionUID = 20170101;
 
-	private MapAllocationContext<K, V> context;
+	private MapAllocationOptimizer context;
 
 	private int containsOp;
 
 	private int iterateOp;
 
-	public HashMapFullMonitor(int initialCapacity, MapAllocationContext<K, V> context) {
+	public HashMapFullMonitor(int initialCapacity, MapAllocationOptimizer context) {
 		super(initialCapacity);
 		this.context = context;
 	}
 
-	public HashMapFullMonitor(Map<? extends K, ? extends V> map, MapAllocationContext<K, V> context) {
+	public HashMapFullMonitor(Map<? extends K, ? extends V> map, MapAllocationOptimizer context) {
 		super(map);
 		this.context = context;
 	}

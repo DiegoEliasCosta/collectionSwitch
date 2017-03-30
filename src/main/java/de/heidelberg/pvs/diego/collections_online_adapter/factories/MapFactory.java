@@ -9,11 +9,11 @@ import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import com.google.api.client.util.ArrayMap;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
 public class MapFactory {
 
@@ -63,7 +63,7 @@ public class MapFactory {
 		return null;
 	}
 
-	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type, MapAllocationContext<K, V> context,
+	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type, MapAllocationOptimizer context,
 			int initialCapacity) {
 
 		switch (type) {
@@ -87,7 +87,7 @@ public class MapFactory {
 	}
 	
 	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type,
-			MapAllocationContext<K, V> context, Map<K, V> map) {
+			MapAllocationOptimizer context, Map<K, V> map) {
 		
 		switch (type) {
 		case ARRAY:
@@ -110,7 +110,7 @@ public class MapFactory {
 		return null;
 	}
 
-	public static <K, V> Map<K, V> createFullMonitor(CollectionTypeEnum type, MapAllocationContext<K, V> context,
+	public static <K, V> Map<K, V> createFullMonitor(CollectionTypeEnum type, MapAllocationOptimizer context,
 			int initialCapacity) {
 
 		switch (type) {
@@ -134,7 +134,7 @@ public class MapFactory {
 	}
 
 	public static <K, V> Map<K, V> createFullMonitor(CollectionTypeEnum type,
-			MapAllocationContext<K, V> context, Map<K, V> map) {
+			MapAllocationOptimizer context, Map<K, V> map) {
 		
 		switch (type) {
 		case ARRAY:

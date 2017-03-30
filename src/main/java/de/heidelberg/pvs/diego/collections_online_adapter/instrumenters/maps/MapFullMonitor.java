@@ -4,18 +4,18 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
 public class MapFullMonitor<K, V> implements Map<K, V> {
 	
 	private Map<K, V> map;
 	
-	private MapAllocationContext<K, V> context;
+	private MapAllocationOptimizer context;
 
 	private int containsOp = 0;
 	private int iterateOp = 0;
 
-	public MapFullMonitor(Map<K, V> map, MapAllocationContext<K, V> context) {
+	public MapFullMonitor(Map<K, V> map, MapAllocationOptimizer context) {
 		super();
 		this.map = map;
 		this.context = context;

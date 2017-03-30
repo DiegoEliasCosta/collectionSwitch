@@ -2,12 +2,8 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
 public interface AllocationContextUpdatable {
 	
-	void optimizeInitialCapacity(int analyzedInitialCapacity);
+	void optimizeCollectionType(CollectionTypeEnum collecton, int medianInitialCapacity);
 	
-	void noInitialCapacityConvergence();
-	
-	void optimizeCollectionType(CollectionTypeEnum collecton);
-	
-	void noCollectionTypeConvergence();
+	void noCollectionTypeConvergence(int medianInitialCapacity);
 
 }

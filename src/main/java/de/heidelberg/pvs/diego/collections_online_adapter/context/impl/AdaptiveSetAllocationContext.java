@@ -4,54 +4,30 @@ import java.util.Collection;
 import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.SetsFactory;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.AdaptiveSetOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.RuleBasedSetOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
-public class AdaptiveSetAllocationContext<E> implements SetAllocationContext<E>, AllocationContextUpdatable {
+public class AdaptiveSetAllocationContext extends AbstractAdaptiveAllocationContext implements SetAllocationContext {
 
-	private static final int FULL_ANALYSIS_THRESHOLD = 100;
-	private static final int SLEEPING_FREQ = 50;
+	private SetAllocationOptimizer optimizer;
 
-	private SetAllocationOptimizer<E> optimizer;
+	public AdaptiveSetAllocationContext(CollectionTypeEnum collectionType, int windowSize, int fullAnalysisThreshold,
+			int sleepingFrequency, int convergencyRate, int divergentRoundsThreshold) {
+		super(collectionType, windowSize, fullAnalysisThreshold, sleepingFrequency, convergencyRate, divergentRoundsThreshold);
 
-	private AllocationContextState state;
-
-	private CollectionTypeEnum championCollectionType;
-	private CollectionTypeEnum defaultCollectionType;
-
-	private int sleepingMonitoringCount;
-
-	private int analyzedInitialCapacity;
-
-	public AdaptiveSetAllocationContext(CollectionTypeEnum collectionType) {
-		super();
-		this.championCollectionType = collectionType;
-		this.optimizer = new AdaptiveSetOptimizer<>(this);
+		this.optimizer = new RuleBasedSetOptimizer(this, windowSize, convergencyRate);
 		
-		// First State
-		this.state = AllocationContextState.ACTIVE_MEMORY;
-		this.analyzedInitialCapacity = 10;
 	}
 
-	public Set<E> createSet() {
+	public <E> Set<E> createSet() {
 		return this.createSet(this.analyzedInitialCapacity);
 	}
 
+	public <E> Set<E> createSet(int initialCapacity) {
 
-	public void updateSize(int size) {
-		optimizer.updateSize(size);
-	}
-
-	public void updateOperationsAndSize(int iterations, int contains, int size) {
-		optimizer.updateOperationsAndSize(iterations, contains, size);
-	}
-
-	public Set<E> createSet(int initialCapacity) {
-		
 		switch (state) {
 
 		case INACTIVE:
@@ -59,39 +35,33 @@ public class AdaptiveSetAllocationContext<E> implements SetAllocationContext<E>,
 
 		case OPTIMIZED:
 			return SetsFactory.createNormalSet(championCollectionType, initialCapacity);
-			
+
 		case SLEEPING_MEMORY:
 			// Only creates with monitor in certain frequencies
 			if (shouldMonitor())
-				return SetsFactory.createSizeMonitor(championCollectionType, this, initialCapacity);
+				return SetsFactory.createSizeMonitor(championCollectionType, optimizer, initialCapacity);
 			else
 				return SetsFactory.createNormalSet(championCollectionType, initialCapacity);
 
 		case SLEEPING_FULL:
 			// Only creates with monitor in certain frequencies
 			if (shouldMonitor())
-				return SetsFactory.createFullMonitor(championCollectionType, this, initialCapacity);
+				return SetsFactory.createFullMonitor(championCollectionType, optimizer, initialCapacity);
 			else
 				return SetsFactory.createNormalSet(championCollectionType, initialCapacity);
 
 		case ACTIVE_MEMORY:
-			return SetsFactory.createSizeMonitor(defaultCollectionType, this, initialCapacity);
+			return SetsFactory.createSizeMonitor(defaultCollectionType, optimizer, initialCapacity);
 
 		case ACTIVE_FULL:
-			return SetsFactory.createFullMonitor(defaultCollectionType, this, initialCapacity);
+			return SetsFactory.createFullMonitor(defaultCollectionType, optimizer, initialCapacity);
 		}
 		return null;
-			
+
 	}
 
-	private boolean shouldMonitor() {
-		// FIXME: This is NOT thread-safe
-		return sleepingMonitoringCount++ % SLEEPING_FREQ == 0;
-	}
+	public <E> Set<E> createSet(Collection<? extends E> set) {
 
-	public Set<E> createSet(Collection<? extends E> set) {
-		
-		int n_alloc;
 		switch (state) {
 
 		case INACTIVE:
@@ -99,63 +69,28 @@ public class AdaptiveSetAllocationContext<E> implements SetAllocationContext<E>,
 
 		case OPTIMIZED:
 			return SetsFactory.createNormalSet(championCollectionType, set);
-			
+
 		case SLEEPING_MEMORY:
 			// Only creates with monitor in certain frequencies
-			n_alloc = sleepingMonitoringCount++;
-			if (n_alloc % SLEEPING_FREQ == 0)
-				return SetsFactory.createSizeMonitor(championCollectionType, this, set);
+			if (shouldMonitor())
+				return SetsFactory.createSizeMonitor(championCollectionType, optimizer, set);
 			else
 				return SetsFactory.createNormalSet(championCollectionType, set);
 
 		case SLEEPING_FULL:
 			// Only creates with monitor in certain frequencies
-			n_alloc = sleepingMonitoringCount++;
-			if (n_alloc % SLEEPING_FREQ == 0)
-				return SetsFactory.createFullMonitor(championCollectionType, this, set);
+			if (shouldMonitor())
+				return SetsFactory.createFullMonitor(championCollectionType, optimizer, set);
 			else
 				return SetsFactory.createNormalSet(championCollectionType, set);
 
 		case ACTIVE_MEMORY:
-			return SetsFactory.createSizeMonitor(defaultCollectionType, this, set);
+			return SetsFactory.createSizeMonitor(defaultCollectionType, optimizer, set);
 
 		case ACTIVE_FULL:
-			return SetsFactory.createFullMonitor(defaultCollectionType, this, set);
+			return SetsFactory.createFullMonitor(defaultCollectionType, optimizer, set);
 		}
 		return null;
 	}
-
-	@Override
-	public void optimizeInitialCapacity(int analyzedInitialCapacity) {
-		this.analyzedInitialCapacity = analyzedInitialCapacity;
-		
-		if(this.analyzedInitialCapacity > FULL_ANALYSIS_THRESHOLD) {
-			this.state = AllocationContextState.ACTIVE_FULL;
-		} else {
-			this.state = AllocationContextState.SLEEPING_MEMORY;
-		}
-	
-		
-	}
-
-	@Override
-	public void noInitialCapacityConvergence() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void optimizeCollectionType(CollectionTypeEnum collection) {
-		
-		this.championCollectionType = collection;
-		
-	}
-
-	@Override
-	public void noCollectionTypeConvergence() {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 }

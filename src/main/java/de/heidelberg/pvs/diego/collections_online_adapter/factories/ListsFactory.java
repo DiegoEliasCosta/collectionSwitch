@@ -6,14 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListOperationsMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListOperationsMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.HashArrayListFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ListSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
 public class ListsFactory {
 
@@ -52,7 +52,7 @@ public class ListsFactory {
 		return null;
 	}
 
-	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationContext<E> context,
+	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer context,
 			int initialCapacity) {
 
 		switch (type) {
@@ -70,7 +70,7 @@ public class ListsFactory {
 
 	}
 
-	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationContext<E> context,
+	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer context,
 			Collection<? extends E> list) {
 
 		switch (type) {
@@ -87,16 +87,16 @@ public class ListsFactory {
 		return null;
 	}
 
-	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationContext<E> context,
+	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer context,
 			int initialCapacity) {
 
 		switch (type) {
 		case ARRAY:
-			return new ArrayListOperationsMonitor<>(initialCapacity, context);
+			return new ArrayListFullMonitor<>(initialCapacity, context);
 		case LINKED:
-			return new LinkedListOperationsMonitor<>(context);
+			return new LinkedListFullMonitor<>(context);
 		case HASH:
-			return new ListSizeMonitor<>(new HashArrayList<>(initialCapacity), context);
+			return new HashArrayListFullMonitor<>(initialCapacity, context);
 		default:
 			break;
 		}
@@ -104,15 +104,15 @@ public class ListsFactory {
 		return null;
 	}
 
-	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationContext<E> context,
+	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer context,
 			Collection<? extends E> list) {
 		switch (type) {
 		case ARRAY:
-			return new ArrayListOperationsMonitor<>(list, context);
+			return new ArrayListFullMonitor<>(list, context);
 		case LINKED:
-			return new LinkedListOperationsMonitor<>(list, context);
+			return new LinkedListFullMonitor<>(list, context);
 		case HASH:
-			return new ListSizeMonitor<>(new HashArrayList<>(list), context);
+			return new HashArrayListFullMonitor<>(list, context);
 		default:
 			break;
 		}
