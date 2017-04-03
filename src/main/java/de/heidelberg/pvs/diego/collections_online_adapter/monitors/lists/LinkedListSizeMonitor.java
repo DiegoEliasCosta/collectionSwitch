@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -11,21 +11,24 @@ public class LinkedListSizeMonitor<E> extends LinkedList<E> {
 	
 	// Monitor
 	private ListAllocationOptimizer context;
+
+	private int index;
 	
-	public LinkedListSizeMonitor(ListAllocationOptimizer context) {
+	public LinkedListSizeMonitor(ListAllocationOptimizer context, int index) {
 		super();
 		this.context = context;
+		this.index = index;
 	}
 
-	public LinkedListSizeMonitor(Collection<? extends E> c, ListAllocationOptimizer context) {
+	public LinkedListSizeMonitor(Collection<? extends E> c, ListAllocationOptimizer context, int index) {
 		super(c);
 		this.context = context;
+		this.index = index;
 	}
 
 	
 	@Override
 	protected void finalize() throws Throwable {
-		super.finalize();
-		context.updateSize(size());
+		context.updateSize(index, size());
 	}
 }

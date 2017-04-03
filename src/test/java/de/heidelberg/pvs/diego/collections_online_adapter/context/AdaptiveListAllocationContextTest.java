@@ -14,12 +14,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.HashArrayListFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ArrayListFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ArrayListSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.HashArrayListFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.LinkedListFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.RuleBasedListOptimizer;
 import jlibs.core.lang.RuntimeUtil;
 
@@ -77,82 +78,13 @@ public class AdaptiveListAllocationContextTest {
 
 	}
 
-	@Test
-	public void testFullToMemoryAnalysisState() throws Exception {
 
-		// Create 10 lists
-		for (int i = 0; i < WINDOW_SIZE; i++) {
-
-			List<Integer> list = arrayContext.createList();
-			list.addAll(fullAnalysisList);
-			list.add(101);
-			list = null;
-		}
-
-		RuntimeUtil.gc();
-		Thread.sleep(10);
-
-		// FULL_ANALYSIS
-		List<Integer> fullMonitorList = arrayContext.createList();
-		assertEquals(ArrayListFullMonitor.class, fullMonitorList.getClass());
-
-		// Create 10 lists
-		for (int i = 0; i < WINDOW_SIZE; i++) {
-
-			List<Integer> list = arrayContext.createList();
-			list.add(1);
-			list = null;
-		}
-
-		RuntimeUtil.gc();
-		Thread.sleep(10);
-
-		// MEMORY_ANALYSIS
-		List<Integer> sizeMonitorList = arrayContext.createList();
-		assertEquals(ArrayListSizeMonitor.class, sizeMonitorList.getClass());
-
-	}
-
-	@Test
-	public void testMemorySleepingState() throws Exception {
-
-		// Create 10 lists
-		for (int i = 0; i < WINDOW_SIZE; i++) {
-
-			List<Integer> list = arrayContext.createList();
-			list.add(1);
-			list = null;
-		}
-
-		RuntimeUtil.gc();
-		Thread.sleep(10);
-
-		// SLEEPING_MEMORY_ANALYSIS
-		List<Integer> fullMonitorList = arrayContext.createList();
-		assertEquals(ArrayListSizeMonitor.class, fullMonitorList.getClass());
-
-		// Create 10 lists
-		for (int i = 0; i < WINDOW_SIZE * SLEEPING_FREQUENCY; i++) {
-
-			List<Integer> list = arrayContext.createList();
-			list.addAll(fullAnalysisList);
-			list = null;
-		}
-
-		RuntimeUtil.gc();
-		Thread.sleep(10);
-
-		// FULL_ANALYSIS
-		List<Integer> sizeMonitorList = arrayContext.createList();
-		assertEquals(ArrayListFullMonitor.class, sizeMonitorList.getClass());
-
-	}
 
 	@Test
 	public void testLinkedListChampion() throws Exception {
 
 		// FULL ANALYSIS
-		((AdaptiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);	
+		((ReactiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);	
 		
 		// Prepare to LINKEDLIST champion 
 		for (int i = 0; i < WINDOW_SIZE; i++) {
@@ -160,8 +92,8 @@ public class AdaptiveListAllocationContextTest {
 			List<Integer> list = arrayContext.createList();
 			list.addAll(this.fullAnalysisList);
 
-			for (int j = 0; j < RuleBasedListOptimizer.MIDLIST_LINKED_THRESHOLD; j++) {
-				list.remove(50);
+			for (int j = 0; j < RuleBasedListOptimizer.MIDLIST_LINKED_THRESHOLD + 3; j++) {
+				list.add(50, 100);
 			}
 
 			list = null;
@@ -181,7 +113,7 @@ public class AdaptiveListAllocationContextTest {
 	public void testHashListChampion() throws Exception {
 
 		// FULL ANALYSIS
-		((AdaptiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);	
+		((ReactiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);	
 		
 		// Prepare to LINKEDLIST champion 
 		for (int i = 0; i < WINDOW_SIZE; i++) {

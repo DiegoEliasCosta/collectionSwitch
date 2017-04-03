@@ -6,7 +6,7 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AbstractAdaptiveAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.RuleBasedSetOptimizer;
 
@@ -28,7 +28,7 @@ public class AdaptiveHashSetAutomataStateTest extends AbstractAutomataStateTest<
 			fullSet.add(i);
 		}
 
-		for (int i = 0; i < RuleBasedSetOptimizer.ARRAY_THRESHOLD; i++) {
+		for (int i = 0; i < RuleBasedSetOptimizer.ARRAY_THRESHOLD - 1; i++) {
 			arraySetSize.add(i);
 		}
 		
@@ -50,7 +50,7 @@ public class AdaptiveHashSetAutomataStateTest extends AbstractAutomataStateTest<
 
 	@Override
 	protected Set<Integer> createCollection(AbstractAdaptiveAllocationContext context) {
-		return ((AdaptiveSetAllocationContext) context).createSet();
+		return ((ReactiveSetAllocationContext) context).createSet();
 	}
 
 	@Override

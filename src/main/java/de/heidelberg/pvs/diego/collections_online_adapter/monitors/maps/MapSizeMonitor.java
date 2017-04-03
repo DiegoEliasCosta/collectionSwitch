@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,17 +11,20 @@ public class MapSizeMonitor<K, V> implements Map<K, V> {
 	private MapAllocationOptimizer context;
 	
 	private Map<K, V> map;
+
+	private int index;
 	
-	public MapSizeMonitor(Map<K, V> map, MapAllocationOptimizer context) {
+	public MapSizeMonitor(Map<K, V> map, MapAllocationOptimizer context, int index) {
 		super();
 		this.context = context;
 		this.map = map;
+		this.index = index;
 	}
 	
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		context.updateSize(size());
+		context.updateSize(index, size());
 	}
 	
 	

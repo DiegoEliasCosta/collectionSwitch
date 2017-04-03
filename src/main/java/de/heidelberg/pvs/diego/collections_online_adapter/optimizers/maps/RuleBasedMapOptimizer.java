@@ -6,6 +6,7 @@ import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
 public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
@@ -21,88 +22,82 @@ public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 	private AllocationContextUpdatable context;
 
 	private AtomicInteger indexManager;
+	private AtomicInteger finalizedManager;
 
 	private final int windowSize;
 	private final int convergenceRate;
 
-	public RuleBasedMapOptimizer(AllocationContextUpdatable context, int windowSize, int convergencyRate) {
+	public RuleBasedMapOptimizer(int windowSize, int convergencyRate) {
 		super();
-		this.context = context;
 		this.windowSize = windowSize;
 		this.convergenceRate = convergencyRate;
 
 		this.sizes = new int[windowSize];
 
 		this.indexManager = new AtomicInteger(0);
+		this.finalizedManager = new AtomicInteger(0);
 		votedCollection = ObjectIntHashMap.newWithKeysValues(CollectionTypeEnum.ARRAY, 0, CollectionTypeEnum.ARRAY_HASH,
 				0, CollectionTypeEnum.HASH, 0, CollectionTypeEnum.LINKED, 0);
 	}
 
 	@Override
-	public void updateSize(int size) {
+	public void updateSize(int index, int size) {
 
-		int myIndex = indexManager.getAndIncrement();
+		int nFinalized = this.finalizedManager.getAndIncrement();
 
-		if (myIndex < windowSize) {
+		sizes[index] = size;
 
-			sizes[myIndex] = size;
+		if (size < RULE_ARRAY_SIZE) {
+			this.votedCollection.addToValue(CollectionTypeEnum.ARRAY, 1);
+		}
 
-			if (size < RULE_ARRAY_SIZE) {
-				this.votedCollection.addToValue(CollectionTypeEnum.ARRAY, 1);
-			}
+		else if (size < RULE_UNIFIED_SIZE) {
+			this.votedCollection.addToValue(CollectionTypeEnum.ARRAY_HASH, 1);
+		}
 
-			else if (size < RULE_UNIFIED_SIZE) {
-				this.votedCollection.addToValue(CollectionTypeEnum.ARRAY_HASH, 1);
-			}
-
-			else {
-				this.votedCollection.addToValue(CollectionTypeEnum.HASH, 1);
-			}
-			// Last update
-			if (myIndex == windowSize - 1) {
-				updateContext();
-			}
+		else {
+			this.votedCollection.addToValue(CollectionTypeEnum.HASH, 1);
+		}
+		// Last update
+		if (nFinalized == windowSize - 1) {
+			updateContext();
 
 		}
 
 	}
 
 	@Override
-	public void updateOperationsAndSize(int containsOp, int iterationOp, int size) {
+	public void updateOperationsAndSize(int index, int containsOp, int iterationOp, int size) {
 
-		int myIndex = indexManager.getAndIncrement();
+		int nFinalized = this.finalizedManager.getAndIncrement();
 
-		if (myIndex < windowSize) {
+		sizes[index] = size;
 
-			sizes[myIndex] = size;
+		if (size < RULE_ARRAY_SIZE) {
+			this.votedCollection.addToValue(CollectionTypeEnum.ARRAY, 1);
+		}
 
-			if (size < RULE_ARRAY_SIZE) {
-				this.votedCollection.addToValue(CollectionTypeEnum.ARRAY, 1);
-			}
+		else if (size < RULE_UNIFIED_SIZE) {
+			this.votedCollection.addToValue(CollectionTypeEnum.ARRAY_HASH, 1);
+		}
 
-			else if (size < RULE_UNIFIED_SIZE) {
-				this.votedCollection.addToValue(CollectionTypeEnum.ARRAY_HASH, 1);
-			}
+		else if (iterationOp > RULE_LINKED_ITERATIONS) {
+			this.votedCollection.addToValue(CollectionTypeEnum.LINKED, 1);
+		}
 
-			else if (iterationOp > RULE_LINKED_ITERATIONS) {
-				this.votedCollection.addToValue(CollectionTypeEnum.LINKED, 1);
-			}
+		else {
+			this.votedCollection.addToValue(CollectionTypeEnum.HASH, 1);
+		}
 
-			else {
-				this.votedCollection.addToValue(CollectionTypeEnum.HASH, 1);
-			}
-
-			// Last update
-			if (myIndex == windowSize - 1) {
-				updateContext();
-			}
-
+		// Last update
+		if (nFinalized == windowSize - 1) {
+			updateContext();
 		}
 
 	}
 
 	private void updateContext() {
-		
+
 		// FIXME: Add the adaptive aspect to the size as well
 		int median = IntArrayUtils.calculateMedian(sizes);
 
@@ -130,10 +125,31 @@ public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 			this.context.noCollectionTypeConvergence(median);
 		}
 
-		indexManager.set(0);
-		votedCollection = ObjectIntHashMap.newWithKeysValues(CollectionTypeEnum.ARRAY, 0,
-				CollectionTypeEnum.ARRAY_HASH, 0, CollectionTypeEnum.HASH, 0, CollectionTypeEnum.LINKED, 0);
+		resetOptimizer();
+	}
 
+	@Override
+	public int getMonitoringIndex() {
+		int index = indexManager.getAndIncrement();
+		if (index < windowSize) {
+			return index;
+		}
+		return -1;
+
+	}
+	
+	private void resetOptimizer() {
+		indexManager.set(0);
+		finalizedManager.set(0);
+		this.votedCollection = ObjectIntHashMap.newWithKeysValues(CollectionTypeEnum.ARRAY, 0, CollectionTypeEnum.HASH,
+				0, CollectionTypeEnum.LINKED, 0);
+		
+	}
+
+	@Override
+	public void setContext(AllocationContextUpdatable context) {
+		this.context = context;
+		
 	}
 
 }

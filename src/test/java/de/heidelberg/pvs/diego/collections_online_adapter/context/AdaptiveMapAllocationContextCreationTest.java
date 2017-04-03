@@ -14,12 +14,12 @@ import org.junit.Test;
 
 import com.google.api.client.util.ArrayMap;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.HashMapFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.HashMapSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapSizeMonitor;
 
 public class AdaptiveMapAllocationContextCreationTest {
 	
@@ -48,7 +48,7 @@ public class AdaptiveMapAllocationContextCreationTest {
 	@Test
 	public void testHashMapCreation() throws Exception {
 		
-		((AdaptiveMapAllocationContext) hashMapContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveMapAllocationContext) hashMapContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		
 		Map<Object, Object> createMap = hashMapContext.createMap();
 		assertNotNull(createMap);
@@ -59,13 +59,13 @@ public class AdaptiveMapAllocationContextCreationTest {
 	@Test
 	public void testLinkedHashMapCreation() throws Exception {
 		
-		((AdaptiveMapAllocationContext) linkedHashMapContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveMapAllocationContext) linkedHashMapContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		Map<Object, Object> createMap = linkedHashMapContext.createMap();
 		assertNotNull(createMap);
 		assertTrue(createMap instanceof LinkedHashMap);
 		
 		
-		((AdaptiveMapAllocationContext) linkedHashMapContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveMapAllocationContext) linkedHashMapContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		createMap = linkedHashMapContext.createMap();
 		assertNotNull(createMap);
 		assertTrue(createMap instanceof LinkedHashMap);
@@ -75,12 +75,12 @@ public class AdaptiveMapAllocationContextCreationTest {
 	@Test
 	public void testArrayMapCreation() throws Exception {
 		
-		((AdaptiveMapAllocationContext) arrayHashMapContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveMapAllocationContext) arrayHashMapContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		Map<Object, Object> createMap = arrayHashMapContext.createMap();
 		assertNotNull(createMap);
 		assertTrue(createMap instanceof ArrayMap);
 		
-		((AdaptiveMapAllocationContext) arrayHashMapContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveMapAllocationContext) arrayHashMapContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		createMap = arrayHashMapContext.createMap();
 		assertNotNull(createMap);
 		assertTrue(createMap instanceof ArrayMap);
@@ -90,12 +90,12 @@ public class AdaptiveMapAllocationContextCreationTest {
 	@Test
 	public void testUnifiedMapCreation() throws Exception {
 		
-		((AdaptiveMapAllocationContext) unifiedHashMapContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveMapAllocationContext) unifiedHashMapContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		Map<Object, Object> createMap = unifiedHashMapContext.createMap();
 		assertNotNull(createMap);
 		assertTrue(createMap instanceof UnifiedMap);
 		
-		((AdaptiveMapAllocationContext) unifiedHashMapContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveMapAllocationContext) unifiedHashMapContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		createMap = unifiedHashMapContext.createMap();
 		assertNotNull(createMap);
 		assertTrue(createMap instanceof UnifiedMap);
@@ -105,20 +105,20 @@ public class AdaptiveMapAllocationContextCreationTest {
 	@Test
 	public void testSizeMonitorCreation() throws Exception {
 		
-		((AdaptiveMapAllocationContext) hashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveMapAllocationContext) hashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		Map<Object, Object> createMap = hashMapContext.createMap();
 		assertTrue(createMap instanceof HashMapSizeMonitor);
 		
 		
-		((AdaptiveMapAllocationContext) linkedHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveMapAllocationContext) linkedHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		Map<Object, Object> createMap2 = linkedHashMapContext.createMap();
 		assertTrue(createMap2 instanceof MapSizeMonitor);
 		
-		((AdaptiveMapAllocationContext) arrayHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveMapAllocationContext) arrayHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		createMap2 = arrayHashMapContext.createMap();
 		assertTrue(createMap2 instanceof MapSizeMonitor);
 		
-		((AdaptiveMapAllocationContext) unifiedHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveMapAllocationContext) unifiedHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		createMap2 = unifiedHashMapContext.createMap();
 		assertTrue(createMap2 instanceof MapSizeMonitor);
 		
@@ -127,20 +127,20 @@ public class AdaptiveMapAllocationContextCreationTest {
 	@Test
 	public void testFullMonitorCreation() throws Exception {
 		
-		((AdaptiveMapAllocationContext) hashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveMapAllocationContext) hashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		Map<Object, Object> createMap = hashMapContext.createMap();
 		assertTrue(createMap instanceof HashMapFullMonitor);
 		
 		
-		((AdaptiveMapAllocationContext) linkedHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveMapAllocationContext) linkedHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		Map<Object, Object> createMap2 = linkedHashMapContext.createMap();
 		assertTrue(createMap2 instanceof MapFullMonitor);
 		
-		((AdaptiveMapAllocationContext) arrayHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveMapAllocationContext) arrayHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		createMap2 = arrayHashMapContext.createMap();
 		assertTrue(createMap2 instanceof MapFullMonitor);
 		
-		((AdaptiveMapAllocationContext) unifiedHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveMapAllocationContext) unifiedHashMapContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		createMap2 = unifiedHashMapContext.createMap();
 		assertTrue(createMap2 instanceof MapFullMonitor);
 		

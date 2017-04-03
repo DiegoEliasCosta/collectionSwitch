@@ -7,7 +7,7 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AbstractAdaptiveAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.RuleBasedMapOptimizer;
 
@@ -22,11 +22,9 @@ public class AdaptiveHashMapAutomataStateTest extends AbstractAutomataStateTest<
 		hashMapSize = new HashMap<>();
 		unifiedMapSize = new HashMap<>();
 
-		for (int i = 0; i < RuleBasedMapOptimizer.RULE_ARRAY_SIZE; i++) {
+		for (int i = 0; i < RuleBasedMapOptimizer.RULE_ARRAY_SIZE + 1; i++) {
 			unifiedMapSize.put(i, i);
 		}
-		// Extra
-		unifiedMapSize.put(10000, 10000);
 
 		for (int i = 0; i < RuleBasedMapOptimizer.RULE_UNIFIED_SIZE; i++) {
 			hashMapSize.put(i, i);
@@ -44,7 +42,7 @@ public class AdaptiveHashMapAutomataStateTest extends AbstractAutomataStateTest<
 
 	@Override
 	protected Map<Integer, Integer> createCollection(AbstractAdaptiveAllocationContext context) {
-		return ((AdaptiveMapAllocationContext) context).createMap();
+		return ((ReactiveMapAllocationContext) context).createMap();
 	}
 
 	@Override

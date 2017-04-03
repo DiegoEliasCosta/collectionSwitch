@@ -5,16 +5,20 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AbstractAdaptiveAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
+import jlibs.core.lang.RuntimeUtil;
 
 public abstract class AbstractAutomataStateTest<K> {
+
+	private static final int SLEEPING_TIME = 200;
 
 	protected abstract AbstractAdaptiveAllocationContext buildContext();
 
@@ -24,7 +28,8 @@ public abstract class AbstractAutomataStateTest<K> {
 	protected abstract List<K> createSmallConvergentCollections(List<K> collections);
 
 	// SIZE < ALPHA && CONVERGENCE < BETA
-	protected abstract List<K> createSmallDivergentCollections(List<K> collections);
+	protected abstract List<K> createSmallDivergentCollections(List<K> collections)
+			throws OperationNotSupportedException;
 
 	// SIZE > ALPHA && CONVERGENCE > BETA
 	protected abstract List<K> createLargeConvergentCollections(List<K> collections);
@@ -55,10 +60,9 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// SIZE > ALPHA and CONVERGENVE > BETA
 		collections = this.createLargeConvergentCollections(collections);
-		collections = null;
 
-		System.gc();
-		Thread.sleep(10);
+		collections = null;
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 	}
@@ -77,9 +81,8 @@ public abstract class AbstractAutomataStateTest<K> {
 		// SIZE > ALPHA and CONVERGENCE > BETA
 		collections = this.createLargeDivergentCollections(collections);
 		collections = null;
-
-		System.gc();
-		Thread.sleep(10);
+		
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 	}
@@ -97,10 +100,9 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// SIZE < ALPHA
 		collections = this.createSmallConvergentCollections(collections);
-		collections = null;
 
-		System.gc();
-		Thread.sleep(10);
+		collections = null;
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_MEMORY, context.getAllocationContextState());
 	}
@@ -116,14 +118,19 @@ public abstract class AbstractAutomataStateTest<K> {
 			collections.add(createCollection(context));
 		}
 
-		// SIZE < ALPHA
-		collections = this.createSmallDivergentCollections(collections);
-		collections = null;
+		try {
+			// SIZE < ALPHA
+			collections = this.createSmallDivergentCollections(collections);
 
-		System.gc();
-		Thread.sleep(10);
+			collections = null;
+			this.disposeCollections(collections);
 
-		Assert.assertEquals(AllocationContextState.ACTIVE_MEMORY, context.getAllocationContextState());
+			Assert.assertEquals(AllocationContextState.ACTIVE_MEMORY, context.getAllocationContextState());
+
+		} catch (OperationNotSupportedException e) {
+			assertTrue(true);
+
+		}
 	}
 
 	// 3. ACTIVE_MEMORY -> SLEEPING MEMORY
@@ -139,10 +146,9 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// SIZE < ALPHA
 		collections = this.createSmallConvergentCollections(collections);
-		collections = null;
 
-		System.gc();
-		Thread.sleep(10);
+		collections = null;
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.SLEEPING_MEMORY, context.getAllocationContextState());
 
@@ -171,8 +177,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// Dispose
 		collections = null;
-		System.gc();
-		Thread.sleep(10);
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.SLEEPING_FULL, context.getAllocationContextState());
 
@@ -185,7 +190,7 @@ public abstract class AbstractAutomataStateTest<K> {
 		context.setAllocationContextState(AllocationContextState.SLEEPING_FULL);
 
 		List<K> collections = new ArrayList<>();
-		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY + 1; i++) {
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY; i++) {
 			collections.add(createCollection(context));
 		}
 
@@ -195,10 +200,19 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// Dispose
 		collections = null;
-		System.gc();
-		Thread.sleep(10);
+
+		collections = null;
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
+
+	}
+
+	private void disposeCollections(List<K> collections) throws InterruptedException {
+		collections = null;
+		RuntimeUtil.gc();
+		RuntimeUtil.gc();
+		Thread.sleep(SLEEPING_TIME);
 
 	}
 
@@ -209,7 +223,7 @@ public abstract class AbstractAutomataStateTest<K> {
 		context.setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 
 		List<K> collections = new ArrayList<>();
-		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * 3; i++) {
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
 
@@ -219,8 +233,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// Dispose
 		collections = null;
-		System.gc();
-		Thread.sleep(10);
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 
@@ -233,7 +246,8 @@ public abstract class AbstractAutomataStateTest<K> {
 		context.setAllocationContextState(AllocationContextState.SLEEPING_MEMORY);
 
 		List<K> collections = new ArrayList<>();
-		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY; i++) {
+		int sleepAmount = AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY;
+		for (int i = 0; i < sleepAmount; i++) {
 			collections.add(createCollection(context));
 		}
 
@@ -243,8 +257,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// Dispose
 		collections = null;
-		System.gc();
-		Thread.sleep(10);
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 
@@ -256,8 +269,7 @@ public abstract class AbstractAutomataStateTest<K> {
 		context.setAllocationContextState(AllocationContextState.SLEEPING_MEMORY);
 
 		List<K> collections = new ArrayList<>();
-		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY
-				+ 1; i++) {
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY; i++) {
 			collections.add(createCollection(context));
 		}
 
@@ -267,8 +279,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// Dispose
 		collections = null;
-		System.gc();
-		Thread.sleep(10);
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 
@@ -292,8 +303,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// Dispose
 		collections = null;
-		System.gc();
-		Thread.sleep(10);
+		this.disposeCollections(collections);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_MEMORY, context.getAllocationContextState());
 
@@ -302,7 +312,7 @@ public abstract class AbstractAutomataStateTest<K> {
 	// 10. SLEEPING_FULL -> ACTIVE_MEMORY
 	@Test
 	public void sleepingFullToActiveMemoryTest() throws Exception {
-		
+
 		context.setAllocationContextState(AllocationContextState.SLEEPING_FULL);
 
 		List<K> collections = new ArrayList<>();
@@ -313,14 +323,225 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		// SIZE < ALPHA ALPHA
 		// CONVERGENCE < BETA
-		collections = this.createSmallDivergentCollections(collections);
+		try {
+			collections = this.createSmallDivergentCollections(collections);
+
+			// Dispose
+			collections = null;
+			this.disposeCollections(collections);
+
+			Assert.assertEquals(AllocationContextState.ACTIVE_MEMORY, context.getAllocationContextState());
+
+		} catch (OperationNotSupportedException e) {
+			assertTrue(true);
+		}
+
+	}
+
+	// 11. INACTIVE -> INACTIVE (A)
+	@Test
+	public void inactiveToInactive_SmallConvergent() throws Exception {
+
+		context.setAllocationContextState(AllocationContextState.INACTIVE);
+
+		List<K> collections = new ArrayList<>();
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
+			collections.add(createCollection(context));
+		}
+
+		// SIZE < ALPHA ALPHA
+		// CONVERGENCE < BETA
+		collections = this.createSmallConvergentCollections(collections);
 
 		// Dispose
 		collections = null;
-		System.gc();
-		Thread.sleep(10);
+		this.disposeCollections(collections);
 
-		Assert.assertEquals(AllocationContextState.ACTIVE_MEMORY, context.getAllocationContextState());
+		Assert.assertEquals(AllocationContextState.INACTIVE, context.getAllocationContextState());
+
+	}
+
+	// 11. INACTIVE -> INACTIVE (B)
+	@Test
+	public void inactiveToInactive_SmallDivergent() throws Exception {
+
+		context.setAllocationContextState(AllocationContextState.INACTIVE);
+
+		List<K> collections = new ArrayList<>();
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
+			collections.add(createCollection(context));
+		}
+
+		// SIZE < ALPHA ALPHA
+		// CONVERGENCE < BETA
+		try {
+
+			collections = this.createSmallDivergentCollections(collections);
+
+			// Dispose
+			collections = null;
+			this.disposeCollections(collections);
+
+			Assert.assertEquals(AllocationContextState.INACTIVE, context.getAllocationContextState());
+
+		} catch (OperationNotSupportedException e) {
+			assertTrue(true);
+
+		}
+
+	}
+
+	// 11. INACTIVE -> INACTIVE (C)
+	@Test
+	public void inactiveToInactive_LargeConvergent() throws Exception {
+
+		context.setAllocationContextState(AllocationContextState.INACTIVE);
+
+		List<K> collections = new ArrayList<>();
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
+			collections.add(createCollection(context));
+		}
+
+		// SIZE < ALPHA ALPHA
+		// CONVERGENCE < BETA
+		collections = this.createLargeConvergentCollections(collections);
+
+		// Dispose
+		collections = null;
+		this.disposeCollections(collections);
+
+		Assert.assertEquals(AllocationContextState.INACTIVE, context.getAllocationContextState());
+
+	}
+
+	// 11. INACTIVE -> INACTIVE (D)
+	@Test
+	public void inactiveToInactive_LargeDivergent() throws Exception {
+
+		context.setAllocationContextState(AllocationContextState.INACTIVE);
+
+		List<K> collections = new ArrayList<>();
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
+			collections.add(createCollection(context));
+		}
+
+		// SIZE < ALPHA ALPHA
+		// CONVERGENCE < BETA
+		collections = this.createLargeDivergentCollections(collections);
+
+		// Dispose
+		collections = null;
+		this.disposeCollections(collections);
+
+		Assert.assertEquals(AllocationContextState.INACTIVE, context.getAllocationContextState());
+	}
+
+	// 12. ACTIVE_FULL -> INACTIVE
+	@Test
+	public void activeFullToInactive() throws Exception {
+
+		context.setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+
+		for (int j = 0; j < AllocationContextFactory.DIVERGENCE_ROUNDS_THRESHOLD; j++) {
+			List<K> collections = new ArrayList<>();
+
+			for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
+				collections.add(createCollection(context));
+			}
+
+			// SIZE < ALPHA ALPHA
+			// CONVERGENCE < BETA
+			collections = this.createLargeDivergentCollections(collections);
+
+			// Dispose
+			collections = null;
+			this.disposeCollections(collections);
+		}
+
+		Assert.assertEquals(AllocationContextState.INACTIVE, context.getAllocationContextState());
+	}
+
+	// 13. ACTIVE_MEMORY -> INACTiVE
+	@Test
+	public void activeMemoryToInactive() throws Exception {
+
+		try {
+			context.setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+
+			for (int j = 0; j < AllocationContextFactory.DIVERGENCE_ROUNDS_THRESHOLD; j++) {
+
+				List<K> collections = new ArrayList<>();
+				for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
+					collections.add(createCollection(context));
+				}
+
+				// SIZE < ALPHA ALPHA
+				// CONVERGENCE < BETA
+				collections = this.createSmallDivergentCollections(collections);
+
+				// Dispose
+				collections = null;
+				this.disposeCollections(collections);
+			}
+
+			Assert.assertEquals(AllocationContextState.INACTIVE, context.getAllocationContextState());
+
+		} catch (OperationNotSupportedException e) {
+			assertTrue(true);
+
+		}
+
+	}
+
+	// 14. SLEEPING_MEMORY -> SLEEPING_MEMORY
+	@Test
+	public void sleepingMemoryToSleepingMemory() throws Exception {
+
+		context.setAllocationContextState(AllocationContextState.SLEEPING_MEMORY);
+
+		for (int j = 0; j < AllocationContextFactory.DIVERGENCE_ROUNDS_THRESHOLD; j++) {
+
+			List<K> collections = new ArrayList<>();
+			for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
+				collections.add(createCollection(context));
+			}
+
+			// SIZE < ALPHA ALPHA
+			// CONVERGENCE < BETA
+			collections = this.createSmallConvergentCollections(collections);
+
+			// Dispose
+			collections = null;
+			this.disposeCollections(collections);
+		}
+
+		Assert.assertEquals(AllocationContextState.SLEEPING_MEMORY, context.getAllocationContextState());
+
+	}
+
+	// 13. ACTIVE_MEMORY -> INACTiVE
+	@Test
+	public void sleepingFullToSleepingFull() throws Exception {
+
+		context.setAllocationContextState(AllocationContextState.SLEEPING_FULL);
+
+		for (int j = 0; j < AllocationContextFactory.DIVERGENCE_ROUNDS_THRESHOLD; j++) {
+
+			List<K> collections = new ArrayList<>();
+			for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
+				collections.add(createCollection(context));
+			}
+
+			// SIZE < ALPHA ALPHA
+			// CONVERGENCE < BETA
+			collections = this.createLargeConvergentCollections(collections);
+
+			// Dispose
+			collections = null;
+			this.disposeCollections(collections);
+		}
+
+		Assert.assertEquals(AllocationContextState.SLEEPING_FULL, context.getAllocationContextState());
 
 	}
 

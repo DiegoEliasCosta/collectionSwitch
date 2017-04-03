@@ -3,18 +3,17 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 import java.util.Collection;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.SetsFactory;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.RuleBasedSetOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
-public class AdaptiveSetAllocationContext extends AbstractAdaptiveAllocationContext implements SetAllocationContext {
+public class ReactiveSetAllocationContext extends AbstractAdaptiveAllocationContext implements SetAllocationContext {
 
 	private SetAllocationOptimizer optimizer;
 
-	public AdaptiveSetAllocationContext(CollectionTypeEnum collectionType, int windowSize, int fullAnalysisThreshold,
+	public ReactiveSetAllocationContext(CollectionTypeEnum collectionType, int windowSize, int fullAnalysisThreshold,
 			int sleepingFrequency, int convergencyRate, int divergentRoundsThreshold) {
 		super(collectionType, windowSize, fullAnalysisThreshold, sleepingFrequency, convergencyRate, divergentRoundsThreshold);
 

@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets;
 
 import java.util.Collection;
 import java.util.HashSet;

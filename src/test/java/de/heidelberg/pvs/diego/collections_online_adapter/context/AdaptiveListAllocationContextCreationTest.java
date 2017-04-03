@@ -10,15 +10,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ArrayListSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.HashArrayListFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.LinkedListSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists.ListSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ArrayListFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ArrayListSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.HashArrayListFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.LinkedListFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.LinkedListSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListSizeMonitor;
 
 public class AdaptiveListAllocationContextCreationTest {
 	
@@ -45,13 +45,13 @@ public class AdaptiveListAllocationContextCreationTest {
 	@Test
 	public void testHashMapCreation() throws Exception {
 		
-		((AdaptiveListAllocationContext) hashContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveListAllocationContext) hashContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		
 		List<Integer> list = hashContext.createList();
 		assertNotNull(list);
 		assertTrue(list instanceof HashArrayList);
 		
-		((AdaptiveListAllocationContext) hashContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveListAllocationContext) hashContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		
 		list = hashContext.createList();
 		assertNotNull(list);
@@ -62,13 +62,13 @@ public class AdaptiveListAllocationContextCreationTest {
 	@Test
 	public void testLinkedHashMapCreation() throws Exception {
 		
-		((AdaptiveListAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveListAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		List<Integer> list = linkedContext.createList();
 		assertNotNull(list);
 		assertTrue(list instanceof LinkedList);
 		
 		
-		((AdaptiveListAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveListAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		list = linkedContext.createList();
 		assertNotNull(list);
 		assertTrue(list instanceof LinkedList);
@@ -78,12 +78,12 @@ public class AdaptiveListAllocationContextCreationTest {
 	@Test
 	public void testArrayMapCreation() throws Exception {
 		
-		((AdaptiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		List<Object> list = arrayContext.createList();
 		assertNotNull(list);
 		assertTrue(list instanceof ArrayList);
 		
-		((AdaptiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		list = arrayContext.createList();
 		assertNotNull(list);
 		assertTrue(list instanceof ArrayList);
@@ -94,16 +94,16 @@ public class AdaptiveListAllocationContextCreationTest {
 	@Test
 	public void testSizeMonitorCreation() throws Exception {
 		
-		((AdaptiveListAllocationContext) hashContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveListAllocationContext) hashContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		List<Object> list = hashContext.createList();
 		assertTrue(list instanceof ListSizeMonitor);
 		
 		
-		((AdaptiveListAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveListAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		List<Object> list2 = linkedContext.createList();
 		assertTrue(list2 instanceof LinkedListSizeMonitor);
 		
-		((AdaptiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		list2 = arrayContext.createList();
 		assertTrue(list2 instanceof ArrayListSizeMonitor);
 		
@@ -112,16 +112,16 @@ public class AdaptiveListAllocationContextCreationTest {
 	@Test
 	public void testFullMonitorCreation() throws Exception {
 		
-		((AdaptiveListAllocationContext) hashContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveListAllocationContext) hashContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		List<Object> list = hashContext.createList();
 		assertTrue(list instanceof HashArrayListFullMonitor);
 		
 		
-		((AdaptiveListAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveListAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		List<Object> list2 = linkedContext.createList();
 		assertTrue(list2 instanceof LinkedListFullMonitor);
 		
-		((AdaptiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		list2 = arrayContext.createList();
 		assertTrue(list2 instanceof ArrayListFullMonitor);
 		

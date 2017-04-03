@@ -18,5 +18,29 @@ public class MemoryFootprintContextTest {
 		
 
 	}
+	
+	@Test
+	public void testAdaptiveSetAllocationContextFootprint() throws Exception {
+
+		// Write to the file
+		String footprint = String.format("AdaptiveSetAllocationContext Footprint\n%s", 
+				GraphLayout.parseInstance(AllocationContextFactory.buildSetContext(CollectionTypeEnum.HASH)).toFootprint());
+
+		System.out.println(String.format("%s", footprint));
+		
+
+	}
+	
+	@Test
+	public void testAdaptiveMapAllocationContextFootprint() throws Exception {
+
+		// Write to the file
+		String footprint = String.format("AdaptiveMapAllocationContext Footprint\n%s", 
+				GraphLayout.parseInstance(AllocationContextFactory.buildMapContext(CollectionTypeEnum.HASH)).toFootprint());
+
+		System.out.println(String.format("%s", footprint));
+		
+
+	}
 
 }

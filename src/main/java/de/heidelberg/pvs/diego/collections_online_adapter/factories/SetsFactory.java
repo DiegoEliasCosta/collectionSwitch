@@ -9,10 +9,10 @@ import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.ArraySet;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.HashSetFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.HashSetSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.HashSetFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.HashSetSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
 public class SetsFactory {

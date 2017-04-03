@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -7,28 +7,62 @@ import java.util.ListIterator;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
-public class ListSizeMonitor<E> implements List<E> {
-	
-	private ListAllocationOptimizer context;
+public class ListProactiveSizeMonitor<E> implements List<E> {
+
+	private ListAllocationOptimizer optimizer;
 	
 	private List<E> list;
-	
-	public ListSizeMonitor(List<E> list, ListAllocationOptimizer context) {
+
+	private int sizeThreshold;
+
+	private int index;
+
+	public ListProactiveSizeMonitor(List<E> list, ListAllocationOptimizer optimizer, int sizeThreshold, int index) {
 		super();
-		this.context = context;
+		this.optimizer = optimizer;
 		this.list = list;
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		context.updateSize(size());
+		this.sizeThreshold = sizeThreshold;
+		this.index = index;
 	}
 	
-	/* ---------------------------------------------------- */
-	/* ---------------- DELEGATE METHODS -------------------*/
-	/* ---------------------------------------------------- */
+	// --------------------------------------------------------------------
+	// --------------------------- ADD METHODS ----------------------------
+	// --------------------------------------------------------------------
 
+	public boolean add(E e) {
+		boolean add = list.add(e);
+		// UPDATE
+		this.checkAndUpdateSize();
+		return add;
+	}
+
+	public boolean addAll(Collection<? extends E> c) {
+		boolean addAll = list.addAll(c);
+		// UPDATE
+		this.checkAndUpdateSize();
+		return addAll;
+	}
+	
+	public boolean addAll(int index, Collection<? extends E> c) {
+		boolean addAll = list.addAll(index, c);
+		// UPDATE
+		this.checkAndUpdateSize();
+		return addAll;
+	}
+	
+	public void add(int index, E element) {
+		list.add(index, element);
+		// UPDATE
+		this.checkAndUpdateSize();
+	}
+	
+	private void checkAndUpdateSize() {
+		int size = list.size();
+		if(size >= this.sizeThreshold) {
+			this.optimizer.updateSize(index, size);
+		}
+	}
+	
 	public int size() {
 		return list.size();
 	}
@@ -53,9 +87,6 @@ public class ListSizeMonitor<E> implements List<E> {
 		return list.toArray(a);
 	}
 
-	public boolean add(E e) {
-		return list.add(e);
-	}
 
 	public boolean remove(Object o) {
 		return list.remove(o);
@@ -65,13 +96,6 @@ public class ListSizeMonitor<E> implements List<E> {
 		return list.containsAll(c);
 	}
 
-	public boolean addAll(Collection<? extends E> c) {
-		return list.addAll(c);
-	}
-
-	public boolean addAll(int index, Collection<? extends E> c) {
-		return list.addAll(index, c);
-	}
 
 	public boolean removeAll(Collection<?> c) {
 		return list.removeAll(c);
@@ -101,9 +125,6 @@ public class ListSizeMonitor<E> implements List<E> {
 		return list.set(index, element);
 	}
 
-	public void add(int index, E element) {
-		list.add(index, element);
-	}
 
 	public E remove(int index) {
 		return list.remove(index);
@@ -128,6 +149,5 @@ public class ListSizeMonitor<E> implements List<E> {
 	public List<E> subList(int fromIndex, int toIndex) {
 		return list.subList(fromIndex, toIndex);
 	}
-
 
 }

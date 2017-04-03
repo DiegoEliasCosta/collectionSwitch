@@ -11,13 +11,13 @@ import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.ArraySet;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.HashSetFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.HashSetSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.sets.SetSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.HashSetFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.HashSetSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetSizeMonitor;
 
 public class AdaptiveSetAllocationContextCreationTest {
 	
@@ -46,12 +46,12 @@ public class AdaptiveSetAllocationContextCreationTest {
 	@Test
 	public void testHashSetCreation() throws Exception {
 		
-		((AdaptiveSetAllocationContext) hashContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveSetAllocationContext) hashContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		Set<Integer> set = hashContext.createSet();
 		assertNotNull(set);
 		assertTrue(set instanceof HashSet);
 		
-		((AdaptiveSetAllocationContext) hashContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveSetAllocationContext) hashContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		
 		set = hashContext.createSet();
 		assertNotNull(set);
@@ -62,13 +62,13 @@ public class AdaptiveSetAllocationContextCreationTest {
 	@Test
 	public void testLinkedHashSetCreation() throws Exception {
 		
-		((AdaptiveSetAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveSetAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		Set<Integer> set = linkedContext.createSet();
 		assertNotNull(set);
 		assertTrue(set instanceof LinkedHashSet);
 		
 		
-		((AdaptiveSetAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveSetAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		set = linkedContext.createSet();
 		assertNotNull(set);
 		assertTrue(set instanceof LinkedHashSet);
@@ -78,12 +78,12 @@ public class AdaptiveSetAllocationContextCreationTest {
 	@Test
 	public void testArraySetCreation() throws Exception {
 		
-		((AdaptiveSetAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveSetAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		Set<Object> set = arrayContext.createSet();
 		assertNotNull(set);
 		assertTrue(set instanceof ArraySet);
 		
-		((AdaptiveSetAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveSetAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		set = arrayContext.createSet();
 		assertNotNull(set);
 		assertTrue(set instanceof ArraySet);
@@ -93,12 +93,12 @@ public class AdaptiveSetAllocationContextCreationTest {
 	@Test
 	public void testUnifiedSetCreation() throws Exception {
 		
-		((AdaptiveSetAllocationContext) unifiedContext).setAllocationContextState(AllocationContextState.INACTIVE);
+		((ReactiveSetAllocationContext) unifiedContext).setAllocationContextState(AllocationContextState.INACTIVE);
 		Set<Object> set = unifiedContext.createSet();
 		assertNotNull(set);
 		assertTrue(set instanceof UnifiedSet);
 		
-		((AdaptiveSetAllocationContext) unifiedContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
+		((ReactiveSetAllocationContext) unifiedContext).setAllocationContextState(AllocationContextState.OPTIMIZED);
 		set = unifiedContext.createSet();
 		assertNotNull(set);
 		assertTrue(set instanceof UnifiedSet);
@@ -109,16 +109,16 @@ public class AdaptiveSetAllocationContextCreationTest {
 	@Test
 	public void testSizeMonitorCreation() throws Exception {
 		
-		((AdaptiveSetAllocationContext) hashContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveSetAllocationContext) hashContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		Set<Object> set = hashContext.createSet();
 		assertTrue(set instanceof HashSetSizeMonitor);
 		
 		
-		((AdaptiveSetAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveSetAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		Set<Object> set2 = linkedContext.createSet();
 		assertTrue(set2 instanceof SetSizeMonitor);
 		
-		((AdaptiveSetAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
+		((ReactiveSetAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 		set2 = arrayContext.createSet();
 		assertTrue(set2 instanceof SetSizeMonitor);
 		
@@ -127,16 +127,16 @@ public class AdaptiveSetAllocationContextCreationTest {
 	@Test
 	public void testFullMonitorCreation() throws Exception {
 		
-		((AdaptiveSetAllocationContext) hashContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveSetAllocationContext) hashContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		Set<Object> set = hashContext.createSet();
 		assertTrue(set instanceof HashSetFullMonitor);
 		
 		
-		((AdaptiveSetAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveSetAllocationContext) linkedContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		Set<Object> set2 = linkedContext.createSet();
 		assertTrue(set2 instanceof SetFullMonitor);
 		
-		((AdaptiveSetAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
+		((ReactiveSetAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 		set2 = arrayContext.createSet();
 		assertTrue(set2 instanceof SetFullMonitor);
 		

@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists;
 
 import java.util.Collection;
 
@@ -12,15 +12,18 @@ public class HashArrayListFullMonitor<E> extends HashArrayList<E>{
 	private int indexOp;
 	private int midListOp;
 	private int containsOp;
+	private int index;
 
-	public HashArrayListFullMonitor(int initialCapacity, ListAllocationOptimizer context) {
+	public HashArrayListFullMonitor(int initialCapacity, ListAllocationOptimizer context, int index) {
 		super(initialCapacity);
 		this.context = context;
+		this.index = index;
 	}
 	
-	public HashArrayListFullMonitor(Collection<? extends E> lists, ListAllocationOptimizer context) {
+	public HashArrayListFullMonitor(Collection<? extends E> lists, ListAllocationOptimizer context, int index) {
 		super(lists);
 		this.context = context;
+		this.index = index;
 	}
 
 	@Override
@@ -50,7 +53,7 @@ public class HashArrayListFullMonitor<E> extends HashArrayList<E>{
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		context.updateOperationsAndSize(indexOp, midListOp, containsOp, size());
+		context.updateOperationsAndSize(index, indexOp, midListOp, containsOp, size());
 	}
 
 

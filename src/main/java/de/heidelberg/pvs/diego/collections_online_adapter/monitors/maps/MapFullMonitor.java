@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps;
 
 import java.util.Collection;
 import java.util.Map;
@@ -15,15 +15,18 @@ public class MapFullMonitor<K, V> implements Map<K, V> {
 	private int containsOp = 0;
 	private int iterateOp = 0;
 
-	public MapFullMonitor(Map<K, V> map, MapAllocationOptimizer context) {
+	private int index;
+
+	public MapFullMonitor(Map<K, V> map, MapAllocationOptimizer context, int index) {
 		super();
 		this.map = map;
 		this.context = context;
+		this.index = index;
 	}
 	
 	@Override
 	protected void finalize() throws Throwable {
-		this.context.updateOperationsAndSize(containsOp, iterateOp, size());
+		this.context.updateOperationsAndSize(index, containsOp, iterateOp, size());
 		super.finalize();
 	}
 	

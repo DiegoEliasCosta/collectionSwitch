@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,19 +17,23 @@ public class HashMapFullMonitor<K, V> extends HashMap<K, V> implements Map<K, V>
 
 	private int iterateOp;
 
-	public HashMapFullMonitor(int initialCapacity, MapAllocationOptimizer context) {
+	private int index;
+
+	public HashMapFullMonitor(int initialCapacity, MapAllocationOptimizer context, int index) {
 		super(initialCapacity);
 		this.context = context;
+		this.index = index;
 	}
 
-	public HashMapFullMonitor(Map<? extends K, ? extends V> map, MapAllocationOptimizer context) {
+	public HashMapFullMonitor(Map<? extends K, ? extends V> map, MapAllocationOptimizer context, int index) {
 		super(map);
 		this.context = context;
+		this.index = index;
 	}
 	
 	@Override
 	protected void finalize() throws Throwable {
-		this.context.updateOperationsAndSize(containsOp, iterateOp, size());
+		this.context.updateOperationsAndSize(index, containsOp, iterateOp, size());
 		super.finalize();
 	}
 

@@ -9,10 +9,10 @@ import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import com.google.api.client.util.ArrayMap;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.HashMapSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.maps.MapSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.HashMapFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.HashMapSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapFullMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
 public class MapFactory {
@@ -39,8 +39,7 @@ public class MapFactory {
 		return null;
 	}
 
-	public static <K, V> Map<K, V> createNormalMap(CollectionTypeEnum type,
-			Map<K, V> map) {
+	public static <K, V> Map<K, V> createNormalMap(CollectionTypeEnum type, Map<K, V> map) {
 		switch (type) {
 		case ARRAY:
 			Map<K, V> arrayMap = new ArrayMap<>();
@@ -63,101 +62,123 @@ public class MapFactory {
 		return null;
 	}
 
-	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type, MapAllocationOptimizer context,
+	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type, MapAllocationOptimizer optimizer,
 			int initialCapacity) {
 
-		switch (type) {
-		case ARRAY:
-			return new MapSizeMonitor<>(ArrayMap.create(initialCapacity), context);
+		int index = optimizer.getMonitoringIndex();
 
-		case ARRAY_HASH:
-			return new MapSizeMonitor<>(new UnifiedMap<>(initialCapacity), context);
+		if (index >= 0) {
 
-		case HASH:
-			return new HashMapSizeMonitor<>(initialCapacity, context);
+			switch (type) {
+			case ARRAY:
+				return new MapSizeMonitor<>(ArrayMap.create(initialCapacity), optimizer, index);
 
-		case LINKED:
-			return new MapSizeMonitor<>(new LinkedHashMap<>(initialCapacity), context);
+			case ARRAY_HASH:
+				return new MapSizeMonitor<>(new UnifiedMap<>(initialCapacity), optimizer, index);
 
-		default:
-			break;
+			case HASH:
+				return new HashMapSizeMonitor<>(initialCapacity, optimizer, index);
+
+			case LINKED:
+				return new MapSizeMonitor<>(new LinkedHashMap<>(initialCapacity), optimizer, index);
+
+			default:
+				break;
+			}
+
 		}
 
-		return null;
+		return createNormalMap(type, initialCapacity);
 	}
-	
-	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type,
-			MapAllocationOptimizer context, Map<K, V> map) {
-		
-		switch (type) {
-		case ARRAY:
-			Map<K, V> arrayMap = new ArrayMap<>();
-			arrayMap.putAll(map);
-			return new MapSizeMonitor<>(arrayMap, context);
 
-		case ARRAY_HASH:
-			return new MapSizeMonitor<>(new UnifiedMap<>(map), context);
+	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type, MapAllocationOptimizer optimizer,
+			Map<K, V> map) {
 
-		case HASH:
-			return new HashMapSizeMonitor<>(map, context);
+		int index = optimizer.getMonitoringIndex();
 
-		case LINKED:
-			return new MapSizeMonitor<>(new LinkedHashMap<>(map), context);
+		if (index >= 0) {
 
-		default:
-			break;
+			switch (type) {
+			case ARRAY:
+				Map<K, V> arrayMap = new ArrayMap<>();
+				arrayMap.putAll(map);
+				return new MapSizeMonitor<>(arrayMap, optimizer, index);
+
+			case ARRAY_HASH:
+				return new MapSizeMonitor<>(new UnifiedMap<>(map), optimizer, index);
+
+			case HASH:
+				return new HashMapSizeMonitor<>(map, optimizer, index);
+
+			case LINKED:
+				return new MapSizeMonitor<>(new LinkedHashMap<>(map), optimizer, index);
+
+			default:
+				break;
+			}
+
 		}
-		return null;
+		return createNormalMap(type, map);
 	}
 
 	public static <K, V> Map<K, V> createFullMonitor(CollectionTypeEnum type, MapAllocationOptimizer context,
 			int initialCapacity) {
 
-		switch (type) {
-		case ARRAY:
-			return new MapFullMonitor<>(ArrayMap.create(initialCapacity), context);
+		int index = context.getMonitoringIndex();
 
-		case ARRAY_HASH:
-			return new MapFullMonitor<>(new UnifiedMap<>(initialCapacity), context);
+		if (index >= 0) {
 
-		case HASH:
-			return new HashMapFullMonitor<>(initialCapacity, context);
+			switch (type) {
+			case ARRAY:
+				return new MapFullMonitor<>(ArrayMap.create(initialCapacity), context, index);
 
-		case LINKED:
-			return new MapFullMonitor<>(new LinkedHashMap<>(initialCapacity), context);
+			case ARRAY_HASH:
+				return new MapFullMonitor<>(new UnifiedMap<>(initialCapacity), context, index);
 
-		default:
-			break;
+			case HASH:
+				return new HashMapFullMonitor<>(initialCapacity, context, index);
+
+			case LINKED:
+				return new MapFullMonitor<>(new LinkedHashMap<>(initialCapacity), context, index);
+
+			default:
+				break;
+			}
+
 		}
 
-		return null;
+		return createNormalMap(type, initialCapacity);
 	}
 
-	public static <K, V> Map<K, V> createFullMonitor(CollectionTypeEnum type,
-			MapAllocationOptimizer context, Map<K, V> map) {
-		
-		switch (type) {
-		case ARRAY:
-			Map<K, V> arrayMap = new ArrayMap<>();
-			arrayMap.putAll(map);
-			return new MapFullMonitor<>(arrayMap, context);
+	public static <K, V> Map<K, V> createFullMonitor(CollectionTypeEnum type, MapAllocationOptimizer context,
+			Map<K, V> map) {
 
-		case ARRAY_HASH:
-			return new MapFullMonitor<>(new UnifiedMap<>(map), context);
+		int index = context.getMonitoringIndex();
 
-		case HASH:
-			return new HashMapFullMonitor<>(map, context);
+		if (index >= 0) {
 
-		case LINKED:
-			return new MapFullMonitor<>(new LinkedHashMap<>(map), context);
+			switch (type) {
+			case ARRAY:
+				Map<K, V> arrayMap = new ArrayMap<>();
+				arrayMap.putAll(map);
+				return new MapFullMonitor<>(arrayMap, context, index);
 
-		default:
-			break;
+			case ARRAY_HASH:
+				return new MapFullMonitor<>(new UnifiedMap<>(map), context, index);
+
+			case HASH:
+				return new HashMapFullMonitor<>(map, context, index);
+
+			case LINKED:
+				return new MapFullMonitor<>(new LinkedHashMap<>(map), context, index);
+
+			default:
+				break;
+			}
+
 		}
 
-		return null;
+		return createNormalMap(type, map);
 	}
-
-	
 
 }

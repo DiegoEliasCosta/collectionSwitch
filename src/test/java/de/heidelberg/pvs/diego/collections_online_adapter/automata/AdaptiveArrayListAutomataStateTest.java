@@ -3,9 +3,11 @@ package de.heidelberg.pvs.diego.collections_online_adapter.automata;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.OperationNotSupportedException;
+
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AbstractAdaptiveAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.RuleBasedListOptimizer;
 
@@ -17,7 +19,7 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 	protected void specificSetup() {
 		fullList = new ArrayList<>();
 
-		for (int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD; i++) {
+		for (int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD + 1; i++) {
 			fullList.add(i);
 		}
 
@@ -29,7 +31,7 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 	}
 
 	protected List<Integer> createCollection(AbstractAdaptiveAllocationContext context) {
-		return ((AdaptiveListAllocationContext) context).createList();
+		return ((ReactiveListAllocationContext) context).createList();
 	}
 
 	protected List<List<Integer>> fillCollectionsAboveSizeLimit(List<List<Integer>> collectionCreated) {
@@ -94,9 +96,8 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 	}
 
 	@Override
-	protected List<List<Integer>> createSmallDivergentCollections(List<List<Integer>> collections) {
-		// TODO Auto-generated method stub
-		return null;
+	protected List<List<Integer>> createSmallDivergentCollections(List<List<Integer>> collections) throws OperationNotSupportedException {
+		throw new OperationNotSupportedException();
 	}
 
 	@Override
@@ -106,8 +107,7 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 			list.addAll(fullList);
 		}
 		
-		// Nothing is necessary for arraylist
-		return null;
+		return collections;
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 
 		}
 		
-		return null;
+		return collections;
 	}
 
 }

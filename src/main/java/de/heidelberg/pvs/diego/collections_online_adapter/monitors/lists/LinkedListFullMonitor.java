@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.instrumenters.lists;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -14,15 +14,19 @@ public class LinkedListFullMonitor<E> extends LinkedList<E> {
 	private int indexOp;
 	private int midListOp;
 	private int containsOp;
+
+	private int index;
 	
-	public LinkedListFullMonitor(ListAllocationOptimizer context) {
+	public LinkedListFullMonitor(ListAllocationOptimizer context, int index) {
 		super();
 		this.context = context;
+		this.index = index;
 	}
 
-	public LinkedListFullMonitor(Collection<? extends E> c, ListAllocationOptimizer context) {
+	public LinkedListFullMonitor(Collection<? extends E> c, ListAllocationOptimizer context, int index) {
 		super(c);
 		this.context = context;
+		this.index = index;
 	}
 
 	@Override
@@ -52,6 +56,6 @@ public class LinkedListFullMonitor<E> extends LinkedList<E> {
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		context.updateOperationsAndSize(indexOp, midListOp, containsOp, size());
+		context.updateOperationsAndSize(index, indexOp, midListOp, containsOp, size());
 	}
 }

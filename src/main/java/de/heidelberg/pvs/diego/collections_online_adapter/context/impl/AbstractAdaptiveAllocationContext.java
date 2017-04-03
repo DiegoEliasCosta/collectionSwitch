@@ -40,12 +40,13 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 	protected boolean shouldMonitor() {
 		return sleepingMonitoringCount++ % this.sleepingFrequency == 0;
 	}
+	
 
 	@Override
 	public void optimizeCollectionType(CollectionTypeEnum collection, int medianInitialCapacity) {
 		this.championCollectionType = collection;
 		this.analyzedInitialCapacity = medianInitialCapacity;
-
+		
 		switch (state) {
 		
 		case INACTIVE:
@@ -69,6 +70,8 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 				this.state = AllocationContextState.SLEEPING_MEMORY;
 			}
 			this.curentDivergenceCount = 0;
+			break;
+		default:
 			break;
 			
 		}
@@ -100,6 +103,10 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 
 	public void setAllocationContextState(AllocationContextState state) {
 		this.state = state;
+	}
+	
+	public CollectionTypeEnum getChampion() {
+		return this.championCollectionType;
 	}
 
 }
