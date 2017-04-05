@@ -2,8 +2,6 @@ package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
-
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
@@ -16,7 +14,12 @@ public class RuleBasedSetOptimizer implements SetAllocationOptimizer {
 	
 	
 	private int sizes[];
-	private ObjectIntHashMap<CollectionTypeEnum> votedCollections;
+	
+	// VOTE
+	private int arrayVote = 0;
+	private int linkedVote = 0;
+	private int unifiedVote = 0;
+	private int hashVote = 0;
 
 	private AtomicInteger indexManager;
 
@@ -31,10 +34,6 @@ public class RuleBasedSetOptimizer implements SetAllocationOptimizer {
 		this.convergenceRate = convergencyRate;
 		this.sizes = new int[windowSize];
 		this.indexManager = new AtomicInteger(0);
-		votedCollections = ObjectIntHashMap.newWithKeysValues(CollectionTypeEnum.ARRAY, 0,
-				CollectionTypeEnum.ARRAY_HASH, 0, 
-				CollectionTypeEnum.HASH, 0, 
-				CollectionTypeEnum.LINKED, 0);
 
 	}
 
@@ -49,22 +48,22 @@ public class RuleBasedSetOptimizer implements SetAllocationOptimizer {
 
 			// R1: Small sets are voted for array
 			if (size < ARRAY_THRESHOLD) {
-				votedCollections.addToValue(CollectionTypeEnum.ARRAY, 1);
+				arrayVote++;
 			}
 
 			// R2: Medium sets are voted for Unified Set
 			else if (size < UNIFIED_THRESHOLD) {
-				votedCollections.addToValue(CollectionTypeEnum.ARRAY_HASH, 1);
+				unifiedVote++;
 			}
 
 			// R3: If iteration is highly-used
 			else if (iterationOp > ITERATION_LINKED_THRESHOLD) {
-				votedCollections.addToValue(CollectionTypeEnum.LINKED, 1);
+				linkedVote++;
 			}
 
 			// R4: Use Hash (best in average)
 			else {
-				votedCollections.addToValue(CollectionTypeEnum.HASH, 1);
+				hashVote++;
 			}
 
 			if (myIndex == windowSize - 1) {
@@ -88,11 +87,11 @@ public class RuleBasedSetOptimizer implements SetAllocationOptimizer {
 
 			// R1: Small sets can be transcribed to ARRAY
 			if (size < ARRAY_THRESHOLD) {
-				votedCollections.addToValue(CollectionTypeEnum.ARRAY, 1);
+				arrayVote++;
 			} else if (size < UNIFIED_THRESHOLD) {
-				votedCollections.addToValue(CollectionTypeEnum.ARRAY_HASH, 1);
+				unifiedVote++;
 			} else {
-				votedCollections.addToValue(CollectionTypeEnum.HASH, 1);
+				hashVote++;
 			}
 
 			// last position
@@ -107,39 +106,38 @@ public class RuleBasedSetOptimizer implements SetAllocationOptimizer {
 	private void updateContext() {
 
 		// FIXME: Add the adaptive aspect to the size as well
+		int mode = IntArrayUtils.calculateModeWithThrehsold(sizes, convergenceRate);
 		int median = IntArrayUtils.calculateMedian(sizes);
 
 		// Inform the Allocation Context
-		if (votedCollections.get(CollectionTypeEnum.ARRAY) > convergenceRate) {
-			this.context.optimizeCollectionType(CollectionTypeEnum.ARRAY, median);
+		if (arrayVote > convergenceRate) {
+			this.context.optimizeCollectionType(CollectionTypeEnum.ARRAY, mode, median);
 		}
 
 		// Inform the Allocation Context
-		else if (votedCollections.get(CollectionTypeEnum.ARRAY_HASH) > convergenceRate) {
-			this.context.optimizeCollectionType(CollectionTypeEnum.ARRAY_HASH, median);
+		else if (unifiedVote > convergenceRate) {
+			this.context.optimizeCollectionType(CollectionTypeEnum.ARRAY_HASH, mode, median);
 		}
 
-		else if (votedCollections.get(CollectionTypeEnum.LINKED) > convergenceRate) {
-			this.context.optimizeCollectionType(CollectionTypeEnum.LINKED, median);
+		else if (linkedVote > convergenceRate) {
+			this.context.optimizeCollectionType(CollectionTypeEnum.LINKED, mode, median);
 		}
 
-		else if (votedCollections.get(CollectionTypeEnum.HASH) > convergenceRate) {
-			this.context.optimizeCollectionType(CollectionTypeEnum.HASH, median);
+		else if (hashVote > convergenceRate) {
+			this.context.optimizeCollectionType(CollectionTypeEnum.HASH, mode, median);
 		}
 
 		else {
 			// No clear convergence for one collection type - more analysis
 			// might be needed
-			this.context.noCollectionTypeConvergence(median);
+			this.context.noCollectionTypeConvergence(mode, median);
 		}
 		
 		indexManager.set(0);
-		votedCollections = ObjectIntHashMap.newWithKeysValues(CollectionTypeEnum.ARRAY, 0,
-				CollectionTypeEnum.ARRAY_HASH, 0, 
-				CollectionTypeEnum.HASH, 0, 
-				CollectionTypeEnum.LINKED, 0);
-		
-
+		arrayVote = 0;
+		unifiedVote = 0;
+		linkedVote = 0;
+		hashVote = 0;
 	}
 
 }

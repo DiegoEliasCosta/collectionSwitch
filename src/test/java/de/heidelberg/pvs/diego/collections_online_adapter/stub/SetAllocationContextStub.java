@@ -9,18 +9,6 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationC
 public class SetAllocationContextStub implements SetAllocationContext {
 
 	@Override
-	public void optimizeCollectionType(CollectionTypeEnum collecton, int medianInitialCapacity) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void noCollectionTypeConvergence(int medianInitialCapacity) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public <E> Set<E> createSet() {
 		// TODO Auto-generated method stub
 		return null;
@@ -36,6 +24,18 @@ public class SetAllocationContextStub implements SetAllocationContext {
 	public <E> Set<E> createSet(Collection<? extends E> set) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void optimizeCollectionType(CollectionTypeEnum collecton, int mode, int median) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

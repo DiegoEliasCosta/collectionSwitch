@@ -3,14 +3,11 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.api.client.util.Lists;
-
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.ListsFactory;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.RuleBasedListOptimizer;
 
 public class ReactiveListAllocationContext extends AbstractAdaptiveAllocationContext
 		implements ListAllocationContext, AllocationContextUpdatable {

@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter;
+package de.heidelberg.pvs.diego.collections_online_adapter.stub;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;

@@ -6,7 +6,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationCont
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
-public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
+public class STRuleBasedMapOptimizer implements MapAllocationOptimizer {
 
 	public static final int RULE_LINKED_ITERATIONS = 100;
 	public static final int RULE_UNIFIED_SIZE = 500;
@@ -22,27 +22,27 @@ public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 
 	private AllocationContextUpdatable context;
 
-	private AtomicInteger indexManager;
-	private AtomicInteger finalizedManager;
+	private int indexManager;
+	private int finalizedManager;
 
 	private final int windowSize;
 	private final int convergenceRate;
 
-	public RuleBasedMapOptimizer(int windowSize, int convergencyRate) {
+	public STRuleBasedMapOptimizer(int windowSize, int convergencyRate) {
 		super();
 		this.windowSize = windowSize;
 		this.convergenceRate = convergencyRate;
 
 		this.sizes = new int[windowSize];
 
-		this.indexManager = new AtomicInteger(0);
-		this.finalizedManager = new AtomicInteger(0);
+		this.indexManager = 0;
+		this.finalizedManager = 0;
 	}
 
 	@Override
 	public void updateSize(int index, int size) {
 
-		int nFinalized = this.finalizedManager.getAndIncrement();
+		int nFinalized = this.finalizedManager++;
 
 		sizes[index] = size;
 
@@ -68,7 +68,7 @@ public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 	@Override
 	public void updateOperationsAndSize(int index, int containsOp, int iterationOp, int size) {
 
-		int nFinalized = this.finalizedManager.getAndIncrement();
+		int nFinalized = this.finalizedManager++;
 
 		sizes[index] = size;
 
@@ -130,7 +130,7 @@ public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 
 	@Override
 	public int getMonitoringIndex() {
-		int index = indexManager.getAndIncrement();
+		int index = indexManager++;
 		if (index < windowSize) {
 			return index;
 		}
@@ -139,8 +139,8 @@ public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 	}
 	
 	private void resetOptimizer() {
-		indexManager.set(0);
-		finalizedManager.set(0);
+		this.indexManager = 0;
+		this.finalizedManager = 0;
 		this.arrayVote = 0;
 		this.linkedVote = 0;
 		this.unifiedVote = 0;

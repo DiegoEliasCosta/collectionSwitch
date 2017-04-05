@@ -1,12 +1,10 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
-public class RuleBasedListOptimizer implements ListAllocationOptimizer {
+public class STRuleBasedListOptimizer implements ListAllocationOptimizer {
 
 	public static final int MIDLIST_LINKED_THRESHOLD = 3;
 	public static final int CONTAINS_HASH_THRESHOLD = 16;
@@ -16,15 +14,16 @@ public class RuleBasedListOptimizer implements ListAllocationOptimizer {
 	private int linkedVote = 0;
 
 	private int sizes[];
-	private AtomicInteger indexManager = new AtomicInteger(0);
-	private AtomicInteger nfinalizedLists = new AtomicInteger(0);
+	private int indexManager = 0;
+	private int nfinalizedLists = 0;
 
 	ListAllocationContext context;
 
+	// Thread-unsafe
 	private final int windowSize;
 	private final int convergenceRate;
 
-	public RuleBasedListOptimizer(int windowSize, int convergenceRate) {
+	public STRuleBasedListOptimizer(int windowSize, int convergenceRate) {
 		super();
 		this.windowSize = windowSize;
 		this.convergenceRate = convergenceRate;
@@ -35,7 +34,7 @@ public class RuleBasedListOptimizer implements ListAllocationOptimizer {
 	public void updateSize(int index, int size) {
 
 		// This is our only thread-safe control
-		int nFinalized = nfinalizedLists.getAndIncrement();
+		int nFinalized = nfinalizedLists++;
 
 		sizes[index] = size;
 
@@ -52,7 +51,7 @@ public class RuleBasedListOptimizer implements ListAllocationOptimizer {
 	@Override
 	public void updateOperationsAndSize(int index, int indexOp, int midListOp, int containsOp, int size) {
 
-		int nFinalized = nfinalizedLists.getAndIncrement();
+		int nFinalized = nfinalizedLists++;
 
 		sizes[index] = size;
 
@@ -115,8 +114,8 @@ public class RuleBasedListOptimizer implements ListAllocationOptimizer {
 	}
 
 	private void resetOptimizer() {
-		indexManager.set(0);
-		nfinalizedLists.set(0);
+		this.indexManager = 0;
+		this.nfinalizedLists = 0;
 		this.arrayVote = 0;
 		this.linkedVote = 0;
 		this.hashVote = 0;
@@ -126,7 +125,7 @@ public class RuleBasedListOptimizer implements ListAllocationOptimizer {
 	@Override
 	public int getMonitoringIndex() {
 		
-		int index = indexManager.getAndIncrement();
+		int index = indexManager++;
 		if (index < windowSize) {
 			return index;
 		}

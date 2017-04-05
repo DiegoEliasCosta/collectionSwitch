@@ -22,6 +22,9 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 		for (int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD + 1; i++) {
 			fullList.add(i);
 		}
+		// Extra
+		fullList.add(10);
+		fullList.add(10);
 
 	}
 

@@ -26,17 +26,6 @@ public class MapAllocationContextStub implements MapAllocationContext {
 		return null;
 	}
 
-	@Override
-	public void optimizeCollectionType(CollectionTypeEnum collecton, int medianInitialCapacity) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void noCollectionTypeConvergence(int medianInitialCapacity) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public AllocationContextState getAllocationContextState() {
@@ -48,6 +37,18 @@ public class MapAllocationContextStub implements MapAllocationContext {
 	public CollectionTypeEnum getChampion() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void optimizeCollectionType(CollectionTypeEnum collecton, int mode, int median) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

@@ -190,7 +190,7 @@ public abstract class AbstractAutomataStateTest<K> {
 		context.setAllocationContextState(AllocationContextState.SLEEPING_FULL);
 
 		List<K> collections = new ArrayList<>();
-		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY; i++) {
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY - 1; i++) {
 			collections.add(createCollection(context));
 		}
 
@@ -199,8 +199,6 @@ public abstract class AbstractAutomataStateTest<K> {
 		collections = this.createLargeDivergentCollections(collections);
 
 		// Dispose
-		collections = null;
-
 		collections = null;
 		this.disposeCollections(collections);
 

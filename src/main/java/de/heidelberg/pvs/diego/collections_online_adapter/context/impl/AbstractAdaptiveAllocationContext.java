@@ -43,9 +43,14 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 	
 
 	@Override
-	public void optimizeCollectionType(CollectionTypeEnum collection, int medianInitialCapacity) {
+	public void optimizeCollectionType(CollectionTypeEnum collection, int mode, int medianInitialCapacity) {
 		this.championCollectionType = collection;
-		this.analyzedInitialCapacity = medianInitialCapacity;
+		
+		if(mode >= 0) {
+			this.analyzedInitialCapacity = mode;
+		} else {
+			this.analyzedInitialCapacity = medianInitialCapacity;
+		}
 		
 		switch (state) {
 		
@@ -79,9 +84,14 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 	}
 
 	@Override
-	public void noCollectionTypeConvergence(int medianInitialCapacity) {
+	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
 
-		this.analyzedInitialCapacity = medianInitialCapacity;
+		if(mode >= 0){
+			this.analyzedInitialCapacity = mode;
+		} else {
+			this.analyzedInitialCapacity = medianInitialCapacity;
+		}
+		
 		
 		if (this.analyzedInitialCapacity < fullAnalysisThreshold) {
 			this.state = AllocationContextState.ACTIVE_MEMORY;

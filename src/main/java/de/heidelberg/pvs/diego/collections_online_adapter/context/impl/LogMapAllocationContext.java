@@ -19,14 +19,14 @@ public class LogMapAllocationContext implements MapAllocationContext {
 
 	int count = 0;
 
-	public LogMapAllocationContext(MapAllocationContext context, String identifier) {
+	public LogMapAllocationContext(MapAllocationContext context, String identifier, String dir) {
 		super();
 		this.context = context;
 
 		long currentTimeMillis = System.currentTimeMillis();
 
 		try {
-			writer = new PrintWriter(identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
+			writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
 			writer.println("Context initialized");
 			writer.println("First Status: " + this.context.getAllocationContextState());
 			writer.println("Specified collection: " + this.context.getChampion());
@@ -39,23 +39,25 @@ public class LogMapAllocationContext implements MapAllocationContext {
 		}
 	}
 
-	public void optimizeCollectionType(CollectionTypeEnum collecton, int medianInitialCapacity) {
+	public void optimizeCollectionType(CollectionTypeEnum collecton, int mode, int medianInitialCapacity) {
 
 		AllocationContextState beforeState = context.getAllocationContextState();
-		context.optimizeCollectionType(collecton, medianInitialCapacity);
+		context.optimizeCollectionType(collecton, mode, medianInitialCapacity);
 		AllocationContextState afterState = context.getAllocationContextState();
 
 		writer.println("State updated from " + beforeState + " -- to --" + afterState);
 		writer.println("Champion choosed: " + context.getChampion());
+		writer.println("Mode Initial Capacity = " + mode);
 		writer.println("Median Initial Capacity = " + medianInitialCapacity);
 		writer.flush();
 	}
 
-	public void noCollectionTypeConvergence(int medianInitialCapacity) {
+	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
 		writer.println("No convergence");
+		writer.println("Mode Initial Capacity = " + mode);
 		writer.println("Median Initial Capacity = " + medianInitialCapacity);
 		writer.flush();
-		context.noCollectionTypeConvergence(medianInitialCapacity);
+		context.noCollectionTypeConvergence(mode, medianInitialCapacity);
 	}
 
 	@Override
@@ -73,7 +75,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 
 		count++;
 		if (count % 100 == 0) {
-			writer.println("Created " + count + " lists");
+			writer.println("Created " + count );
 			writer.flush();
 		}
 
@@ -85,7 +87,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 
 		count++;
 		if (count % 100 == 0) {
-			writer.println("Created " + count + " lists");
+			writer.println("Created " + count );
 			writer.flush();
 		}
 
@@ -97,7 +99,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 
 		count++;
 		if (count % 100 == 0) {
-			writer.println("Created " + count + " lists");
+			writer.println("Created " + count );
 			writer.flush();
 		}
 

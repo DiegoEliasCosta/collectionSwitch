@@ -17,14 +17,14 @@ public class LogListAllocationContext implements ListAllocationContext {
 	
 	int count = 0;
 	
-	public LogListAllocationContext(ListAllocationContext context, String identifier) {
+	public LogListAllocationContext(ListAllocationContext context, String identifier, String dir) {
 		super();
 		this.context = context;
 		
 		long currentTimeMillis = System.currentTimeMillis();
 		
 		try{
-		    writer = new PrintWriter(identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
+		    writer = new PrintWriter(dir + "/" +identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
 		    writer.println("Context initialized");
 		    writer.println("First Status: " + this.context.getAllocationContextState());
 		    writer.println("Specified collection: " + this.context.getChampion());
@@ -37,14 +37,15 @@ public class LogListAllocationContext implements ListAllocationContext {
 		}
 	}
 
-	public void optimizeCollectionType(CollectionTypeEnum collecton, int medianInitialCapacity) {
+	public void optimizeCollectionType(CollectionTypeEnum collecton, int mode, int medianInitialCapacity) {
 		
 		AllocationContextState beforeState = context.getAllocationContextState();
-		context.optimizeCollectionType(collecton, medianInitialCapacity);
+		context.optimizeCollectionType(collecton, mode,  medianInitialCapacity);
 		AllocationContextState afterState = context.getAllocationContextState();
 		
 		writer.println("State updated from " + beforeState + " -- to --" + afterState);
 		writer.println("Champion choosed: " + context.getChampion());
+		writer.println("Mode Initial Capacity = " + mode);
 		writer.println("Median Initial Capacity = " + medianInitialCapacity);
 		writer.flush();
 	}
@@ -61,11 +62,12 @@ public class LogListAllocationContext implements ListAllocationContext {
 		return context.createList();
 	}
 
-	public void noCollectionTypeConvergence(int medianInitialCapacity) {
+	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
 		writer.println("No convergence");
+		writer.println("Mode Initial Capacity = " + mode);
 		writer.println("Median Initial Capacity = " + medianInitialCapacity);
 		writer.flush();
-		context.noCollectionTypeConvergence(medianInitialCapacity);
+		context.noCollectionTypeConvergence(mode, medianInitialCapacity);
 	}
 
 	public <E> List<E> createList(int initialCapacity) {
