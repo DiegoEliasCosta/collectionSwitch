@@ -19,10 +19,10 @@ public class AdaptiveHashSetAutomataStateTest extends AbstractAutomataStateTest<
 
 	@Override
 	protected void specificSetup() {
-		fullSet = new HashSet<>();
-		arraySetSize = new HashSet<>();
-		unifiedSetSize = new HashSet<>();
-		hashSetSize = new HashSet<>();
+		fullSet = new HashSet();
+		arraySetSize = new HashSet();
+		unifiedSetSize = new HashSet();
+		hashSetSize = new HashSet();
 
 		for (int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD + 1; i++) {
 			fullSet.add(i);

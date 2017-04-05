@@ -38,7 +38,7 @@ public class AdaptiveMapAllocationContextCreationTest {
 		arrayHashMapContext = AllocationContextFactory.buildMapContext(CollectionTypeEnum.ARRAY);
 		unifiedHashMapContext = AllocationContextFactory.buildMapContext(CollectionTypeEnum.ARRAY_HASH);
 		
-		fullMap = new HashedMap<>();
+		fullMap = new HashedMap();
 		for(int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD; i++) {
 			fullMap.put(i, i);
 		}

@@ -36,7 +36,7 @@ public class AdaptiveSetAllocationContextCreationTest {
 		linkedContext = AllocationContextFactory.buildSetContext(CollectionTypeEnum.LINKED);
 		arrayContext = 	AllocationContextFactory.buildSetContext(CollectionTypeEnum.ARRAY);
 		
-		fullSet = new HashSet<>();
+		fullSet = new HashSet();
 		for(int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD; i++) {
 			fullSet.add(i);
 		}

@@ -16,18 +16,18 @@ public class HashArrayList<E> extends ArrayList<E> implements Serializable {
 
 	public HashArrayList() {
 		super();
-		bag = new HashBag<>();
+		bag = new HashBag();
 	}
 	
 	public HashArrayList(int initialCapacity) {
 		super(initialCapacity);
-		bag = new HashBag<>(initialCapacity);
+		bag = new HashBag(initialCapacity);
 	}
 	
 
 	public HashArrayList(Collection<? extends E> c) {
 		super();
-		bag = new HashBag<>();
+		bag = new HashBag();
 		bag.addAll(c);
 	}
 	

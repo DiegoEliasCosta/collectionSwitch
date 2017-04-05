@@ -17,7 +17,7 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 
 	@Override
 	protected void specificSetup() {
-		fullList = new ArrayList<>();
+		fullList = new ArrayList();
 
 		for (int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD + 1; i++) {
 			fullList.add(i);

@@ -19,16 +19,16 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListA
 
 public class ListsFactory {
 
-	public static <E> List<E> createNormalList(CollectionTypeEnum type, int initialCapacity) {
+	public static  List createNormalList(CollectionTypeEnum type, int initialCapacity) {
 
 		switch (type) {
 
 		case ARRAY:
-			return new ArrayList<E>(initialCapacity);
+			return new ArrayList(initialCapacity);
 		case LINKED:
-			return new LinkedList<E>();
+			return new LinkedList();
 		case HASH:
-			return new HashArrayList<E>(initialCapacity);
+			return new HashArrayList(initialCapacity);
 		default:
 			break;
 		}
@@ -37,16 +37,16 @@ public class ListsFactory {
 
 	}
 
-	public static <E> List<E> createNormalList(CollectionTypeEnum type, Collection<? extends E> list) {
+	public static  List createNormalList(CollectionTypeEnum type, Collection list) {
 
 		switch (type) {
 
 		case ARRAY:
-			return new ArrayList<E>(list);
+			return new ArrayList(list);
 		case LINKED:
-			return new LinkedList<E>(list);
+			return new LinkedList(list);
 		case HASH:
-			return new HashArrayList<E>(list);
+			return new HashArrayList(list);
 		default:
 			break;
 		}
@@ -54,7 +54,7 @@ public class ListsFactory {
 		return null;
 	}
 
-	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
+	public static  List createSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
 			int initialCapacity) {
 
 		int index = optimizer.getMonitoringIndex();
@@ -62,11 +62,11 @@ public class ListsFactory {
 		if (index >= 0) {
 			switch (type) {
 			case ARRAY:
-				return new ArrayListSizeMonitor<>(initialCapacity, optimizer, index);
+				return new ArrayListSizeMonitor(initialCapacity, optimizer, index);
 			case LINKED:
-				return new LinkedListSizeMonitor<>(optimizer, index);
+				return new LinkedListSizeMonitor(optimizer, index);
 			case HASH:
-				return new ListSizeMonitor<>(new HashArrayList<>(initialCapacity), optimizer, index);
+				return new ListSizeMonitor(new HashArrayList(initialCapacity), optimizer, index);
 			default:
 				break;
 			}
@@ -77,19 +77,19 @@ public class ListsFactory {
 
 	}
 
-	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
-			Collection<? extends E> list) {
+	public static  List createSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
+			Collection list) {
 
 		int index = optimizer.getMonitoringIndex();
 
 		if (index >= 0) {
 			switch (type) {
 			case ARRAY:
-				return new ArrayListSizeMonitor<>(list, optimizer, index);
+				return new ArrayListSizeMonitor(list, optimizer, index);
 			case LINKED:
-				return new LinkedListSizeMonitor<>(list, optimizer, index);
+				return new LinkedListSizeMonitor(list, optimizer, index);
 			case HASH:
-				return new ListSizeMonitor<>(new HashArrayList<>(list), optimizer, index);
+				return new ListSizeMonitor(new HashArrayList(list), optimizer, index);
 			default:
 				break;
 			}
@@ -98,8 +98,8 @@ public class ListsFactory {
 		return createNormalList(type, list);
 	}
 
-	public static <E> List<E> createProactiveSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
-			Collection<? extends E> list, int sizeThreshold) {
+	public static  List createProactiveSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
+			Collection list, int sizeThreshold) {
 
 		int index = optimizer.getMonitoringIndex();
 
@@ -107,11 +107,11 @@ public class ListsFactory {
 
 			switch (type) {
 			case ARRAY:
-				return new ListProactiveSizeMonitor<>(new ArrayList<>(list), optimizer, sizeThreshold, index);
+				return new ListProactiveSizeMonitor(new ArrayList(list), optimizer, sizeThreshold, index);
 			case LINKED:
-				return new ListProactiveSizeMonitor<>(new LinkedList<>(list), optimizer, sizeThreshold, index);
+				return new ListProactiveSizeMonitor(new LinkedList(list), optimizer, sizeThreshold, index);
 			case HASH:
-				return new ListProactiveSizeMonitor<>(new HashArrayList<>(list), optimizer, sizeThreshold, index);
+				return new ListProactiveSizeMonitor(new HashArrayList(list), optimizer, sizeThreshold, index);
 			default:
 				break;
 			}
@@ -121,7 +121,7 @@ public class ListsFactory {
 		return createNormalList(type, list);
 	}
 
-	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
+	public static  List createFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
 			int initialCapacity) {
 
 		int index = optimizer.getMonitoringIndex();
@@ -130,11 +130,11 @@ public class ListsFactory {
 
 			switch (type) {
 			case ARRAY:
-				return new ArrayListFullMonitor<>(initialCapacity, optimizer, index);
+				return new ArrayListFullMonitor(initialCapacity, optimizer, index);
 			case LINKED:
-				return new LinkedListFullMonitor<>(optimizer, index);
+				return new LinkedListFullMonitor(optimizer, index);
 			case HASH:
-				return new HashArrayListFullMonitor<>(initialCapacity, optimizer, index);
+				return new HashArrayListFullMonitor(initialCapacity, optimizer, index);
 			default:
 				break;
 			}
@@ -144,8 +144,8 @@ public class ListsFactory {
 		return createNormalList(type, initialCapacity);
 	}
 
-	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
-			Collection<? extends E> list) {
+	public static  List createFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
+			Collection list) {
 
 		int index = optimizer.getMonitoringIndex();
 
@@ -153,11 +153,11 @@ public class ListsFactory {
 
 			switch (type) {
 			case ARRAY:
-				return new ArrayListFullMonitor<>(list, optimizer, index);
+				return new ArrayListFullMonitor(list, optimizer, index);
 			case LINKED:
-				return new LinkedListFullMonitor<>(list, optimizer, index);
+				return new LinkedListFullMonitor(list, optimizer, index);
 			case HASH:
-				return new HashArrayListFullMonitor<>(list, optimizer, index);
+				return new HashArrayListFullMonitor(list, optimizer, index);
 			default:
 				break;
 			}
@@ -167,8 +167,8 @@ public class ListsFactory {
 		return createNormalList(type, list);
 	}
 
-	public static <E> List<E> createProactiveFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
-			Collection<? extends E> list) {
+	public static  List createProactiveFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
+			Collection list) {
 
 		int index = optimizer.getMonitoringIndex();
 
@@ -176,11 +176,11 @@ public class ListsFactory {
 
 			switch (type) {
 			case ARRAY:
-				return new ListProactiveFullMonitor<>(new ArrayList<>(list), optimizer, index);
+				return new ListProactiveFullMonitor(new ArrayList(list), optimizer, index);
 			case LINKED:
-				return new ListProactiveFullMonitor<>(new LinkedList<>(list), optimizer, index);
+				return new ListProactiveFullMonitor(new LinkedList(list), optimizer, index);
 			case HASH:
-				return new ListProactiveFullMonitor<>(new HashArrayList<>(list), optimizer, index);
+				return new ListProactiveFullMonitor(new HashArrayList(list), optimizer, index);
 			default:
 				break;
 			}

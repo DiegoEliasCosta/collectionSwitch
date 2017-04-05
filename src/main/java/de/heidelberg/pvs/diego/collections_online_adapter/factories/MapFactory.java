@@ -24,13 +24,13 @@ public class MapFactory {
 			return ArrayMap.create(initialCapacity);
 
 		case ARRAY_HASH:
-			return new UnifiedMap<>(initialCapacity);
+			return new UnifiedMap(initialCapacity);
 
 		case HASH:
-			return new HashMap<>(initialCapacity);
+			return new HashMap(initialCapacity);
 
 		case LINKED:
-			return new LinkedHashMap<>(initialCapacity);
+			return new LinkedHashMap(initialCapacity);
 
 		default:
 			break;
@@ -42,18 +42,18 @@ public class MapFactory {
 	public static <K, V> Map<K, V> createNormalMap(CollectionTypeEnum type, Map<K, V> map) {
 		switch (type) {
 		case ARRAY:
-			Map<K, V> arrayMap = new ArrayMap<>();
+			Map<K, V> arrayMap = new ArrayMap();
 			arrayMap.putAll(map);
 			return arrayMap;
 
 		case ARRAY_HASH:
-			return new UnifiedMap<>(map);
+			return new UnifiedMap(map);
 
 		case HASH:
-			return new HashMap<>(map);
+			return new HashMap(map);
 
 		case LINKED:
-			return new LinkedHashMap<>(map);
+			return new LinkedHashMap(map);
 
 		default:
 			break;
@@ -71,16 +71,16 @@ public class MapFactory {
 
 			switch (type) {
 			case ARRAY:
-				return new MapSizeMonitor<>(ArrayMap.create(initialCapacity), optimizer, index);
+				return new MapSizeMonitor(ArrayMap.create(initialCapacity), optimizer, index);
 
 			case ARRAY_HASH:
-				return new MapSizeMonitor<>(new UnifiedMap<>(initialCapacity), optimizer, index);
+				return new MapSizeMonitor(new UnifiedMap(initialCapacity), optimizer, index);
 
 			case HASH:
-				return new HashMapSizeMonitor<>(initialCapacity, optimizer, index);
+				return new HashMapSizeMonitor(initialCapacity, optimizer, index);
 
 			case LINKED:
-				return new MapSizeMonitor<>(new LinkedHashMap<>(initialCapacity), optimizer, index);
+				return new MapSizeMonitor(new LinkedHashMap(initialCapacity), optimizer, index);
 
 			default:
 				break;
@@ -100,18 +100,18 @@ public class MapFactory {
 
 			switch (type) {
 			case ARRAY:
-				Map<K, V> arrayMap = new ArrayMap<>();
+				Map<K, V> arrayMap = new ArrayMap();
 				arrayMap.putAll(map);
-				return new MapSizeMonitor<>(arrayMap, optimizer, index);
+				return new MapSizeMonitor(arrayMap, optimizer, index);
 
 			case ARRAY_HASH:
-				return new MapSizeMonitor<>(new UnifiedMap<>(map), optimizer, index);
+				return new MapSizeMonitor(new UnifiedMap(map), optimizer, index);
 
 			case HASH:
-				return new HashMapSizeMonitor<>(map, optimizer, index);
+				return new HashMapSizeMonitor(map, optimizer, index);
 
 			case LINKED:
-				return new MapSizeMonitor<>(new LinkedHashMap<>(map), optimizer, index);
+				return new MapSizeMonitor(new LinkedHashMap(map), optimizer, index);
 
 			default:
 				break;
@@ -130,16 +130,16 @@ public class MapFactory {
 
 			switch (type) {
 			case ARRAY:
-				return new MapFullMonitor<>(ArrayMap.create(initialCapacity), context, index);
+				return new MapFullMonitor(ArrayMap.create(initialCapacity), context, index);
 
 			case ARRAY_HASH:
-				return new MapFullMonitor<>(new UnifiedMap<>(initialCapacity), context, index);
+				return new MapFullMonitor(new UnifiedMap(initialCapacity), context, index);
 
 			case HASH:
-				return new HashMapFullMonitor<>(initialCapacity, context, index);
+				return new HashMapFullMonitor(initialCapacity, context, index);
 
 			case LINKED:
-				return new MapFullMonitor<>(new LinkedHashMap<>(initialCapacity), context, index);
+				return new MapFullMonitor(new LinkedHashMap(initialCapacity), context, index);
 
 			default:
 				break;
@@ -159,18 +159,18 @@ public class MapFactory {
 
 			switch (type) {
 			case ARRAY:
-				Map<K, V> arrayMap = new ArrayMap<>();
+				Map<K, V> arrayMap = new ArrayMap();
 				arrayMap.putAll(map);
-				return new MapFullMonitor<>(arrayMap, context, index);
+				return new MapFullMonitor(arrayMap, context, index);
 
 			case ARRAY_HASH:
-				return new MapFullMonitor<>(new UnifiedMap<>(map), context, index);
+				return new MapFullMonitor(new UnifiedMap(map), context, index);
 
 			case HASH:
-				return new HashMapFullMonitor<>(map, context, index);
+				return new HashMapFullMonitor(map, context, index);
 
 			case LINKED:
-				return new MapFullMonitor<>(new LinkedHashMap<>(map), context, index);
+				return new MapFullMonitor(new LinkedHashMap(map), context, index);
 
 			default:
 				break;

@@ -27,16 +27,16 @@ public class MemoryFootprintMonitors {
 	@Test
 	public void testMemoryFootprintArrayListMonitor() throws Exception {
 		
-		List<Integer> monitorList = new ArrayListSizeMonitor<>(10, optimizer, 1);
+		List<Integer> monitorList = new ArrayListSizeMonitor(10, optimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorList).toFootprint());
 		
-		monitorList = new ListSizeMonitor<>(new ArrayList<>(10), optimizer, 1);
+		monitorList = new ListSizeMonitor(new ArrayList(10), optimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorList).toFootprint());
 		
-		List<Integer> monitorFullList = new ArrayListFullMonitor<>(10, optimizer, 1);
+		List<Integer> monitorFullList = new ArrayListFullMonitor(10, optimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorFullList).toFootprint());
 		
-		List<Integer> list = new ArrayList<>(10);
+		List<Integer> list = new ArrayList(10);
 		System.out.println(GraphLayout.parseInstance(list).toFootprint());
 		
 	}
@@ -44,16 +44,16 @@ public class MemoryFootprintMonitors {
 	@Test
 	public void testMemoryFootprintHashSetMonitor() throws Exception {
 		
-		Map<Integer, Integer> monitorList = new HashMapSizeMonitor<>(10, mapOptimizer, 1);
+		Map<Integer, Integer> monitorList = new HashMapSizeMonitor(10, mapOptimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorList).toFootprint());
 		
-		monitorList = new MapSizeMonitor<>(new HashMap<>(10), mapOptimizer, 1);
+		monitorList = new MapSizeMonitor(new HashMap(10), mapOptimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorList).toFootprint());
 		
-		Map<Integer, Integer> monitorFullList = new HashMapFullMonitor<>(10, mapOptimizer, 1);
+		Map<Integer, Integer> monitorFullList = new HashMapFullMonitor(10, mapOptimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorFullList).toFootprint());
 		
-		Map<Integer, Integer> list = new HashMap<>(10);
+		Map<Integer, Integer> list = new HashMap(10);
 		System.out.println(GraphLayout.parseInstance(list).toFootprint());
 		
 	}

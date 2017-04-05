@@ -53,7 +53,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -73,7 +73,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -93,7 +93,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -113,7 +113,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -139,7 +139,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.ACTIVE_MEMORY);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -166,7 +166,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -189,7 +189,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.SLEEPING_FULL);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY - 1; i++) {
 			collections.add(createCollection(context));
 		}
@@ -220,7 +220,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -243,7 +243,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.SLEEPING_MEMORY);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		int sleepAmount = AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY;
 		for (int i = 0; i < sleepAmount; i++) {
 			collections.add(createCollection(context));
@@ -266,7 +266,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.SLEEPING_MEMORY);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY; i++) {
 			collections.add(createCollection(context));
 		}
@@ -289,7 +289,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.SLEEPING_FULL);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY
 				+ 1; i++) {
 			collections.add(createCollection(context));
@@ -313,7 +313,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.SLEEPING_FULL);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY
 				+ 1; i++) {
 			collections.add(createCollection(context));
@@ -342,7 +342,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.INACTIVE);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -365,7 +365,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.INACTIVE);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -395,7 +395,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.INACTIVE);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -418,7 +418,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		context.setAllocationContextState(AllocationContextState.INACTIVE);
 
-		List<K> collections = new ArrayList<>();
+		List<K> collections = new ArrayList();
 		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 			collections.add(createCollection(context));
 		}
@@ -441,7 +441,7 @@ public abstract class AbstractAutomataStateTest<K> {
 		context.setAllocationContextState(AllocationContextState.ACTIVE_FULL);
 
 		for (int j = 0; j < AllocationContextFactory.DIVERGENCE_ROUNDS_THRESHOLD; j++) {
-			List<K> collections = new ArrayList<>();
+			List<K> collections = new ArrayList();
 
 			for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 				collections.add(createCollection(context));
@@ -468,7 +468,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 			for (int j = 0; j < AllocationContextFactory.DIVERGENCE_ROUNDS_THRESHOLD; j++) {
 
-				List<K> collections = new ArrayList<>();
+				List<K> collections = new ArrayList();
 				for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 					collections.add(createCollection(context));
 				}
@@ -499,7 +499,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		for (int j = 0; j < AllocationContextFactory.DIVERGENCE_ROUNDS_THRESHOLD; j++) {
 
-			List<K> collections = new ArrayList<>();
+			List<K> collections = new ArrayList();
 			for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 				collections.add(createCollection(context));
 			}
@@ -525,7 +525,7 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		for (int j = 0; j < AllocationContextFactory.DIVERGENCE_ROUNDS_THRESHOLD; j++) {
 
-			List<K> collections = new ArrayList<>();
+			List<K> collections = new ArrayList();
 			for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE; i++) {
 				collections.add(createCollection(context));
 			}

@@ -23,16 +23,16 @@ public class SetsFactory {
 		switch (type) {
 
 		case HASH:
-			return new HashSet<>(initialCapacity);
+			return new HashSet(initialCapacity);
 
 		case ARRAY:
 			return new ArraySet(initialCapacity);
 
 		case ARRAY_HASH:
-			return new UnifiedSet<>(initialCapacity);
+			return new UnifiedSet(initialCapacity);
 
 		case LINKED:
-			return new LinkedHashSet<>(initialCapacity);
+			return new LinkedHashSet(initialCapacity);
 
 		default:
 			break;
@@ -48,16 +48,16 @@ public class SetsFactory {
 		switch (type) {
 
 		case HASH:
-			return new HashSet<>(set);
+			return new HashSet(set);
 
 		case ARRAY:
 			return new ArraySet(set);
 
 		case ARRAY_HASH:
-			return new UnifiedSet<>(set);
+			return new UnifiedSet(set);
 
 		case LINKED:
-			return new LinkedHashSet<>(set);
+			return new LinkedHashSet(set);
 
 		default:
 			break;
@@ -74,16 +74,16 @@ public class SetsFactory {
 		switch (type) {
 
 		case HASH:
-			return new HashSetSizeMonitor<>(initialCapacity, context);
+			return new HashSetSizeMonitor(initialCapacity, context);
 
 		case ARRAY:
-			return new SetSizeMonitor<>(new ArraySet(initialCapacity), context);
+			return new SetSizeMonitor(new ArraySet(initialCapacity), context);
 
 		case ARRAY_HASH:
-			return new SetSizeMonitor<>(new UnifiedSet<>(initialCapacity), context);
+			return new SetSizeMonitor(new UnifiedSet(initialCapacity), context);
 
 		case LINKED:
-			return new SetSizeMonitor<>(new LinkedHashSet<>(initialCapacity), context);
+			return new SetSizeMonitor(new LinkedHashSet(initialCapacity), context);
 
 		default:
 			break;
@@ -101,16 +101,16 @@ public class SetsFactory {
 		switch (type) {
 
 		case HASH:
-			return new HashSetSizeMonitor<>(set, context);
+			return new HashSetSizeMonitor(set, context);
 
 		case ARRAY:
-			return new SetSizeMonitor<>(new ArraySet(set), context);
+			return new SetSizeMonitor(new ArraySet(set), context);
 
 		case ARRAY_HASH:
-			return new SetSizeMonitor<>(new UnifiedSet<>(set), context);
+			return new SetSizeMonitor(new UnifiedSet(set), context);
 
 		case LINKED:
-			return new SetSizeMonitor<>(new LinkedHashSet<>(set), context);
+			return new SetSizeMonitor(new LinkedHashSet(set), context);
 
 		default:
 			break;
@@ -128,16 +128,16 @@ public class SetsFactory {
 		switch (type) {
 
 		case HASH:
-			return new HashSetFullMonitor<>(initialCapacity, context);
+			return new HashSetFullMonitor(initialCapacity, context);
 
 		case ARRAY:
-			return new SetFullMonitor<>(new ArraySet(initialCapacity), context);
+			return new SetFullMonitor(new ArraySet(initialCapacity), context);
 
 		case ARRAY_HASH:
-			return new SetFullMonitor<>(new UnifiedSet<>(initialCapacity), context);
+			return new SetFullMonitor(new UnifiedSet(initialCapacity), context);
 
 		case LINKED:
-			return new SetFullMonitor<>(new LinkedHashSet<>(initialCapacity), context);
+			return new SetFullMonitor(new LinkedHashSet(initialCapacity), context);
 
 		default:
 			break;
@@ -154,16 +154,16 @@ public class SetsFactory {
 		switch (type) {
 
 		case HASH:
-			return new HashSetFullMonitor<>(set, context);
+			return new HashSetFullMonitor(set, context);
 
 		case ARRAY:
-			return new SetFullMonitor<>(new ArraySet(set), context);
+			return new SetFullMonitor(new ArraySet(set), context);
 
 		case ARRAY_HASH:
-			return new SetFullMonitor<>(new UnifiedSet<>(set), context);
+			return new SetFullMonitor(new UnifiedSet(set), context);
 
 		case LINKED:
-			return new SetFullMonitor<>(new LinkedHashSet<>(set), context);
+			return new SetFullMonitor(new LinkedHashSet(set), context);
 
 		default:
 			break;

@@ -35,7 +35,7 @@ public class AdaptiveListAllocationContextCreationTest {
 		linkedContext = 	AllocationContextFactory.buildListContext(CollectionTypeEnum.LINKED);
 		arrayContext = 	AllocationContextFactory.buildListContext(CollectionTypeEnum.ARRAY);
 		
-		fullList = new ArrayList<>();
+		fullList = new ArrayList();
 		for(int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD; i++) {
 			fullList.add(i);
 		}

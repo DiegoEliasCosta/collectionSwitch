@@ -19,8 +19,8 @@ public class AdaptiveHashMapAutomataStateTest extends AbstractAutomataStateTest<
 	@Override
 	protected void specificSetup() {
 
-		hashMapSize = new HashMap<>();
-		unifiedMapSize = new HashMap<>();
+		hashMapSize = new HashMap();
+		unifiedMapSize = new HashMap();
 
 		for (int i = 0; i < RuleBasedMapOptimizer.RULE_ARRAY_SIZE + 1; i++) {
 			unifiedMapSize.put(i, i);
