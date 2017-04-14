@@ -23,16 +23,16 @@ public class SetsFactory {
 		switch (type) {
 
 		case HASH:
-			return new HashSet(initialCapacity);
+			return new HashSet<E>(initialCapacity);
 
 		case ARRAY:
 			return new ArraySet(initialCapacity);
 
 		case ARRAY_HASH:
-			return new UnifiedSet(initialCapacity);
+			return new UnifiedSet<E>(initialCapacity);
 
 		case LINKED:
-			return new LinkedHashSet(initialCapacity);
+			return new LinkedHashSet<E>(initialCapacity);
 
 		default:
 			break;
@@ -48,16 +48,16 @@ public class SetsFactory {
 		switch (type) {
 
 		case HASH:
-			return new HashSet(set);
+			return new HashSet<E>(set);
 
 		case ARRAY:
 			return new ArraySet(set);
 
 		case ARRAY_HASH:
-			return new UnifiedSet(set);
+			return new UnifiedSet<E>(set);
 
 		case LINKED:
-			return new LinkedHashSet(set);
+			return new LinkedHashSet<E>(set);
 
 		default:
 			break;
@@ -71,53 +71,65 @@ public class SetsFactory {
 	public static <E> Set<E> createSizeMonitor(CollectionTypeEnum type, SetAllocationOptimizer context,
 			int initialCapacity) {
 
-		switch (type) {
+		int index = context.getMonitoringIndex();
 
-		case HASH:
-			return new HashSetSizeMonitor(initialCapacity, context);
+		if (index >= 0) {
 
-		case ARRAY:
-			return new SetSizeMonitor(new ArraySet(initialCapacity), context);
+			switch (type) {
 
-		case ARRAY_HASH:
-			return new SetSizeMonitor(new UnifiedSet(initialCapacity), context);
+			case HASH:
+				return new HashSetSizeMonitor<E>(initialCapacity, context, index);
 
-		case LINKED:
-			return new SetSizeMonitor(new LinkedHashSet(initialCapacity), context);
+			case ARRAY:
+				return new SetSizeMonitor<E>(new ArraySet(initialCapacity), context, index);
 
-		default:
-			break;
+			case ARRAY_HASH:
+				return new SetSizeMonitor<E>(new UnifiedSet<E>(initialCapacity), context, index);
+
+			case LINKED:
+				return new SetSizeMonitor<E>(new LinkedHashSet<E>(initialCapacity), context, index);
+
+			default:
+				break;
+
+			}
 
 		}
 
-		return null;
+		return createNormalSet(type, initialCapacity);
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <E> Set<E> createSizeMonitor(CollectionTypeEnum type, SetAllocationOptimizer context,
+	public static <E> Set<E> createSizeMonitor(CollectionTypeEnum type, SetAllocationOptimizer optimizer,
 			Collection<? extends E> set) {
 
-		switch (type) {
+		int index = optimizer.getMonitoringIndex();
 
-		case HASH:
-			return new HashSetSizeMonitor(set, context);
+		if (index >= 0) {
 
-		case ARRAY:
-			return new SetSizeMonitor(new ArraySet(set), context);
+			switch (type) {
 
-		case ARRAY_HASH:
-			return new SetSizeMonitor(new UnifiedSet(set), context);
+			case HASH:
+				return new HashSetSizeMonitor<E>(set, optimizer, index);
 
-		case LINKED:
-			return new SetSizeMonitor(new LinkedHashSet(set), context);
+			case ARRAY:
+				return new SetSizeMonitor<E>(new ArraySet(set), optimizer, index);
 
-		default:
-			break;
+			case ARRAY_HASH:
+				return new SetSizeMonitor<E>(new UnifiedSet<E>(set), optimizer, index);
+
+			case LINKED:
+				return new SetSizeMonitor<E>(new LinkedHashSet<E>(set), optimizer, index);
+
+			default:
+				break;
+
+			}
 
 		}
 
-		return null;
+		return createNormalSet(type, set);
 
 	}
 
@@ -125,53 +137,64 @@ public class SetsFactory {
 	public static <E> Set<E> createFullMonitor(CollectionTypeEnum type, SetAllocationOptimizer context,
 			int initialCapacity) {
 
-		switch (type) {
+		int index = context.getMonitoringIndex();
 
-		case HASH:
-			return new HashSetFullMonitor(initialCapacity, context);
+		if (index >= 0) {
 
-		case ARRAY:
-			return new SetFullMonitor(new ArraySet(initialCapacity), context);
+			switch (type) {
 
-		case ARRAY_HASH:
-			return new SetFullMonitor(new UnifiedSet(initialCapacity), context);
+			case HASH:
+				return new HashSetFullMonitor<E>(initialCapacity, context, index);
 
-		case LINKED:
-			return new SetFullMonitor(new LinkedHashSet(initialCapacity), context);
+			case ARRAY:
+				return new SetFullMonitor<E>(new ArraySet(initialCapacity), context, index);
 
-		default:
-			break;
+			case ARRAY_HASH:
+				return new SetFullMonitor<E>(new UnifiedSet<E>(initialCapacity), context, index);
+
+			case LINKED:
+				return new SetFullMonitor<E>(new LinkedHashSet<E>(initialCapacity), context, index);
+
+			default:
+				break;
+
+			}
 
 		}
 
-		return null;
+		return createNormalSet(type, initialCapacity);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <E> Set<E> createFullMonitor(CollectionTypeEnum type, SetAllocationOptimizer context,
 			Collection<? extends E> set) {
 
-		switch (type) {
+		int index = context.getMonitoringIndex();
 
-		case HASH:
-			return new HashSetFullMonitor(set, context);
+		if (index >= 0) {
 
-		case ARRAY:
-			return new SetFullMonitor(new ArraySet(set), context);
+			switch (type) {
 
-		case ARRAY_HASH:
-			return new SetFullMonitor(new UnifiedSet(set), context);
+			case HASH:
+				return new HashSetFullMonitor<E>(set, context, index);
 
-		case LINKED:
-			return new SetFullMonitor(new LinkedHashSet(set), context);
+			case ARRAY:
+				return new SetFullMonitor<E>(new ArraySet(set), context, index);
 
-		default:
-			break;
+			case ARRAY_HASH:
+				return new SetFullMonitor<E>(new UnifiedSet<E>(set), context, index);
+
+			case LINKED:
+				return new SetFullMonitor<E>(new LinkedHashSet<E>(set), context, index);
+
+			default:
+				break;
+
+			}
 
 		}
 
-		return null;
+		return createNormalSet(type, set);
 	}
-
 
 }

@@ -21,8 +21,8 @@ public class HashMapSizeMonitor<K, V> extends HashMap<K, V> {
 
 	private int index;
 	
-	public HashMapSizeMonitor(int initialCapacity, MapAllocationOptimizer context, int index) {
-		super(initialCapacity);
+	public HashMapSizeMonitor(int initialCapacity, float loadFactor, MapAllocationOptimizer context, int index) {
+		super(initialCapacity, loadFactor);
 		this.context = context;
 		this.index = index;
 	}

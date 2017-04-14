@@ -19,7 +19,7 @@ public class HashMapFullMonitor<K, V> extends HashMap<K, V> implements Map<K, V>
 
 	private int index;
 
-	public HashMapFullMonitor(int initialCapacity, MapAllocationOptimizer context, int index) {
+	public HashMapFullMonitor(int initialCapacity, float loadFactor, MapAllocationOptimizer context, int index) {
 		super(initialCapacity);
 		this.context = context;
 		this.index = index;

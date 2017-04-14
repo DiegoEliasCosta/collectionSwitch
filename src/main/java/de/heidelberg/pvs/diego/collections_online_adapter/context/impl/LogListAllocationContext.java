@@ -11,6 +11,8 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocation
 
 public class LogListAllocationContext implements ListAllocationContext {
 	
+	private static final int FREQUENCY = 10;
+
 	ListAllocationContext context;
 	
 	PrintWriter writer;
@@ -53,8 +55,8 @@ public class LogListAllocationContext implements ListAllocationContext {
 	public <E> List<E> createList() {
 		
 		count++;
-		if(count % 100 == 0) {
-			writer.println("Created " + count + " lists");
+		if(count % FREQUENCY == 0) {
+			writer.println(String.format("Created %d lists \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getInitialCapacity() ));
 			writer.flush();
 		}
 	
@@ -71,10 +73,24 @@ public class LogListAllocationContext implements ListAllocationContext {
 	}
 
 	public <E> List<E> createList(int initialCapacity) {
+		
+		count++;
+		if(count % FREQUENCY == 0) {
+			writer.println(String.format("Created %d lists \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getInitialCapacity(), initialCapacity));
+			writer.flush();
+		}
+		
 		return context.createList(initialCapacity);
 	}
 
 	public <E> List<E> createList(Collection<? extends E> c) {
+		
+		count++;
+		if(count % FREQUENCY == 0) {
+			writer.println(String.format("Copied %d lists \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getInitialCapacity(), c.size()));
+			writer.flush();
+		}
+		
 		return context.createList(c);
 	}
 
@@ -86,6 +102,17 @@ public class LogListAllocationContext implements ListAllocationContext {
 	@Override
 	public CollectionTypeEnum getChampion() {
 		return this.context.getChampion();
+	}
+
+	@Override
+	public void setAllocationContextState(AllocationContextState inactive) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		return this.context.getInitialCapacity();
 	}
 
 	

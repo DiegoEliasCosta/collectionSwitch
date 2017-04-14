@@ -3,6 +3,7 @@ package de.heidelberg.pvs.diego.collections_online_adapter.stub;
 import java.util.Collection;
 import java.util.Set;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 
@@ -36,6 +37,18 @@ public class SetAllocationContextStub implements SetAllocationContext {
 	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public AllocationContextState getAllocationContextState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public CollectionTypeEnum getChampion() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

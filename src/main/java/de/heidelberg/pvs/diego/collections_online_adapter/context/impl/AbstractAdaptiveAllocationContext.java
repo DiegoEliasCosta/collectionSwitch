@@ -12,6 +12,8 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 	protected CollectionTypeEnum defaultCollectionType;
 
 	protected int analyzedInitialCapacity;
+	protected float analyzedLoadFactor;
+
 
 	protected int sleepingMonitoringCount;
 
@@ -35,6 +37,7 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 		// First State
 		this.state = AllocationContextState.ACTIVE_MEMORY;
 		analyzedInitialCapacity = 10;
+		analyzedLoadFactor = 0.75f;
 	}
 
 	protected boolean shouldMonitor() {
@@ -48,8 +51,10 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 		
 		if(mode >= 0) {
 			this.analyzedInitialCapacity = mode;
+			this.analyzedLoadFactor = 0.9f;
 		} else {
 			this.analyzedInitialCapacity = medianInitialCapacity;
+			this.analyzedLoadFactor = 0.75f;
 		}
 		
 		switch (state) {
@@ -88,8 +93,10 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 
 		if(mode >= 0){
 			this.analyzedInitialCapacity = mode;
+			this.analyzedLoadFactor = 0.9f;
 		} else {
 			this.analyzedInitialCapacity = medianInitialCapacity;
+			this.analyzedLoadFactor = 0.75f;
 		}
 		
 		
@@ -117,6 +124,10 @@ public abstract class AbstractAdaptiveAllocationContext implements AllocationCon
 	
 	public CollectionTypeEnum getChampion() {
 		return this.championCollectionType;
+	}
+	
+	public int getInitialCapacity() {
+		return this.analyzedInitialCapacity;
 	}
 
 }

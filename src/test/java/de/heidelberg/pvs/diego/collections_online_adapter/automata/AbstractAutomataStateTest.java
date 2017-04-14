@@ -1,6 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.automata;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +64,9 @@ public abstract class AbstractAutomataStateTest<K> {
 		collections = null;
 		this.disposeCollections(collections);
 
+		// Triggers the optimization
+		createCollection(context);
+
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 	}
 
@@ -81,8 +84,11 @@ public abstract class AbstractAutomataStateTest<K> {
 		// SIZE > ALPHA and CONVERGENCE > BETA
 		collections = this.createLargeDivergentCollections(collections);
 		collections = null;
-		
+
 		this.disposeCollections(collections);
+
+		// Triggers the optimization
+		createCollection(context);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 	}
@@ -103,6 +109,9 @@ public abstract class AbstractAutomataStateTest<K> {
 
 		collections = null;
 		this.disposeCollections(collections);
+
+		// Triggers the optimization
+		createCollection(context);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_MEMORY, context.getAllocationContextState());
 	}
@@ -150,6 +159,9 @@ public abstract class AbstractAutomataStateTest<K> {
 		collections = null;
 		this.disposeCollections(collections);
 
+		// Triggers the optimization
+		createCollection(context);
+
 		Assert.assertEquals(AllocationContextState.SLEEPING_MEMORY, context.getAllocationContextState());
 
 	}
@@ -179,6 +191,9 @@ public abstract class AbstractAutomataStateTest<K> {
 		collections = null;
 		this.disposeCollections(collections);
 
+		// Triggers the optimization
+		createCollection(context);
+
 		Assert.assertEquals(AllocationContextState.SLEEPING_FULL, context.getAllocationContextState());
 
 	}
@@ -190,7 +205,7 @@ public abstract class AbstractAutomataStateTest<K> {
 		context.setAllocationContextState(AllocationContextState.SLEEPING_FULL);
 
 		List<K> collections = new ArrayList();
-		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY - 1; i++) {
+		for (int i = 0; i < AllocationContextFactory.WINDOW_SIZE * AllocationContextFactory.SLEEPING_FREQUENCY; i++) {
 			collections.add(createCollection(context));
 		}
 
@@ -202,13 +217,16 @@ public abstract class AbstractAutomataStateTest<K> {
 		collections = null;
 		this.disposeCollections(collections);
 
+		// Triggers the optimization
+		createCollection(context);
+
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 
 	}
 
 	private void disposeCollections(List<K> collections) throws InterruptedException {
 		collections = null;
-		RuntimeUtil.gc();
+		System.gc();
 		RuntimeUtil.gc();
 		Thread.sleep(SLEEPING_TIME);
 
@@ -232,6 +250,9 @@ public abstract class AbstractAutomataStateTest<K> {
 		// Dispose
 		collections = null;
 		this.disposeCollections(collections);
+
+		// Triggers the optimization
+		createCollection(context);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 
@@ -257,6 +278,9 @@ public abstract class AbstractAutomataStateTest<K> {
 		collections = null;
 		this.disposeCollections(collections);
 
+		// Triggers the optimization
+		//createCollection(context);
+
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 
 	}
@@ -278,6 +302,9 @@ public abstract class AbstractAutomataStateTest<K> {
 		// Dispose
 		collections = null;
 		this.disposeCollections(collections);
+
+		// Triggers the optimization
+		createCollection(context);
 
 		Assert.assertEquals(AllocationContextState.ACTIVE_FULL, context.getAllocationContextState());
 
@@ -454,6 +481,9 @@ public abstract class AbstractAutomataStateTest<K> {
 			// Dispose
 			collections = null;
 			this.disposeCollections(collections);
+
+			// Triggers the optimization
+			createCollection(context);
 		}
 
 		Assert.assertEquals(AllocationContextState.INACTIVE, context.getAllocationContextState());
@@ -537,8 +567,12 @@ public abstract class AbstractAutomataStateTest<K> {
 			// Dispose
 			collections = null;
 			this.disposeCollections(collections);
+			
+
 		}
 
+		// Triggers the optimization
+		createCollection(context);
 		Assert.assertEquals(AllocationContextState.SLEEPING_FULL, context.getAllocationContextState());
 
 	}

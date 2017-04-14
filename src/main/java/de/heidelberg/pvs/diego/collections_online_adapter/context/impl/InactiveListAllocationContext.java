@@ -55,4 +55,16 @@ public class InactiveListAllocationContext implements ListAllocationContext {
 		return null;
 	}
 
+	@Override
+	public void setAllocationContextState(AllocationContextState inactive) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

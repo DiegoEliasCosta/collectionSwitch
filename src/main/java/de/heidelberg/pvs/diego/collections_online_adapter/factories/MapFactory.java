@@ -1,5 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.factories;
 
+import java.rmi.server.LoaderHandler;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,24 +14,25 @@ import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.HashMapF
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.HashMapSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.ProactiveMapFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
 public class MapFactory {
 
-	public static <K, V> Map<K, V> createNormalMap(CollectionTypeEnum type, int initialCapacity) {
+	public static <K, V> Map<K, V> createNormalMap(CollectionTypeEnum type, int initialCapacity, float loadFactor) {
 
 		switch (type) {
 		case ARRAY:
 			return ArrayMap.create(initialCapacity);
 
 		case ARRAY_HASH:
-			return new UnifiedMap(initialCapacity);
+			return new UnifiedMap<K, V>(initialCapacity, loadFactor);
 
 		case HASH:
-			return new HashMap(initialCapacity);
+			return new HashMap<K, V>(initialCapacity, loadFactor);
 
 		case LINKED:
-			return new LinkedHashMap(initialCapacity);
+			return new LinkedHashMap<K, V>(initialCapacity, loadFactor);
 
 		default:
 			break;
@@ -42,18 +44,18 @@ public class MapFactory {
 	public static <K, V> Map<K, V> createNormalMap(CollectionTypeEnum type, Map<K, V> map) {
 		switch (type) {
 		case ARRAY:
-			Map<K, V> arrayMap = new ArrayMap();
+			Map<K, V> arrayMap = new ArrayMap<K, V>();
 			arrayMap.putAll(map);
 			return arrayMap;
 
 		case ARRAY_HASH:
-			return new UnifiedMap(map);
+			return new UnifiedMap<K, V>(map);
 
 		case HASH:
-			return new HashMap(map);
+			return new HashMap<K, V>(map);
 
 		case LINKED:
-			return new LinkedHashMap(map);
+			return new LinkedHashMap<K, V>(map);
 
 		default:
 			break;
@@ -63,7 +65,7 @@ public class MapFactory {
 	}
 
 	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type, MapAllocationOptimizer optimizer,
-			int initialCapacity) {
+			int initialCapacity, float loadFactor) {
 
 		int index = optimizer.getMonitoringIndex();
 
@@ -74,13 +76,13 @@ public class MapFactory {
 				return new MapSizeMonitor(ArrayMap.create(initialCapacity), optimizer, index);
 
 			case ARRAY_HASH:
-				return new MapSizeMonitor(new UnifiedMap(initialCapacity), optimizer, index);
+				return new MapSizeMonitor<K, V>(new UnifiedMap<K, V>(initialCapacity, loadFactor), optimizer, index);
 
 			case HASH:
-				return new HashMapSizeMonitor(initialCapacity, optimizer, index);
+				return new HashMapSizeMonitor<K, V>(initialCapacity, loadFactor, optimizer, index);
 
 			case LINKED:
-				return new MapSizeMonitor(new LinkedHashMap(initialCapacity), optimizer, index);
+				return new MapSizeMonitor<K, V>(new LinkedHashMap<K, V>(initialCapacity, loadFactor), optimizer, index);
 
 			default:
 				break;
@@ -88,8 +90,46 @@ public class MapFactory {
 
 		}
 
-		return createNormalMap(type, initialCapacity);
+		return createNormalMap(type, initialCapacity, loadFactor);
 	}
+	
+	public static <K, V> Map<K, V> createProactiveSizeMonitor(CollectionTypeEnum type, MapAllocationOptimizer optimizer,
+			int initialCapacity, float loadFactor) {
+
+		int index = optimizer.getMonitoringIndex();
+
+		if (index >= 0) {
+			
+			ProactiveMapFullMonitor<K, V> monitor;
+
+			switch (type) {
+			case ARRAY:
+				monitor = new ProactiveMapFullMonitor(ArrayMap.create(initialCapacity), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+
+			case ARRAY_HASH:
+				monitor = new ProactiveMapFullMonitor<K, V>(new UnifiedMap<K, V>(initialCapacity, loadFactor), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+			case HASH:
+				monitor = new ProactiveMapFullMonitor<K, V>(new HashMap<K, V>(initialCapacity, loadFactor), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+					
+			case LINKED:
+				monitor = new ProactiveMapFullMonitor<K, V>(new LinkedHashMap<K, V>(initialCapacity, loadFactor), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+			default:
+				break;
+			}
+
+		}
+
+		return createNormalMap(type, initialCapacity, loadFactor);
+	}
+	
 
 	public static <K, V> Map<K, V> createSizeMonitor(CollectionTypeEnum type, MapAllocationOptimizer optimizer,
 			Map<K, V> map) {
@@ -100,18 +140,18 @@ public class MapFactory {
 
 			switch (type) {
 			case ARRAY:
-				Map<K, V> arrayMap = new ArrayMap();
+				Map<K, V> arrayMap = new ArrayMap<K, V>();
 				arrayMap.putAll(map);
-				return new MapSizeMonitor(arrayMap, optimizer, index);
+				return new MapSizeMonitor<K, V>(arrayMap, optimizer, index);
 
 			case ARRAY_HASH:
-				return new MapSizeMonitor(new UnifiedMap(map), optimizer, index);
+				return new MapSizeMonitor<K, V>(new UnifiedMap<K, V>(map), optimizer, index);
 
 			case HASH:
-				return new HashMapSizeMonitor(map, optimizer, index);
+				return new HashMapSizeMonitor<K, V>(map, optimizer, index);
 
 			case LINKED:
-				return new MapSizeMonitor(new LinkedHashMap(map), optimizer, index);
+				return new MapSizeMonitor<K, V>(new LinkedHashMap<K, V>(map), optimizer, index);
 
 			default:
 				break;
@@ -120,9 +160,48 @@ public class MapFactory {
 		}
 		return createNormalMap(type, map);
 	}
+	
+	public static <K, V> Map<K, V> createProactiveSizeMonitor(CollectionTypeEnum type, MapAllocationOptimizer optimizer,
+			Map<K,V> map) {
+
+		int index = optimizer.getMonitoringIndex();
+
+		if (index >= 0) {
+			
+			ProactiveMapFullMonitor<K, V> monitor;
+
+			switch (type) {
+			case ARRAY:
+				Map<K, V> arrayMap = new ArrayMap<K, V>();
+				arrayMap.putAll(map);
+				monitor = new ProactiveMapFullMonitor<K, V>(arrayMap, optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+
+			case ARRAY_HASH:
+				monitor = new ProactiveMapFullMonitor<K, V>(new UnifiedMap<K, V>(map), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+			case HASH:
+				monitor = new ProactiveMapFullMonitor<K, V>(new HashMap<K, V>(map), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+					
+			case LINKED:
+				monitor = new ProactiveMapFullMonitor<K, V>(new LinkedHashMap<K, V>(map), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+			default:
+				break;
+			}
+
+		}
+
+		return createNormalMap(type, map);
+	}
 
 	public static <K, V> Map<K, V> createFullMonitor(CollectionTypeEnum type, MapAllocationOptimizer context,
-			int initialCapacity) {
+			int initialCapacity, float loadFactor) {
 
 		int index = context.getMonitoringIndex();
 
@@ -133,13 +212,13 @@ public class MapFactory {
 				return new MapFullMonitor(ArrayMap.create(initialCapacity), context, index);
 
 			case ARRAY_HASH:
-				return new MapFullMonitor(new UnifiedMap(initialCapacity), context, index);
+				return new MapFullMonitor<K, V>(new UnifiedMap<K, V>(initialCapacity, loadFactor), context, index);
 
 			case HASH:
-				return new HashMapFullMonitor(initialCapacity, context, index);
+				return new HashMapFullMonitor<K, V>(initialCapacity, loadFactor, context, index);
 
 			case LINKED:
-				return new MapFullMonitor(new LinkedHashMap(initialCapacity), context, index);
+				return new MapFullMonitor<K, V>(new LinkedHashMap<K, V>(initialCapacity, loadFactor), context, index);
 
 			default:
 				break;
@@ -147,7 +226,44 @@ public class MapFactory {
 
 		}
 
-		return createNormalMap(type, initialCapacity);
+		return createNormalMap(type, initialCapacity, loadFactor);
+	}
+	
+	public static <K, V> Map<K, V> createProactiveFullMonitor(CollectionTypeEnum type, MapAllocationOptimizer optimizer,
+			int initialCapacity, float loadFactor) {
+
+		int index = optimizer.getMonitoringIndex();
+
+		if (index >= 0) {
+			
+			ProactiveMapFullMonitor<K, V> monitor;
+
+			switch (type) {
+			case ARRAY:
+				monitor = new ProactiveMapFullMonitor(ArrayMap.create(initialCapacity), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+
+			case ARRAY_HASH:
+				monitor = new ProactiveMapFullMonitor<K, V>(new UnifiedMap<K, V>(initialCapacity, loadFactor), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+			case HASH:
+				monitor = new ProactiveMapFullMonitor<K, V>(new HashMap<K, V>(initialCapacity, loadFactor), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+					
+			case LINKED:
+				monitor = new ProactiveMapFullMonitor<K, V>(new LinkedHashMap<K, V>(initialCapacity, loadFactor), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+			default:
+				break;
+			}
+
+		}
+
+		return createNormalMap(type, initialCapacity, loadFactor);
 	}
 
 	public static <K, V> Map<K, V> createFullMonitor(CollectionTypeEnum type, MapAllocationOptimizer context,
@@ -159,19 +275,58 @@ public class MapFactory {
 
 			switch (type) {
 			case ARRAY:
-				Map<K, V> arrayMap = new ArrayMap();
+				Map<K, V> arrayMap = new ArrayMap<K, V>();
 				arrayMap.putAll(map);
-				return new MapFullMonitor(arrayMap, context, index);
+				return new MapFullMonitor<K, V>(arrayMap, context, index);
 
 			case ARRAY_HASH:
-				return new MapFullMonitor(new UnifiedMap(map), context, index);
+				return new MapFullMonitor<K, V>(new UnifiedMap<K, V>(map), context, index);
 
 			case HASH:
-				return new HashMapFullMonitor(map, context, index);
+				return new HashMapFullMonitor<K, V>(map, context, index);
 
 			case LINKED:
-				return new MapFullMonitor(new LinkedHashMap(map), context, index);
+				return new MapFullMonitor<K, V>(new LinkedHashMap<K, V>(map), context, index);
 
+			default:
+				break;
+			}
+
+		}
+
+		return createNormalMap(type, map);
+	}
+	
+	public static <K, V> Map<K, V> createProactiveFullMonitor(CollectionTypeEnum type, MapAllocationOptimizer optimizer,
+			Map<K,V> map) {
+
+		int index = optimizer.getMonitoringIndex();
+
+		if (index >= 0) {
+			
+			ProactiveMapFullMonitor<K, V> monitor;
+
+			switch (type) {
+			case ARRAY:
+				Map<K, V> arrayMap = new ArrayMap<K, V>();
+				arrayMap.putAll(map);
+				monitor = new ProactiveMapFullMonitor<K, V>(arrayMap, optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+
+			case ARRAY_HASH:
+				monitor = new ProactiveMapFullMonitor<K, V>(new UnifiedMap<K, V>(map), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+			case HASH:
+				monitor = new ProactiveMapFullMonitor<K, V>(new HashMap<K, V>(map), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
+					
+			case LINKED:
+				monitor = new ProactiveMapFullMonitor<K, V>(new LinkedHashMap<K, V>(map), optimizer, index);
+				optimizer.addReference(monitor);
+				return monitor;
 			default:
 				break;
 			}

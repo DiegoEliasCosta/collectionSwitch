@@ -3,9 +3,6 @@ package de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import javax.swing.ListModel;
-
-import de.heidelberg.pvs.diego.collections_online_adapter.monitors.ListMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
 public class ArrayListFullMonitor<E> extends ArrayList<E> {
@@ -56,7 +53,6 @@ public class ArrayListFullMonitor<E> extends ArrayList<E> {
 	
 	@Override
 	protected void finalize() throws Throwable {
-		super.finalize();
 		context.updateOperationsAndSize(index, indexOp, midListOp, containsOp, size());
 	}
 

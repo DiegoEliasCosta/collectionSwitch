@@ -77,14 +77,14 @@
 			<artifactId>eclipse-collections-forkjoin</artifactId>
 			<version>8.0.0</version>
 		</dependency>
-		
+
 		<!-- JOL -->
 		<dependency>
 			<groupId>org.openjdk.jol</groupId>
 			<artifactId>jol-core</artifactId>
 			<version>0.5</version>
 		</dependency>
-		
+
 		<!-- JLIBS -->
 		<!-- http://mvnrepository.com/artifact/in.jlibs/jlibs-core -->
 		<dependency>
@@ -120,6 +120,8 @@
 					</execution>
 				</executions>
 				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>

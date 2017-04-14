@@ -44,13 +44,13 @@ public class MemoryFootprintMonitors {
 	@Test
 	public void testMemoryFootprintHashSetMonitor() throws Exception {
 		
-		Map<Integer, Integer> monitorList = new HashMapSizeMonitor(10, mapOptimizer, 1);
+		Map<Integer, Integer> monitorList = new HashMapSizeMonitor(10, 0.75f, mapOptimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorList).toFootprint());
 		
 		monitorList = new MapSizeMonitor(new HashMap(10), mapOptimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorList).toFootprint());
 		
-		Map<Integer, Integer> monitorFullList = new HashMapFullMonitor(10, mapOptimizer, 1);
+		Map<Integer, Integer> monitorFullList = new HashMapFullMonitor(10, 0.75f, mapOptimizer, 1);
 		System.out.println(GraphLayout.parseInstance(monitorFullList).toFootprint());
 		
 		Map<Integer, Integer> list = new HashMap(10);

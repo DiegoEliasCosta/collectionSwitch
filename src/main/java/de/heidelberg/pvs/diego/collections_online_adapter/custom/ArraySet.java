@@ -66,15 +66,15 @@ public class ArraySet extends AbstractSet {
     private Object[] values = EMPTY_ARRAY;
     
     public ArraySet() { 
-    	
     }
     
     public ArraySet(int initialCapacity) {
-    	values = new Object[initialCapacity];
+    	// IGNORED
+    	//values = new Object[initialCapacity];
     }
     
     public ArraySet(Collection<?> set) {
-    	this.add(set);
+    	this.addAll(set);
     	
     }
     

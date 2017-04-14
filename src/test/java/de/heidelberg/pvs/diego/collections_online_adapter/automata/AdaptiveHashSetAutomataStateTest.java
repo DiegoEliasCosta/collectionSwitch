@@ -6,8 +6,9 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AbstractAdaptiveAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
+import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.RuleBasedSetOptimizer;
 
 public class AdaptiveHashSetAutomataStateTest extends AbstractAutomataStateTest<Set<Integer>> {
@@ -19,10 +20,10 @@ public class AdaptiveHashSetAutomataStateTest extends AbstractAutomataStateTest<
 
 	@Override
 	protected void specificSetup() {
-		fullSet = new HashSet();
-		arraySetSize = new HashSet();
-		unifiedSetSize = new HashSet();
-		hashSetSize = new HashSet();
+		fullSet = new HashSet<Integer>();
+		arraySetSize = new HashSet<Integer>();
+		unifiedSetSize = new HashSet<Integer>();
+		hashSetSize = new HashSet<Integer>();
 
 		for (int i = 0; i < AllocationContextFactory.FULL_ANALYSIS_THRESHOLD + 1; i++) {
 			fullSet.add(i);
@@ -45,12 +46,13 @@ public class AdaptiveHashSetAutomataStateTest extends AbstractAutomataStateTest<
 
 	@Override
 	protected AbstractAdaptiveAllocationContext buildContext() {
+		AllocationContextBuilder builder = new AllocationContextBuilder(CollectionTypeEnum.HASH, "AdaptiveHashSetAutomata_Test");
 		return (AbstractAdaptiveAllocationContext) AllocationContextFactory.buildSetContext(CollectionTypeEnum.HASH);
 	}
 
 	@Override
 	protected Set<Integer> createCollection(AbstractAdaptiveAllocationContext context) {
-		return ((ReactiveSetAllocationContext) context).createSet();
+		return ((AdaptiveSetAllocationContext) context).createSet();
 	}
 
 	@Override

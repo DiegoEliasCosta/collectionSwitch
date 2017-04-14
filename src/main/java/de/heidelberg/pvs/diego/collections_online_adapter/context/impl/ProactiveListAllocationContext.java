@@ -8,18 +8,19 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionType
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.ListsFactory;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ProactiveRuleBasedListOptimizer;
 
-public class ReactiveListAllocationContext extends AbstractAdaptiveAllocationContext
+public class ProactiveListAllocationContext extends AbstractAdaptiveAllocationContext
 		implements ListAllocationContext, AllocationContextUpdatable {
 
-	ListAllocationOptimizer optimizer;
+	ProactiveRuleBasedListOptimizer optimizer;
 	
-	public ReactiveListAllocationContext(CollectionTypeEnum collectionType, ListAllocationOptimizer optimizer, int windowSize, int fullAnalysisThreshold,
+	public ProactiveListAllocationContext(CollectionTypeEnum collectionType, ListAllocationOptimizer optimizer, int windowSize, int fullAnalysisThreshold,
 			int sleepingFrequency, int convergencyRate, int divergentRoundsThreshold) {
 		super(collectionType, windowSize, fullAnalysisThreshold, sleepingFrequency, convergencyRate,
 				divergentRoundsThreshold);
 		
-		this.optimizer = optimizer;
+		this.optimizer = (ProactiveRuleBasedListOptimizer) optimizer;
 
 	}
 	
@@ -41,22 +42,24 @@ public class ReactiveListAllocationContext extends AbstractAdaptiveAllocationCon
 		case SLEEPING_MEMORY:
 			// Only creates with monitor in certain frequencies
 			if (shouldMonitor()) {
-				return ListsFactory.createSizeMonitor(championCollectionType, optimizer, initialCapacity);
+				return ListsFactory.createProactiveSizeMonitor(championCollectionType, optimizer, initialCapacity);
+			} else {
+				return ListsFactory.createNormalList(championCollectionType, initialCapacity);
 			}
-			return ListsFactory.createNormalList(championCollectionType, initialCapacity);
 
 		case SLEEPING_FULL:
 			// Only creates with monitor in certain frequencies
 			if (shouldMonitor()) {
-				return ListsFactory.createFullMonitor(championCollectionType, optimizer, initialCapacity);
+				return ListsFactory.createProactiveFullMonitor(championCollectionType, optimizer, initialCapacity);
+			} else {
+				return ListsFactory.createNormalList(championCollectionType, initialCapacity);
 			}
-			return ListsFactory.createNormalList(championCollectionType, initialCapacity);
 
 		case ACTIVE_MEMORY:
-			return ListsFactory.createSizeMonitor(defaultCollectionType, optimizer, initialCapacity);
+			return ListsFactory.createProactiveSizeMonitor(defaultCollectionType, optimizer, initialCapacity);
 
 		case ACTIVE_FULL:
-			return ListsFactory.createFullMonitor(defaultCollectionType, optimizer, initialCapacity);
+			return ListsFactory.createProactiveFullMonitor(defaultCollectionType, optimizer, initialCapacity);
 		}
 
 		return null;
@@ -77,22 +80,24 @@ public class ReactiveListAllocationContext extends AbstractAdaptiveAllocationCon
 		case SLEEPING_MEMORY:
 			// Only creates with monitor in certain frequencies
 			if (shouldMonitor())
-				return ListsFactory.createSizeMonitor(championCollectionType, optimizer, list);
-			else
+				return ListsFactory.createProactiveSizeMonitor(championCollectionType, optimizer, list);
+			else {
 				return ListsFactory.createNormalList(championCollectionType, list);
+			}
 
 		case SLEEPING_FULL:
 			// Only creates with monitor in certain frequencies
 			if (shouldMonitor())
-				return ListsFactory.createFullMonitor(championCollectionType, optimizer, list);
-			else
+				return ListsFactory.createProactiveFullMonitor(championCollectionType, optimizer, list);
+			else {
 				return ListsFactory.createNormalList(championCollectionType, list);
+			}
 
 		case ACTIVE_MEMORY:
-			return ListsFactory.createSizeMonitor(defaultCollectionType, optimizer, list);
+			return ListsFactory.createProactiveSizeMonitor(defaultCollectionType, optimizer, list);
 
 		case ACTIVE_FULL:
-			return ListsFactory.createFullMonitor(defaultCollectionType, optimizer, list);
+			return ListsFactory.createProactiveFullMonitor(defaultCollectionType, optimizer, list);
 		}
 		return null;
 	}

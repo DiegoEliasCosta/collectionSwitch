@@ -1,7 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
 import static de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.FULL_ANALYSIS_THRESHOLD;
-import static de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.SLEEPING_FREQUENCY;
 import static de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.WINDOW_SIZE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -14,11 +13,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.custom.HashArrayList;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ArrayListFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ArrayListSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.HashArrayListFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.LinkedListFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.RuleBasedListOptimizer;
@@ -84,7 +81,7 @@ public class AdaptiveListAllocationContextTest {
 	public void testLinkedListChampion() throws Exception {
 
 		// FULL ANALYSIS
-		((ReactiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);	
+		((AdaptiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);	
 		
 		// Prepare to LINKEDLIST champion 
 		for (int i = 0; i < WINDOW_SIZE; i++) {
@@ -113,7 +110,7 @@ public class AdaptiveListAllocationContextTest {
 	public void testHashListChampion() throws Exception {
 
 		// FULL ANALYSIS
-		((ReactiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);	
+		((AdaptiveListAllocationContext) arrayContext).setAllocationContextState(AllocationContextState.ACTIVE_FULL);	
 		
 		// Prepare to LINKEDLIST champion 
 		for (int i = 0; i < WINDOW_SIZE; i++) {

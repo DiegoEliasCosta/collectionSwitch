@@ -1,6 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.utils;
 
-import java.util.Arrays;
+import java.util.Arrays;import jlibs.core.graph.sequences.ConcatSequence;
 
 public class IntArrayUtils {
 
@@ -52,6 +52,33 @@ public class IntArrayUtils {
 		}
 
 		return maxValue;
+	}
+	
+	public static int calculateModeCategoryWithThreshold(final int[] a, int convergenceRate, int category) {
+		
+		int maxValue = 0;
+		int maxCount = 0;
+
+		for (int i = 0; i < a.length; ++i) {
+			int count = 0;
+			int bini = a[i] / category;
+			for (int j = 0; j < a.length; ++j) {
+				int bin = a[j] / category;
+				if (bin == bini)
+					++count;
+			}
+			if (count > maxCount) {
+				maxCount = count;
+				maxValue = bini;
+			}
+		}
+
+		if(maxCount >= convergenceRate) {
+			return maxValue * category + category;
+		} else {
+			return -1;
+		}
+		
 	}
 
 	/**

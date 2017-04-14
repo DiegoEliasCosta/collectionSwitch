@@ -29,12 +29,12 @@ public class InactiveMapAllocationContext implements MapAllocationContext {
 
 	@Override
 	public <K, V> Map<K, V> createMap() {
-		return MapFactory.createNormalMap(type, 10);
+		return MapFactory.createNormalMap(type, 10, 0.75f);
 	}
 
 	@Override
 	public <K, V> Map<K, V> createMap(int initialCapacity) {
-		return MapFactory.createNormalMap(type, initialCapacity);
+		return MapFactory.createNormalMap(type, initialCapacity, 0.75f);
 	}
 
 	@Override
@@ -52,6 +52,17 @@ public class InactiveMapAllocationContext implements MapAllocationContext {
 	public CollectionTypeEnum getChampion() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public <K, V> Map<K, V> createMap(int initialCapacity, float loadFactor) {
+		return MapFactory.createNormalMap(type, initialCapacity, 0.75f);
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

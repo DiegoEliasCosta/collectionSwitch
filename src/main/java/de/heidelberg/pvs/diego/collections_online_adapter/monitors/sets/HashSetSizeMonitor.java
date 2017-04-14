@@ -9,32 +9,38 @@ public class HashSetSizeMonitor<E> extends HashSet<E> {
 	
 	private static final long serialVersionUID = 20170101L;
 	private SetAllocationOptimizer context;
+	private int index;
 	
-	public HashSetSizeMonitor(SetAllocationOptimizer context) {
+	public HashSetSizeMonitor(SetAllocationOptimizer context, int index) {
 		super();
 		this.context = context;
+		this.index = index;
 	}
 
-	public HashSetSizeMonitor(Collection<? extends E> c, SetAllocationOptimizer context) {
+	public HashSetSizeMonitor(Collection<? extends E> c, SetAllocationOptimizer context, int index) {
 		super(c);
 		this.context = context;
+		this.index = index;
 	}
 
-	public HashSetSizeMonitor(int initialCapacity, float loadFactor, SetAllocationOptimizer context) {
+	public HashSetSizeMonitor(int initialCapacity, float loadFactor, SetAllocationOptimizer context, int index) {
 		super(initialCapacity, loadFactor);
 		this.context = context;
+		this.index = index;
 	}
 
-	public HashSetSizeMonitor(int initialCapacity, SetAllocationOptimizer context) {
+	public HashSetSizeMonitor(int initialCapacity, SetAllocationOptimizer context, int index) {
 		super(initialCapacity);
 		this.context = context;
+		this.index = index;
+		
 	}
 
 
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		context.updateSize(size());
+		context.updateSize(index, size());
 	}
 
 }

@@ -21,7 +21,6 @@ public class MapSizeMonitor<K, V> implements Map<K, V> {
 		this.index = index;
 	}
 	
-	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
 		context.updateSize(index, size());

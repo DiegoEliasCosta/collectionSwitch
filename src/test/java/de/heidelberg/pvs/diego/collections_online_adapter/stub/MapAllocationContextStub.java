@@ -51,5 +51,17 @@ public class MapAllocationContextStub implements MapAllocationContext {
 		
 	}
 
+	@Override
+	public <K, V> Map<K, V> createMap(int initialCapacity, float loadFactor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 
 }

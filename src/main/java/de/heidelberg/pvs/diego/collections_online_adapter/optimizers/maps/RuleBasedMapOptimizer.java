@@ -1,5 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps;
 
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
@@ -9,7 +10,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 
 	public static final int RULE_LINKED_ITERATIONS = 100;
-	public static final int RULE_UNIFIED_SIZE = 500;
+	public static final int RULE_UNIFIED_SIZE = 1500;
 	public static final int RULE_ARRAY_SIZE = 10;
 
 	private int sizes[];
@@ -99,6 +100,19 @@ public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 
 		// FIXME: Add the adaptive aspect to the size as well
 		int mode = IntArrayUtils.calculateModeWithThrehsold(sizes, convergenceRate);
+		
+		if(mode < 0) {
+			mode = IntArrayUtils.calculateModeCategoryWithThreshold(sizes, convergenceRate, 2);
+		}
+		
+		if(mode < 0) {
+			mode = IntArrayUtils.calculateModeCategoryWithThreshold(sizes, convergenceRate, 5);
+		}
+		
+		if(mode < 0) {
+			mode = IntArrayUtils.calculateModeCategoryWithThreshold(sizes, convergenceRate, 10);
+		}
+		
 		int median = IntArrayUtils.calculateMedian(sizes);
 
 		// Inform the Allocation Context
@@ -151,6 +165,24 @@ public class RuleBasedMapOptimizer implements MapAllocationOptimizer {
 	@Override
 	public void setContext(AllocationContextUpdatable context) {
 		this.context = context;
+		
+	}
+
+	@Override
+	public void updateVote(int index, CollectionTypeEnum vote) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addReference(Map<?, ?> map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void checkFinalizedAnalysis() {
+		// TODO Auto-generated method stub
 		
 	}
 

@@ -7,8 +7,10 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AbstractAdaptiveAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
+import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder;
+import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder.AllocationContextAlgorithm;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.RuleBasedMapOptimizer;
 
 public class AdaptiveHashMapAutomataStateTest extends AbstractAutomataStateTest<Map<Integer, Integer>> {
@@ -37,12 +39,15 @@ public class AdaptiveHashMapAutomataStateTest extends AbstractAutomataStateTest<
 
 	@Override
 	protected AbstractAdaptiveAllocationContext buildContext() {
-		return (AbstractAdaptiveAllocationContext) AllocationContextFactory.buildMapContext(CollectionTypeEnum.HASH);
+		AllocationContextBuilder builder = new AllocationContextBuilder(CollectionTypeEnum.HASH, "AdaptiveHashMapAutomata_TEST");
+		builder.withAlgorithm(AllocationContextAlgorithm.ADAPTIVE);
+		return (AbstractAdaptiveAllocationContext) builder.buildMapAllocationContext();
+		
 	}
 
 	@Override
 	protected Map<Integer, Integer> createCollection(AbstractAdaptiveAllocationContext context) {
-		return ((ReactiveMapAllocationContext) context).createMap();
+		return ((AdaptiveMapAllocationContext) context).createMap();
 	}
 
 	@Override

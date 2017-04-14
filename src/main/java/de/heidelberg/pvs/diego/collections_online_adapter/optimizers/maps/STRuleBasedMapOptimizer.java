@@ -1,6 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
@@ -99,6 +99,9 @@ public class STRuleBasedMapOptimizer implements MapAllocationOptimizer {
 
 		// FIXME: Add the adaptive aspect to the size as well
 		int mode = IntArrayUtils.calculateModeWithThrehsold(sizes, convergenceRate);
+		if(mode < 0) {
+			mode = IntArrayUtils.calculateModeCategoryWithThreshold(sizes, convergenceRate, 10);
+		}
 		int median = IntArrayUtils.calculateMedian(sizes);
 
 		// Inform the Allocation Context
@@ -151,6 +154,37 @@ public class STRuleBasedMapOptimizer implements MapAllocationOptimizer {
 	@Override
 	public void setContext(AllocationContextUpdatable context) {
 		this.context = context;
+		
+	}
+
+	@Override
+	public void updateVote(int index, CollectionTypeEnum vote) {
+		switch(vote) {
+		case ARRAY:
+			arrayVote++;
+			break;
+		case ARRAY_HASH:
+			unifiedVote++;
+			break;
+		case HASH:
+			hashVote++;
+			break;
+		case LINKED:
+			linkedVote++;
+			break;
+		}
+		
+	}
+
+	@Override
+	public void addReference(Map<?, ?> map) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void checkFinalizedAnalysis() {
+		// TODO Auto-generated method stub
 		
 	}
 

@@ -1,5 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
@@ -86,6 +87,19 @@ public class RuleBasedListOptimizer implements ListAllocationOptimizer {
 
 		// FIXME: Add the adaptive aspect to the size as well
 		int mode = IntArrayUtils.calculateModeWithThrehsold(sizes, convergenceRate);
+		
+		if(mode < 0) {
+			mode = IntArrayUtils.calculateModeCategoryWithThreshold(sizes, convergenceRate, 3);
+		}
+		
+		if(mode < 0) {
+			mode = IntArrayUtils.calculateModeCategoryWithThreshold(sizes, convergenceRate, 5);
+		}
+		
+		if(mode < 0) {
+			mode = IntArrayUtils.calculateModeCategoryWithThreshold(sizes, convergenceRate, 10);
+		}
+		
 		int median = IntArrayUtils.calculateMedian(sizes);
 
 		// FIXME: To add here the no convergence initial capacity as well
@@ -137,6 +151,34 @@ public class RuleBasedListOptimizer implements ListAllocationOptimizer {
 	@Override
 	public void setContext(ListAllocationContext context) {
 		this.context = context;
+		
+	}
+
+	@Override
+	public void checkFinalizedAnalysis() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateVote(int index, CollectionTypeEnum vote) {
+		switch(vote) {
+		case ARRAY:
+			arrayVote++;
+			break;
+		case HASH:
+			hashVote++;
+			break;
+		case LINKED:
+			linkedVote++;
+			break;
+		}
+		
+	}
+
+	@Override
+	public void addReference(List<?> list) {
+		// FIXME: This is not used here - to be removed from the interface later
 		
 	}
 

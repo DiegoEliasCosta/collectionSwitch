@@ -17,7 +17,7 @@ public class ArrayListSizeMonitor<E> extends ArrayList<E> {
 		this.context = context;
 		this.index = index;
 	}
-
+	
 	public ArrayListSizeMonitor(int initialCapacity, ListAllocationOptimizer context, int index) {
 		super(initialCapacity);
 		this.context = context;
@@ -33,8 +33,22 @@ public class ArrayListSizeMonitor<E> extends ArrayList<E> {
 
 	@Override
 	protected void finalize() throws Throwable {
-		super.finalize();
 		context.updateSize(index, size());
 	}
+	
+	@Override
+	public boolean add(E e) {
+		return super.add(e);
+	}
+	
+	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		return super.addAll(c);
+	}
+	
+	public void setOptimizer(ListAllocationOptimizer optimizer) {
+		this.context = optimizer;
+	}
+
 
 }

@@ -12,17 +12,19 @@ public class SetFullMonitor<E> implements Set<E> {
 	private int containsOp;
 	private int iterateOp;
 	private SetAllocationOptimizer context;
+	private int index;
 
-	public SetFullMonitor(Set<E> set, SetAllocationOptimizer context) {
+	public SetFullMonitor(Set<E> set, SetAllocationOptimizer context, int index) {
 		super();
 		this.set = set;
 		this.context = context;
+		this.index = index;
 	}
 	
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		this.context.updateOperationsAndSize(containsOp, iterateOp, size());
+		this.context.updateOperationsAndSize(index, containsOp, iterateOp, size());
 	}
 	
 	public boolean contains(Object o) {

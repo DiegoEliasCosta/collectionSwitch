@@ -13,16 +13,13 @@ public class ListProactiveSizeMonitor<E> implements List<E> {
 	
 	private List<E> list;
 
-	private int sizeThreshold;
-
-	private int index;
-
-	public ListProactiveSizeMonitor(List<E> list, ListAllocationOptimizer optimizer, int sizeThreshold, int index) {
+	private final int monitorIndex;
+	
+	public ListProactiveSizeMonitor(List<E> list, ListAllocationOptimizer optimizer, int index) {
 		super();
 		this.optimizer = optimizer;
 		this.list = list;
-		this.sizeThreshold = sizeThreshold;
-		this.index = index;
+		this.monitorIndex = index;
 	}
 	
 	// --------------------------------------------------------------------
@@ -32,35 +29,28 @@ public class ListProactiveSizeMonitor<E> implements List<E> {
 	public boolean add(E e) {
 		boolean add = list.add(e);
 		// UPDATE
-		this.checkAndUpdateSize();
+		this.optimizer.updateSize(monitorIndex, size());
 		return add;
 	}
 
 	public boolean addAll(Collection<? extends E> c) {
 		boolean addAll = list.addAll(c);
 		// UPDATE
-		this.checkAndUpdateSize();
+		this.optimizer.updateSize(monitorIndex, size());
 		return addAll;
 	}
 	
 	public boolean addAll(int index, Collection<? extends E> c) {
 		boolean addAll = list.addAll(index, c);
 		// UPDATE
-		this.checkAndUpdateSize();
+		this.optimizer.updateSize(monitorIndex, size());;
 		return addAll;
 	}
 	
 	public void add(int index, E element) {
 		list.add(index, element);
 		// UPDATE
-		this.checkAndUpdateSize();
-	}
-	
-	private void checkAndUpdateSize() {
-		int size = list.size();
-		if(size >= this.sizeThreshold) {
-			this.optimizer.updateSize(index, size);
-		}
+		this.optimizer.updateSize(monitorIndex, size());
 	}
 	
 	public int size() {

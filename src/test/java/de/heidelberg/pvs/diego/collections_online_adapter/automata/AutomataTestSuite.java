@@ -7,7 +7,9 @@ import org.junit.runners.Suite;
 
 @Suite.SuiteClasses({
 	AdaptiveArrayListAutomataStateTest.class,
+	ProactiveArrayListAutomataStateTest.class,
 	AdaptiveHashMapAutomataStateTest.class,
+	ProactiveHashMapAutomataStateTest.class,
 	AdaptiveHashSetAutomataStateTest.class
 })
 public class AutomataTestSuite {

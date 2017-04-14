@@ -2,16 +2,15 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 
 public class LogMapAllocationContext implements MapAllocationContext {
+
+	private static final int FREQUENCY = 10;
 
 	MapAllocationContext context;
 
@@ -74,8 +73,8 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	public <K, V> Map<K, V> createMap() {
 
 		count++;
-		if (count % 100 == 0) {
-			writer.println("Created " + count );
+		if (count % FREQUENCY == 0) {
+			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=DEFAULT)  ", count, this.context.getInitialCapacity()));
 			writer.flush();
 		}
 
@@ -86,8 +85,9 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	public <K, V> Map<K, V> createMap(int initialCapacity) {
 
 		count++;
-		if (count % 100 == 0) {
-			writer.println("Created " + count );
+		if (count % FREQUENCY == 0) {
+			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getInitialCapacity(), initialCapacity));
+			
 			writer.flush();
 		}
 
@@ -98,12 +98,31 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	public <K, V> Map<K, V> createMap(Map<K, V> map) {
 
 		count++;
-		if (count % 100 == 0) {
-			writer.println("Created " + count );
+		if (count % FREQUENCY == 0) {
+			writer.println(String.format("Copied %d maps \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getInitialCapacity(), map.size()));
 			writer.flush();
 		}
 
 		return this.context.createMap(map);
 	}
+	
+	@Override
+	public <K, V> Map<K, V> createMap(int initialCapacity, float loadFactor) {
+		
+		count++;
+		if (count % FREQUENCY == 0) {
+			writer.println(String.format("Copied %d maps \n\t-- initialCapacity (analyzed=%d || described=%d) \n\t-- (loadFactor=%d)  ", 
+					count, this.context.getInitialCapacity(), initialCapacity, loadFactor));
+			writer.flush();
+		}
+		
+		return this.context.createMap(initialCapacity, loadFactor);
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		return context.getInitialCapacity();
+	}
+
 
 }

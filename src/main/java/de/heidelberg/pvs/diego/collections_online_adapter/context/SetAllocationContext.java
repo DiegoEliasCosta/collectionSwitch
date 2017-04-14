@@ -10,6 +10,10 @@ public interface SetAllocationContext extends AllocationContextUpdatable {
 	public <E> Set<E> createSet(int initialCapacity);
 
 	public <E> Set<E> createSet(Collection<? extends E> set);
+
+	public AllocationContextState getAllocationContextState();
+
+	public CollectionTypeEnum getChampion();
 	
 	
 }

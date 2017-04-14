@@ -5,10 +5,13 @@ import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AbstractAdaptiveAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
+import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder;
+import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder.AllocationContextAlgorithm;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.RuleBasedListOptimizer;
 
 public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTest<List<Integer>> {
@@ -30,11 +33,13 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 
 	@Override
 	protected AbstractAdaptiveAllocationContext buildContext() {
-		return (AbstractAdaptiveAllocationContext) AllocationContextFactory.buildListContext(CollectionTypeEnum.ARRAY);
+		AllocationContextBuilder builder = new AllocationContextBuilder(CollectionTypeEnum.ARRAY, "AdaptiveArrayListAutomata_TEST");
+		builder.withAlgorithm(AllocationContextAlgorithm.ADAPTIVE);
+		return (AbstractAdaptiveAllocationContext) builder.buildListAllocationContext();
 	}
 
 	protected List<Integer> createCollection(AbstractAdaptiveAllocationContext context) {
-		return ((ReactiveListAllocationContext) context).createList();
+		return ((ListAllocationContext) context).createList();
 	}
 
 	protected List<List<Integer>> fillCollectionsAboveSizeLimit(List<List<Integer>> collectionCreated) {
@@ -108,6 +113,7 @@ public class AdaptiveArrayListAutomataStateTest extends AbstractAutomataStateTes
 
 		for (List<Integer> list : collections) {
 			list.addAll(fullList);
+			list.add(1);
 		}
 		
 		return collections;

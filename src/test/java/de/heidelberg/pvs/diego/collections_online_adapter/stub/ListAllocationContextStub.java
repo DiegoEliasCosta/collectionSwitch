@@ -6,11 +6,8 @@ import java.util.List;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
 public class ListAllocationContextStub implements ListAllocationContext {
-
-
 
 	@Override
 	public <E> List<E> createList() {
@@ -52,6 +49,18 @@ public class ListAllocationContextStub implements ListAllocationContext {
 	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setAllocationContextState(AllocationContextState inactive) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 

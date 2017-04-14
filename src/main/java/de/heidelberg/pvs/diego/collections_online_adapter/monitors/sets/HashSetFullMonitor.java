@@ -14,21 +14,24 @@ public class HashSetFullMonitor<E> extends HashSet<E> {
 
 	private int containsOp;
 	private int iterateOp;
+	private int index ;
 	
-	public HashSetFullMonitor(int initialCapacity, SetAllocationOptimizer context) {
+	public HashSetFullMonitor(int initialCapacity, SetAllocationOptimizer context, int index) {
 		super(initialCapacity);
 		this.context = context;
+		this.index = index;
 	}
 	
-	public HashSetFullMonitor(Collection<? extends E> set, SetAllocationOptimizer context) {
+	public HashSetFullMonitor(Collection<? extends E> set, SetAllocationOptimizer context, int index) {
 		super(set);
 		this.context = context;
+		this.index = index;
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		this.context.updateOperationsAndSize(containsOp, iterateOp, size());
+		this.context.updateOperationsAndSize(index, containsOp, iterateOp, size());
 	}
 	
 	public boolean contains(Object o) {
