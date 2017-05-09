@@ -74,6 +74,32 @@ public class ListsFactory {
 	}
 
 	
+
+	
+	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer) {
+
+		int index = optimizer.getMonitoringIndex();
+		
+		if (index >= 0) {
+			
+			switch (type) {
+			case ARRAY:
+				return new ArrayListSizeMonitor<E>(optimizer, index);
+			case LINKED:
+				return new LinkedListSizeMonitor<E>(optimizer, index);
+			case HASH:
+				return new ListSizeMonitor<E>(new HashArrayList<E>(), optimizer, index);
+			default:
+				break;
+			}
+
+		}
+
+		return createNormalList(type);
+
+	}
+
+	
 	public static <E> List<E> createSizeMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,
 			int initialCapacity) {
 
@@ -180,6 +206,28 @@ public class ListsFactory {
 		}
 
 		return createNormalList(type, list);
+	}
+	
+	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer) {
+
+		int index = optimizer.getMonitoringIndex();
+
+		if (index >= 0) {
+
+			switch (type) {
+			case ARRAY:
+				return new ArrayListFullMonitor<E>(optimizer, index);
+			case LINKED:
+				return new LinkedListFullMonitor<E>(optimizer, index);
+			case HASH:
+				return new HashArrayListFullMonitor<E>(optimizer, index);
+			default:
+				break;
+			}
+
+		}
+
+		return createNormalList(type);
 	}
 
 	public static <E> List<E> createFullMonitor(CollectionTypeEnum type, ListAllocationOptimizer optimizer,

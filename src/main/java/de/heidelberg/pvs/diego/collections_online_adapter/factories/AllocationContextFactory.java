@@ -13,6 +13,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationC
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FastListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InactiveListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAllocationContext;
@@ -21,6 +22,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.Proactive
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ProactiveMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ProactiveSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder.AllocationContextAlgorithm;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.FastListOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ProactiveRuleBasedListOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.RuleBasedListOptimizer;
@@ -38,7 +40,7 @@ public class AllocationContextFactory {
 	
 	// TODO: HUGE REFACTOR -- We should be able to use the same context for all collections
 
-	private static final int THREADS_NUMBER = 2;
+	private static final int THREADS_NUMBER = 0;
 	// Default Values
 	public static final int WINDOW_SIZE = 10;
 	public static final int CONVERGENCE_RATE = 7;
@@ -50,6 +52,7 @@ public class AllocationContextFactory {
 
 	public static class AllocationContextBuilder {
 
+		private static final int SAMPLES = 100;
 		private final CollectionTypeEnum type;
 		private final String identifier;
 
@@ -65,10 +68,11 @@ public class AllocationContextFactory {
 		private int fullAnalysisThr = FULL_ANALYSIS_THRESHOLD;
 		private int sleepingFrequency = SLEEPING_FREQUENCY;
 		private int divergenceRounds = DIVERGENCE_ROUNDS_THRESHOLD;
+		private int samples = SAMPLES;
 
 		public enum AllocationContextAlgorithm {
 
-			ADAPTIVE, INACTIVE, PROACTIVE;
+			ADAPTIVE, INACTIVE, PROACTIVE, FAST;
 
 		}
 
@@ -97,6 +101,11 @@ public class AllocationContextFactory {
 
 		public AllocationContextBuilder windowSize(int windowSize) {
 			this.windowSize = windowSize;
+			return this;
+		}
+		
+		public AllocationContextBuilder samples(int samples) {
+			this.samples  = samples;
 			return this;
 		}
 
@@ -145,12 +154,12 @@ public class AllocationContextFactory {
 	public static ListAllocationContext buildListContext(AllocationContextBuilder builder) {
 		return buildListContext(builder.type, builder.identifier, builder.algorithm, builder.windowSize,
 				builder.convergenceRate, builder.sleepingFrequency, builder.fullAnalysisThr, builder.divergenceRounds,
-				builder.hasLog, builder.logFile, builder.singleThread);
+				builder.hasLog, builder.logFile, builder.singleThread, builder.samples);
 	}
 	
 	public static ListAllocationContext buildListContext(CollectionTypeEnum type, String identifier,
 			AllocationContextAlgorithm algorithm, int windowSize, int convergenceRate, int sleepingFrequency,
-			int fullAnalysisThr, int divergenceRounds, boolean withLog, String logDir, boolean singleThreaded) {
+			int fullAnalysisThr, int divergenceRounds, boolean withLog, String logDir, boolean singleThreaded, int samples) {
 
 		ListAllocationContext context;
 		final ListAllocationOptimizer optimizer;
@@ -160,6 +169,14 @@ public class AllocationContextFactory {
 		case INACTIVE:
 			optimizer = null;
 			return new InactiveListAllocationContext(type);
+			
+		case FAST:
+			
+			optimizer = new FastListOptimizer();
+			context = new FastListAllocationContext(type, optimizer, samples);
+			optimizer.setContext(context);
+			break;
+			
 
 		case ADAPTIVE:
 			if (singleThreaded) {
@@ -384,11 +401,17 @@ public class AllocationContextFactory {
 		if (sleepingFrequencyStr != null) {
 			builder.sleepingFrequency(Integer.parseInt(sleepingFrequencyStr));
 		}
-
+		
 		String fullAnalysysStr = System.getProperty("fullAnalysis");
 		if (fullAnalysysStr != null) {
 			builder.fullAnalysisThr(Integer.parseInt(fullAnalysysStr));
 		}
+		
+		String sampleStr = System.getProperty("samples");
+		if(sampleStr != null) {
+			builder.samples(Integer.parseInt(sampleStr));
+		}
+		
 
 		builder.singleThread(System.getProperty("single-thread") != null);
 
@@ -396,6 +419,8 @@ public class AllocationContextFactory {
 		builder.withAlgorithm(AllocationContextAlgorithm.PROACTIVE);
 		if (System.getProperty("adaptive") != null) {
 			builder.withAlgorithm(AllocationContextAlgorithm.ADAPTIVE);
+		} else if(System.getProperty("fast") != null) {
+			builder.withAlgorithm(AllocationContextAlgorithm.FAST);
 		}
 
 		String logFile = System.getProperty("log");

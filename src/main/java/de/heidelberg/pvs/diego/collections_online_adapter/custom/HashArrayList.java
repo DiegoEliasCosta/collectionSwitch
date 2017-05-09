@@ -3,7 +3,6 @@ package de.heidelberg.pvs.diego.collections_online_adapter.custom;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Predicate;
 
 import org.eclipse.collections.impl.bag.mutable.HashBag;
 
@@ -106,13 +105,6 @@ public class HashArrayList<E> extends ArrayList<E> implements Serializable {
 		bag.remove(c);
 		return super.removeAll(c);
 	}
-	
-	@Override
-	public boolean removeIf(Predicate<? super E> filter) {
-		bag.removeIf(filter);
-		return super.removeIf(filter);
-	}
-	
 	
 	@Override
 	public void clear() {

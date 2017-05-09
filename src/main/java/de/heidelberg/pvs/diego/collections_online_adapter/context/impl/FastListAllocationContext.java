@@ -11,82 +11,151 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListA
 
 public class FastListAllocationContext implements ListAllocationContext {
 
+	private static final float ALPHA = 0.9f;
 	int sample;
+
 	int count;
-	
-	ListAllocationOptimizer optimizer;
-	
+	int finalizedCount;
+
 	CollectionTypeEnum championCollection;
 	CollectionTypeEnum defaultCollection;
-	
+
 	AllocationContextState state;
 	private int analyzedInitialCapacity;
+	private int contains;
+	private int analyzedContains;
+	
+	private ListAllocationOptimizer optimizer;
 	
 	
-	public FastListAllocationContext(CollectionTypeEnum defaultCollections, int sample, ListAllocationOptimizer optimizer) {
+	public FastListAllocationContext(CollectionTypeEnum defaultCollections, ListAllocationOptimizer optimizer, int sample) {
 		super();
 		this.sample = sample;
-		this.optimizer = optimizer;
 		this.defaultCollection = defaultCollections;
+		this.championCollection = defaultCollections;
+		this.analyzedInitialCapacity = 10;
+		this.optimizer = optimizer;
+		state = AllocationContextState.WARMUP;
 	}
 
 	@Override
 	public void optimizeCollectionType(CollectionTypeEnum collecton, int mode, int median) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public <E> List<E> createList() {
 		
-		switch(state) {
-		
-			case INACTIVE:
+		int countCopy = count++;
+
+		switch (state) {
+
+		case ACTIVE:
+			if (countCopy % sample == 0) {
+				return ListsFactory.createFullMonitor(championCollection, optimizer, this.analyzedInitialCapacity);
+			} else {
+				return ListsFactory.createNormalList(championCollection, this.analyzedInitialCapacity);
+			}
+
+		case INACTIVE:
+			return ListsFactory.createNormalList(defaultCollection);
+
+		case WARMUP:
+			if (countCopy % sample == 0) {
+				return ListsFactory.createFullMonitor(defaultCollection, optimizer);
+			} else {
 				return ListsFactory.createNormalList(defaultCollection);
-				
-			case ACTIVE_FULL:
-				break;
-				
-		
+			}
+
+		default:
+			return null;
+
 		}
-		
-		return null;
 	}
 
 	@Override
 	public <E> List<E> createList(int initialCapacity) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		int countCopy = count++;
+		
+		switch (state) {
+
+		case ACTIVE:
+			if (countCopy % sample == 0) {
+				return ListsFactory.createFullMonitor(championCollection, optimizer, this.analyzedInitialCapacity);
+			} else {
+				return ListsFactory.createNormalList(championCollection, this.analyzedInitialCapacity);
+			}
+
+		case INACTIVE:
+			return ListsFactory.createNormalList(defaultCollection);
+
+		case WARMUP:
+			if (countCopy % sample == 0) {
+				return ListsFactory.createFullMonitor(defaultCollection, optimizer);
+			} else {
+				return ListsFactory.createNormalList(defaultCollection);
+			}
+
+		default:
+			return null;
+
+		}
 	}
 
 	@Override
-	public <E> List<E> createList(Collection<? extends E> c) {
-		// TODO Auto-generated method stub
-		return null;
+	public <E> List<E> createList(Collection<? extends E> list) {
+		
+		int countCopy = count++;
+		
+		// FIXME: Analyze only the operations in this case
+		switch (state) {
+		case ACTIVE:
+			if (countCopy % sample == 0) {
+				return ListsFactory.createSizeMonitor(championCollection, optimizer, list);
+			} else {
+				return ListsFactory.createNormalList(championCollection, list);
+			}
+
+		case INACTIVE:
+			return ListsFactory.createNormalList(defaultCollection, list);
+
+		case WARMUP:
+			if (countCopy % sample == 0) {
+				return ListsFactory.createSizeMonitor(defaultCollection, optimizer, list);
+			} else {
+				return ListsFactory.createNormalList(defaultCollection, list);
+			}
+
+		default:
+			return null;
+
+		}
+		
+		
 	}
 
 	@Override
 	public AllocationContextState getAllocationContextState() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.state;
 	}
 
 	@Override
 	public CollectionTypeEnum getChampion() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.championCollection;
 	}
 
 	@Override
 	public void setAllocationContextState(AllocationContextState inactive) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -94,5 +163,5 @@ public class FastListAllocationContext implements ListAllocationContext {
 		return this.analyzedInitialCapacity;
 	}
 
-	
+
 }

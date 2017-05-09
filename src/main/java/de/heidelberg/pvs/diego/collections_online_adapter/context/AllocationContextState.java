@@ -13,6 +13,9 @@ public enum AllocationContextState {
 	
 	OPTIMIZED,
 	
-	INACTIVE; 
+	INACTIVE,
+	
+	WARMUP, 
+	ACTIVE; 
 	
 }

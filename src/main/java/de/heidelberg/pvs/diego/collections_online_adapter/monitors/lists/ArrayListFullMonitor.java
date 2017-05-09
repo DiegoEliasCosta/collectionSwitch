@@ -15,6 +15,12 @@ public class ArrayListFullMonitor<E> extends ArrayList<E> {
 	private int index;
 	
 
+	public ArrayListFullMonitor(ListAllocationOptimizer context, int index) {
+		super();
+		this.context = context;
+		this.index = index;
+	}
+	
 	public ArrayListFullMonitor(int initialCapacity, ListAllocationOptimizer context, int index) {
 		super(initialCapacity);
 		this.context = context;

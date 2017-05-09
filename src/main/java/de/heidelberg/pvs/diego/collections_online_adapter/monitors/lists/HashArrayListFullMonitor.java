@@ -13,6 +13,11 @@ public class HashArrayListFullMonitor<E> extends HashArrayList<E>{
 	private int midListOp;
 	private int containsOp;
 	private int index;
+	
+	public HashArrayListFullMonitor(ListAllocationOptimizer context, int index) {
+		this.context = context;
+		this.index = index;
+	}
 
 	public HashArrayListFullMonitor(int initialCapacity, ListAllocationOptimizer context, int index) {
 		super(initialCapacity);

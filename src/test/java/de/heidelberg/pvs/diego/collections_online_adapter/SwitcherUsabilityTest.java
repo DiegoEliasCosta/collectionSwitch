@@ -19,5 +19,13 @@ public class SwitcherUsabilityTest {
 		
 	}
 	
+	@Test
+	public void testAnnotation() {
+		
+		
+		
+		
+	}
+	
 	
 }
