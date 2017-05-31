@@ -1,7 +1,10 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.context;
+package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Map;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.MapFactory;
 
 public class InactiveMapAllocationContext implements MapAllocationContext {

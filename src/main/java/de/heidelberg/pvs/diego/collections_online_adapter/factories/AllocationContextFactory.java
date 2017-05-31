@@ -5,8 +5,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.InactiveMapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.InactiveSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
@@ -15,6 +13,8 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveM
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.AdaptiveSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.FastListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InactiveListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InactiveMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InactiveSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;

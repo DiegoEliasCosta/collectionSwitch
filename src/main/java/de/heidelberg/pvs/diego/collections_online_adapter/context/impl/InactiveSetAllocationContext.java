@@ -1,8 +1,11 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.context;
+package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Collection;
 import java.util.Set;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.SetsFactory;
 
 public class InactiveSetAllocationContext implements SetAllocationContext {
