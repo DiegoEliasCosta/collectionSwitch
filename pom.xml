@@ -37,6 +37,14 @@
 			<version>1.2.1</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/edu.stanford.nlp/stanford-corenlp -->
+		<!--  Stanford's NLP -->
+		<dependency>
+			<groupId>edu.stanford.nlp</groupId>
+			<artifactId>stanford-corenlp</artifactId>
+			<version>3.7.0</version>
+		</dependency>
+
 		<!-- FAST UTIL -->
 		<dependency>
 			<groupId>it.unimi.dsi</groupId>
@@ -91,6 +99,13 @@
 			<groupId>in.jlibs</groupId>
 			<artifactId>jlibs-core</artifactId>
 			<version>2.1</version>
+		</dependency>
+
+		<!-- TROVE -->
+		<dependency>
+			<groupId>net.sf.trove4j</groupId>
+			<artifactId>trove4j</artifactId>
+			<version>3.0.3</version>
 		</dependency>
 
 	</dependencies>

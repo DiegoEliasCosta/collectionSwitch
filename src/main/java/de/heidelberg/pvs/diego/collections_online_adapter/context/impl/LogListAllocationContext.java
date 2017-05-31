@@ -26,7 +26,7 @@ public class LogListAllocationContext implements ListAllocationContext {
 		long currentTimeMillis = System.currentTimeMillis();
 		
 		try{
-		    writer = new PrintWriter(dir + "/" +identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
+		    writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
 		    writer.println("Context initialized");
 		    writer.println("First Status: " + this.context.getAllocationContextState());
 		    writer.println("Specified collection: " + this.context.getChampion());

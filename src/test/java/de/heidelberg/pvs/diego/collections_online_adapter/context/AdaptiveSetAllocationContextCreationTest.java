@@ -32,7 +32,7 @@ public class AdaptiveSetAllocationContextCreationTest {
 	public void setup() {
 		
 		hashContext = 	AllocationContextFactory.buildSetContext(CollectionTypeEnum.HASH);
-		unifiedContext = 	AllocationContextFactory.buildSetContext(CollectionTypeEnum.ARRAY_HASH);
+		unifiedContext = 	AllocationContextFactory.buildSetContext(CollectionTypeEnum.OPEN_HASH);
 		linkedContext = AllocationContextFactory.buildSetContext(CollectionTypeEnum.LINKED);
 		arrayContext = 	AllocationContextFactory.buildSetContext(CollectionTypeEnum.ARRAY);
 		

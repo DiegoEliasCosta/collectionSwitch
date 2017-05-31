@@ -48,7 +48,7 @@ public class ProactiveRuleBasedMapOptimizer implements MapAllocationOptimizer {
 		}
 
 		else if (size < RULE_UNIFIED_SIZE) {
-			votes[index] = CollectionTypeEnum.ARRAY_HASH;
+			votes[index] = CollectionTypeEnum.OPEN_HASH;
 		}
 
 		else {
@@ -80,7 +80,7 @@ public class ProactiveRuleBasedMapOptimizer implements MapAllocationOptimizer {
 		for (int i = 0; i < windowSize; i++) {
 			if (this.votes[i] == CollectionTypeEnum.ARRAY)
 				arrayVote++;
-			else if (this.votes[i] == CollectionTypeEnum.ARRAY_HASH)
+			else if (this.votes[i] == CollectionTypeEnum.OPEN_HASH)
 				unifiedVote++;
 			else if (this.votes[i] == CollectionTypeEnum.HASH)
 				hashVote++;
@@ -95,7 +95,7 @@ public class ProactiveRuleBasedMapOptimizer implements MapAllocationOptimizer {
 
 		// Inform the Allocation Context
 		else if (unifiedVote > convergenceRate) {
-			this.context.optimizeCollectionType(CollectionTypeEnum.ARRAY_HASH, mode, median);
+			this.context.optimizeCollectionType(CollectionTypeEnum.OPEN_HASH, mode, median);
 		}
 
 		else if (linkedVote > convergenceRate) {

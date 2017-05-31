@@ -25,7 +25,7 @@ public class MapFactory {
 		case ARRAY:
 			return ArrayMap.create(initialCapacity);
 
-		case ARRAY_HASH:
+		case OPEN_HASH:
 			return new UnifiedMap<K, V>(initialCapacity, loadFactor);
 
 		case HASH:
@@ -48,7 +48,7 @@ public class MapFactory {
 			arrayMap.putAll(map);
 			return arrayMap;
 
-		case ARRAY_HASH:
+		case OPEN_HASH:
 			return new UnifiedMap<K, V>(map);
 
 		case HASH:
@@ -75,7 +75,7 @@ public class MapFactory {
 			case ARRAY:
 				return new MapSizeMonitor(ArrayMap.create(initialCapacity), optimizer, index);
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				return new MapSizeMonitor<K, V>(new UnifiedMap<K, V>(initialCapacity, loadFactor), optimizer, index);
 
 			case HASH:
@@ -108,7 +108,7 @@ public class MapFactory {
 				optimizer.addReference(monitor);
 				return monitor;
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				monitor = new ProactiveMapFullMonitor<K, V>(new UnifiedMap<K, V>(initialCapacity, loadFactor), optimizer, index);
 				optimizer.addReference(monitor);
 				return monitor;
@@ -144,7 +144,7 @@ public class MapFactory {
 				arrayMap.putAll(map);
 				return new MapSizeMonitor<K, V>(arrayMap, optimizer, index);
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				return new MapSizeMonitor<K, V>(new UnifiedMap<K, V>(map), optimizer, index);
 
 			case HASH:
@@ -178,7 +178,7 @@ public class MapFactory {
 				optimizer.addReference(monitor);
 				return monitor;
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				monitor = new ProactiveMapFullMonitor<K, V>(new UnifiedMap<K, V>(map), optimizer, index);
 				optimizer.addReference(monitor);
 				return monitor;
@@ -211,7 +211,7 @@ public class MapFactory {
 			case ARRAY:
 				return new MapFullMonitor(ArrayMap.create(initialCapacity), context, index);
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				return new MapFullMonitor<K, V>(new UnifiedMap<K, V>(initialCapacity, loadFactor), context, index);
 
 			case HASH:
@@ -244,7 +244,7 @@ public class MapFactory {
 				optimizer.addReference(monitor);
 				return monitor;
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				monitor = new ProactiveMapFullMonitor<K, V>(new UnifiedMap<K, V>(initialCapacity, loadFactor), optimizer, index);
 				optimizer.addReference(monitor);
 				return monitor;
@@ -279,7 +279,7 @@ public class MapFactory {
 				arrayMap.putAll(map);
 				return new MapFullMonitor<K, V>(arrayMap, context, index);
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				return new MapFullMonitor<K, V>(new UnifiedMap<K, V>(map), context, index);
 
 			case HASH:
@@ -314,7 +314,7 @@ public class MapFactory {
 				optimizer.addReference(monitor);
 				return monitor;
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				monitor = new ProactiveMapFullMonitor<K, V>(new UnifiedMap<K, V>(map), optimizer, index);
 				optimizer.addReference(monitor);
 				return monitor;

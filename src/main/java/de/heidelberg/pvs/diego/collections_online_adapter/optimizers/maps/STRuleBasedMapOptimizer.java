@@ -111,7 +111,7 @@ public class STRuleBasedMapOptimizer implements MapAllocationOptimizer {
 
 		// Inform the Allocation Context
 		else if (unifiedVote > convergenceRate) {
-			this.context.optimizeCollectionType(CollectionTypeEnum.ARRAY_HASH, mode, median);
+			this.context.optimizeCollectionType(CollectionTypeEnum.OPEN_HASH, mode, median);
 		}
 
 		else if (linkedVote > convergenceRate) {
@@ -163,7 +163,7 @@ public class STRuleBasedMapOptimizer implements MapAllocationOptimizer {
 		case ARRAY:
 			arrayVote++;
 			break;
-		case ARRAY_HASH:
+		case OPEN_HASH:
 			unifiedVote++;
 			break;
 		case HASH:

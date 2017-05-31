@@ -28,7 +28,7 @@ public class SetsFactory {
 		case ARRAY:
 			return new ArraySet(initialCapacity);
 
-		case ARRAY_HASH:
+		case OPEN_HASH:
 			return new UnifiedSet<E>(initialCapacity);
 
 		case LINKED:
@@ -53,7 +53,7 @@ public class SetsFactory {
 		case ARRAY:
 			return new ArraySet(set);
 
-		case ARRAY_HASH:
+		case OPEN_HASH:
 			return new UnifiedSet<E>(set);
 
 		case LINKED:
@@ -83,7 +83,7 @@ public class SetsFactory {
 			case ARRAY:
 				return new SetSizeMonitor<E>(new ArraySet(initialCapacity), context, index);
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				return new SetSizeMonitor<E>(new UnifiedSet<E>(initialCapacity), context, index);
 
 			case LINKED:
@@ -116,7 +116,7 @@ public class SetsFactory {
 			case ARRAY:
 				return new SetSizeMonitor<E>(new ArraySet(set), optimizer, index);
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				return new SetSizeMonitor<E>(new UnifiedSet<E>(set), optimizer, index);
 
 			case LINKED:
@@ -149,7 +149,7 @@ public class SetsFactory {
 			case ARRAY:
 				return new SetFullMonitor<E>(new ArraySet(initialCapacity), context, index);
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				return new SetFullMonitor<E>(new UnifiedSet<E>(initialCapacity), context, index);
 
 			case LINKED:
@@ -181,7 +181,7 @@ public class SetsFactory {
 			case ARRAY:
 				return new SetFullMonitor<E>(new ArraySet(set), context, index);
 
-			case ARRAY_HASH:
+			case OPEN_HASH:
 				return new SetFullMonitor<E>(new UnifiedSet<E>(set), context, index);
 
 			case LINKED:
