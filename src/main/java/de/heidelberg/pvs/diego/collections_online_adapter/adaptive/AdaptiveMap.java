@@ -13,7 +13,7 @@ import edu.stanford.nlp.util.ArrayMap;
 public class AdaptiveMap<K, V> implements Map<K, V> {
 	
 	private static final int OPENHASH_HIGH_BOUND = 10000;
-	private static final int ARRAY_HIGH_BOUND = 50;
+	private static final int ARRAY_HIGH_BOUND = 20;
 	
 	private static final int SAMPLE = 50;
 	
@@ -23,7 +23,7 @@ public class AdaptiveMap<K, V> implements Map<K, V> {
 	
 	public AdaptiveMap() {
 		super();
-		map = new ArrayMap<>();
+		map = new ArrayMap<K,V>();
 		type = CollectionTypeEnum.ARRAY;
 	}
 	

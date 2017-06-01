@@ -36,11 +36,11 @@ public class AdaptiveSet<E> implements Set<E> {
 			set = new ArraySet(capacity);
 			type = CollectionTypeEnum.ARRAY;
 		} else if (capacity < OPENHASH_HIGH_BOUND) {
-			set = new HashSet<E>(capacity);
-			type = CollectionTypeEnum.HASH;
-		} else {
 			set = new UnifiedSet<E>(capacity);
 			type = CollectionTypeEnum.OPEN_HASH;
+		} else {
+			set = new HashSet<E>(capacity);
+			type = CollectionTypeEnum.HASH;
 
 		}
 	}
@@ -54,12 +54,12 @@ public class AdaptiveSet<E> implements Set<E> {
 		 */
 
 		if (capacity < OPENHASH_HIGH_BOUND) {
-			set = new HashSet<E>(capacity, loadFactor);
-			type = CollectionTypeEnum.HASH;
-
-		} else {
 			set = new UnifiedSet<E>(capacity, loadFactor);
 			type = CollectionTypeEnum.OPEN_HASH;
+
+		} else {
+			set = new HashSet<E>(capacity, loadFactor);
+			type = CollectionTypeEnum.HASH;
 
 		}
 	}
@@ -71,14 +71,14 @@ public class AdaptiveSet<E> implements Set<E> {
 		// type = CollectionTypeEnum.ARRAY;
 		// }
 
-		if (set.size() > OPENHASH_HIGH_BOUND) {
-			this.set = new HashSet<E>(set);
-			type = CollectionTypeEnum.HASH;
+		if (set.size() < OPENHASH_HIGH_BOUND) {
+			this.set = new UnifiedSet<E>(set);
+			type = CollectionTypeEnum.OPEN_HASH;
 		}
 
 		else {
-			set = new UnifiedSet<E>(set);
-			type = CollectionTypeEnum.OPEN_HASH;
+			set = new HashSet<E>(set);
+			type = CollectionTypeEnum.HASH;
 		}
 
 	}
