@@ -14,14 +14,11 @@ public class ActiveOptimizer implements AllocationOptimizer {
 
 	private static final Object DUMB_OBJECT = new Object();
 	
-	public static final int MIDLIST_LINKED_THRESHOLD = 3;
-	public static final int CONTAINS_HASH_THRESHOLD = 16;
-
 	private int sizes[];
 	private AtomicInteger indexManager = new AtomicInteger(0);
 	protected Map<List<?>, Object> finalizedManager;
 
-	ListAllocationContext context;
+	AllocationContextUpdatable context;
 	
 	Thread proactiveThread;
 
@@ -73,7 +70,7 @@ public class ActiveOptimizer implements AllocationOptimizer {
 
 	@Override
 	public void setContext(AllocationContextUpdatable context) {
-		// TODO Auto-generated method stub
+		this.context = context;
 		
 	}
 }

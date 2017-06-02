@@ -6,26 +6,23 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
-public class SetSizeMonitor<E> implements Set<E> {
+public class SetPassiveSizeMonitor<E> implements Set<E> {
 	
 	private AllocationOptimizer context;
 	
 	private Set<E> set;
-
-	private int index;
 	
-	public SetSizeMonitor(Set<E> set, AllocationOptimizer context, int index) {
+	public SetPassiveSizeMonitor(Set<E> set, AllocationOptimizer context) {
 		super();
 		this.context = context;
 		this.set = set;
-		this.index = index;
 	}
 
 
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		context.updateSize(index, size());
+		context.updateSize(0, size());
 	}
 
 	

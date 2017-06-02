@@ -1,19 +1,16 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 
 public class PassiveOptimizer implements AllocationOptimizer {
 
 	private static final float ALPHA = 0.9f;
-	private ListAllocationContext context;
+	private AllocationContextUpdatable context;
 	private int finalizedCount;
 	private int analyzedInitialCapacity;
 	
-	public PassiveOptimizer(ListAllocationContext context) {
+	public PassiveOptimizer() {
 		super();
-		this.context = context;
 	}
 
 	@Override
@@ -31,14 +28,14 @@ public class PassiveOptimizer implements AllocationOptimizer {
 		}
 		
 		if(finalizedCopy == 10) {
-			this.context.setAllocationContextState(AllocationContextState.ACTIVE);
+			this.context.updateCollectionSize(analyzedInitialCapacity);
 		}	
 		
 	}
 
 	@Override
 	public void setContext(AllocationContextUpdatable context) {
-		// TODO Auto-generated method stub
+		this.context = context;
 		
 	}
 

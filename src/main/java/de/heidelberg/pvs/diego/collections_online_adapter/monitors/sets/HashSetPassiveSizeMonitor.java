@@ -5,34 +5,29 @@ import java.util.HashSet;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
-public class HashSetSizeMonitor<E> extends HashSet<E> {
+public class HashSetPassiveSizeMonitor<E> extends HashSet<E> {
 	
 	private static final long serialVersionUID = 20170101L;
 	private AllocationOptimizer context;
-	private int index;
 	
-	public HashSetSizeMonitor(AllocationOptimizer context, int index) {
+	public HashSetPassiveSizeMonitor(AllocationOptimizer context) {
 		super();
 		this.context = context;
-		this.index = index;
 	}
 
-	public HashSetSizeMonitor(Collection<? extends E> c, AllocationOptimizer context, int index) {
+	public HashSetPassiveSizeMonitor(Collection<? extends E> c, AllocationOptimizer context, int index) {
 		super(c);
 		this.context = context;
-		this.index = index;
 	}
 
-	public HashSetSizeMonitor(int initialCapacity, float loadFactor, AllocationOptimizer context, int index) {
+	public HashSetPassiveSizeMonitor(int initialCapacity, float loadFactor, AllocationOptimizer context, int index) {
 		super(initialCapacity, loadFactor);
 		this.context = context;
-		this.index = index;
 	}
 
-	public HashSetSizeMonitor(int initialCapacity, AllocationOptimizer context, int index) {
+	public HashSetPassiveSizeMonitor(int initialCapacity, AllocationOptimizer context, int index) {
 		super(initialCapacity);
 		this.context = context;
-		this.index = index;
 		
 	}
 
@@ -40,7 +35,7 @@ public class HashSetSizeMonitor<E> extends HashSet<E> {
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		context.updateSize(index, size());
+		context.updateSize(0, size());
 	}
 
 }

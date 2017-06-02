@@ -1,54 +1,128 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.adaptive.AdaptiveSet;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetPassiveSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
 public class SetAllocationContextImpl implements SetAllocationContext {
 
+	private static final int SAMPLE = 0;
+
+	private AllocationOptimizer optimizer;
+
+	private AllocationContextState state;
+
 	private int analyzedCollectionSize = 0;
-	
-	
-	
-	
+	private int count;
+
+	public SetAllocationContextImpl(AllocationOptimizer optimizer) {
+		this.optimizer = optimizer;
+		this.state = AllocationContextState.WARMUP;
+	}
+
 	@Override
 	public void updateCollectionSize(int size) {
-		
 		analyzedCollectionSize = size;
-		
-		
+		this.state = AllocationContextState.ADAPTIVE;
 	}
 
 	@Override
 	public void noSizeConvergence() {
-		// TODO Auto-generated method stub
-		
+		// TODO To be implemented
+
 	}
 
 	@Override
 	public <E> Set<E> createSet() {
-		// TODO Auto-generated method stub
+		
+		switch (state) {
+
+		case ADAPTIVE:
+			if (count++ % SAMPLE == 0) {
+				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(analyzedCollectionSize), optimizer);
+			}
+			return new AdaptiveSet<>(analyzedCollectionSize);
+
+		case WARMUP:
+			if (count++ % SAMPLE == 0) {
+				return new SetPassiveSizeMonitor<E>(new HashSet<E>(), optimizer);
+			}
+			return new HashSet<E>();
+
+		case INACTIVE:
+			return new HashSet<E>();
+
+		default:
+			break;
+		}
+
 		return null;
 	}
 
 	@Override
 	public <E> Set<E> createSet(int initialCapacity) {
-		// TODO Auto-generated method stub
+		
+		switch (state) {
+
+		case ADAPTIVE:
+			if (count++ % SAMPLE == 0) {
+				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(analyzedCollectionSize), optimizer);
+			}
+			return new AdaptiveSet<>(analyzedCollectionSize);
+
+		case WARMUP:
+			if (count++ % SAMPLE == 0) {
+				return new SetPassiveSizeMonitor<E>(new HashSet<E>(initialCapacity), optimizer);
+			}
+			return new HashSet<E>(initialCapacity);
+
+		case INACTIVE:
+			return new HashSet<E>(initialCapacity);
+
+		default:
+			break;
+		}
+
 		return null;
 	}
 
 	@Override
 	public <E> Set<E> createSet(Collection<? extends E> set) {
-		// TODO Auto-generated method stub
+		
+		switch (state) {
+
+		case ADAPTIVE:
+			if (count++ % SAMPLE == 0) {
+				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(set), optimizer);
+			}
+			return new AdaptiveSet<>(set);
+
+		case WARMUP:
+			if (count++ % SAMPLE == 0) {
+				return new SetPassiveSizeMonitor<E>(new HashSet<E>(set), optimizer);
+			}
+			return new HashSet<E>(set);
+
+		case INACTIVE:
+			return new HashSet<E>(set);
+
+		default:
+			break;
+		}
+
 		return null;
+		
 	}
 
 	@Override
 	public AllocationContextState getAllocationContextState() {
-		// TODO Auto-generated method stub
-		return null;
+		return state;
 	}
 
 }

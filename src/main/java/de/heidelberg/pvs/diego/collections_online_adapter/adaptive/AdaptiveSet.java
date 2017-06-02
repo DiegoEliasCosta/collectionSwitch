@@ -64,7 +64,7 @@ public class AdaptiveSet<E> implements Set<E> {
 		}
 	}
 
-	public AdaptiveSet(Collection<E> set) {
+	public AdaptiveSet(Collection<? extends E> set) {
 
 		// if (set.size() < ARRAY_HIGH_BOUND) {
 		// set = new ArraySet<E>(capacity, loadFactor);
