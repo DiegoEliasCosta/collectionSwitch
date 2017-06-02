@@ -14,8 +14,6 @@ public interface MapAllocationContext  extends AllocationContextUpdatable {
 	
 	public AllocationContextState getAllocationContextState();
 
-	public CollectionTypeEnum getChampion();
-	
 	public int getInitialCapacity();
 
 }

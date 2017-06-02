@@ -5,89 +5,64 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
-public class ListProactiveFullMonitor<E> implements List<E> {
+public class ListActiveSizeMonitor<E> implements List<E> {
 
+	private AllocationOptimizer optimizer;
+	
 	private List<E> list;
-	private ListAllocationOptimizer optimizer;
+
 	private final int monitorIndex;
-
-	private int containsOp;
-	private int midListOp;
-	private int indexOp;
-
-	public ListProactiveFullMonitor(List<E> list, ListAllocationOptimizer optimizer, int index) {
+	
+	public ListActiveSizeMonitor(List<E> list, AllocationOptimizer optimizer, int index) {
 		super();
-		this.list = list;
 		this.optimizer = optimizer;
+		this.list = list;
 		this.monitorIndex = index;
-		this.optimizer.updateSize(index, size());
-	}
-
-	@Override
-	public E get(int index) {
-		indexOp++;
-		return list.get(index);
-	}
-
-	@Override
-	public E remove(int index) {
-		midListOp++;
-		// FIXME: MidList op analysis
-		return list.remove(index);
-	}
-
-	@Override
-	public void add(int index, E element) {
-		indexOp++;
-		list.add(index, element);
-
 	}
 	
+	// --------------------------------------------------------------------
+	// --------------------------- ADD METHODS ----------------------------
+	// --------------------------------------------------------------------
+
 	public boolean add(E e) {
 		boolean add = list.add(e);
+		// UPDATE
 		this.optimizer.updateSize(monitorIndex, size());
 		return add;
 	}
-	
+
 	public boolean addAll(Collection<? extends E> c) {
 		boolean addAll = list.addAll(c);
+		// UPDATE
 		this.optimizer.updateSize(monitorIndex, size());
 		return addAll;
 	}
 	
 	public boolean addAll(int index, Collection<? extends E> c) {
 		boolean addAll = list.addAll(index, c);
-		this.optimizer.updateSize(monitorIndex, size());
+		// UPDATE
+		this.optimizer.updateSize(monitorIndex, size());;
 		return addAll;
 	}
-
-	@Override
-	public boolean contains(Object o) {
-		containsOp++;
-		if(containsOp >= 20){
-			this.optimizer.updateVote(monitorIndex, CollectionTypeEnum.HASH);
-		}
-		
-		return list.contains(o);
+	
+	public void add(int index, E element) {
+		list.add(index, element);
+		// UPDATE
+		this.optimizer.updateSize(monitorIndex, size());
 	}
 	
-	public boolean containsAll(Collection<?> c) {
-		containsOp += c.size();
-		if(containsOp >= 20){
-			this.optimizer.updateVote(monitorIndex, CollectionTypeEnum.HASH);
-		}
-		return list.containsAll(c);
-	}
-
 	public int size() {
 		return list.size();
 	}
 
 	public boolean isEmpty() {
 		return list.isEmpty();
+	}
+
+	public boolean contains(Object o) {
+		return list.contains(o);
 	}
 
 	public Iterator<E> iterator() {
@@ -107,7 +82,9 @@ public class ListProactiveFullMonitor<E> implements List<E> {
 		return list.remove(o);
 	}
 
-
+	public boolean containsAll(Collection<?> c) {
+		return list.containsAll(c);
+	}
 
 
 	public boolean removeAll(Collection<?> c) {
@@ -130,8 +107,17 @@ public class ListProactiveFullMonitor<E> implements List<E> {
 		return list.hashCode();
 	}
 
+	public E get(int index) {
+		return list.get(index);
+	}
+
 	public E set(int index, E element) {
 		return list.set(index, element);
+	}
+
+
+	public E remove(int index) {
+		return list.remove(index);
 	}
 
 	public int indexOf(Object o) {

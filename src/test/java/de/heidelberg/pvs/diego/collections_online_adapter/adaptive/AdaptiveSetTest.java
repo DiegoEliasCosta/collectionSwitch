@@ -1,7 +1,5 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.adaptive;
 
-import static org.junit.Assert.*;
-
 import java.util.HashSet;
 import java.util.Set;
 

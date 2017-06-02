@@ -4,15 +4,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
 public class ProactiveSetFullMonitor<E> implements Set<E> {
 	
 	private Set<E> set;
-	private SetAllocationOptimizer context;
+	private AllocationOptimizer context;
 	private final int index;
 
-	public ProactiveSetFullMonitor(Set<E> set, SetAllocationOptimizer context, int index) {
+	public ProactiveSetFullMonitor(Set<E> set, AllocationOptimizer context, int index) {
 		super();
 		this.set = set;
 		this.context = context;

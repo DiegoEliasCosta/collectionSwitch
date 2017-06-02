@@ -15,8 +15,6 @@ public interface ListAllocationContext extends AllocationContextUpdatable {
 	
 	public AllocationContextState getAllocationContextState();
 	
-	public CollectionTypeEnum getChampion();
-
 	public void setAllocationContextState(AllocationContextState inactive);
 
 	public int getInitialCapacity();

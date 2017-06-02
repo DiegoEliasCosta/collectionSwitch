@@ -13,7 +13,5 @@ public interface SetAllocationContext extends AllocationContextUpdatable {
 
 	public AllocationContextState getAllocationContextState();
 
-	public CollectionTypeEnum getChampion();
-	
 	
 }

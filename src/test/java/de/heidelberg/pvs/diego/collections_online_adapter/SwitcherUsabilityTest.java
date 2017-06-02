@@ -14,7 +14,7 @@ public class SwitcherUsabilityTest {
 
 	@Test
 	public void testWithFactory() throws Exception {
-		ListAllocationContext context = AllocationContextFactory.buildListContext(CollectionTypeEnum.ARRAY);
+		ListAllocationContext context = AllocationContextFactory.buildListContext(CollectionTypeEnum.ARRAY, "");
 		list = context.createList();
 		
 	}
