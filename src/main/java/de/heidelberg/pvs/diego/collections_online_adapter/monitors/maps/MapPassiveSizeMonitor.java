@@ -6,24 +6,21 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
-public class MapSizeMonitor<K, V> implements Map<K, V> {
+public class MapPassiveSizeMonitor<K, V> implements Map<K, V> {
 	
 	private AllocationOptimizer context;
 	
 	private Map<K, V> map;
 
-	private int index;
-	
-	public MapSizeMonitor(Map<K, V> map, AllocationOptimizer context, int index) {
+	public MapPassiveSizeMonitor(Map<K, V> map, AllocationOptimizer context) {
 		super();
 		this.context = context;
 		this.map = map;
-		this.index = index;
 	}
 	
 	protected void finalize() throws Throwable {
 		super.finalize();
-		context.updateSize(index, size());
+		context.updateSize(0, size());
 	}
 	
 	

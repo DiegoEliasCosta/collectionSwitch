@@ -14,6 +14,5 @@ public interface MapAllocationContext  extends AllocationContextUpdatable {
 	
 	public AllocationContextState getAllocationContextState();
 
-	public int getInitialCapacity();
 
 }

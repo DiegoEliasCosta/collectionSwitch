@@ -12,13 +12,14 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationO
 
 public class SetAllocationContextImpl implements SetAllocationContext {
 
-	private static final int SAMPLE = 0;
+	private static final int SAMPLE = 1;
 
 	private AllocationOptimizer optimizer;
 
 	private AllocationContextState state;
 
 	private int analyzedCollectionSize = 0;
+	private int analyzedCollectionInitialCapacity = 0;
 	private int count;
 
 	public SetAllocationContextImpl(AllocationOptimizer optimizer) {
@@ -29,6 +30,7 @@ public class SetAllocationContextImpl implements SetAllocationContext {
 	@Override
 	public void updateCollectionSize(int size) {
 		analyzedCollectionSize = size;
+		analyzedCollectionInitialCapacity = (int) (size /.75f + 1);
 		this.state = AllocationContextState.ADAPTIVE;
 	}
 
@@ -45,9 +47,9 @@ public class SetAllocationContextImpl implements SetAllocationContext {
 
 		case ADAPTIVE:
 			if (count++ % SAMPLE == 0) {
-				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(analyzedCollectionSize), optimizer);
+				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(analyzedCollectionInitialCapacity), optimizer);
 			}
-			return new AdaptiveSet<>(analyzedCollectionSize);
+			return new AdaptiveSet<>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
 			if (count++ % SAMPLE == 0) {
@@ -72,9 +74,9 @@ public class SetAllocationContextImpl implements SetAllocationContext {
 
 		case ADAPTIVE:
 			if (count++ % SAMPLE == 0) {
-				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(analyzedCollectionSize), optimizer);
+				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(analyzedCollectionInitialCapacity), optimizer);
 			}
-			return new AdaptiveSet<>(analyzedCollectionSize);
+			return new AdaptiveSet<>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
 			if (count++ % SAMPLE == 0) {
