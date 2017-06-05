@@ -12,7 +12,5 @@ public interface MapAllocationContext  extends AllocationContextUpdatable {
 
 	public <K, V> Map<K, V> createMap(Map<K, V> map);
 	
-	public AllocationContextState getAllocationContextState();
-
 
 }

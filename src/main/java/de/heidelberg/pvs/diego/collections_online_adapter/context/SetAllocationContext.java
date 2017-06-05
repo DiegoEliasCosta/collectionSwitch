@@ -11,7 +11,5 @@ public interface SetAllocationContext extends AllocationContextUpdatable {
 
 	public <E> Set<E> createSet(Collection<? extends E> set);
 
-	public AllocationContextState getAllocationContextState();
-
 	
 }

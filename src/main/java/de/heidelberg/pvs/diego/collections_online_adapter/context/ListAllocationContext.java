@@ -11,12 +11,4 @@ public interface ListAllocationContext extends AllocationContextUpdatable {
 	
 	public <E> List<E> createList(Collection<? extends E> c);
 	
-	// Used for checking
-	
-	public AllocationContextState getAllocationContextState();
-	
-	public void setAllocationContextState(AllocationContextState inactive);
-
-	public int getInitialCapacity();
-	
 }

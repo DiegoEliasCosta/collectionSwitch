@@ -1,6 +1,7 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
+import sun.net.www.content.audio.wav;
 
 public class PassiveOptimizer implements AllocationOptimizer {
 
@@ -8,9 +9,11 @@ public class PassiveOptimizer implements AllocationOptimizer {
 	private AllocationContextUpdatable context;
 	private int finalizedCount;
 	private int analyzedInitialCapacity;
+	private int windowSize;
 	
-	public PassiveOptimizer() {
+	public PassiveOptimizer(int windowSize) {
 		super();
+		this.windowSize = windowSize;
 	}
 
 	@Override
@@ -27,7 +30,7 @@ public class PassiveOptimizer implements AllocationOptimizer {
 			finalizedCount++;
 		}
 		
-		if(finalizedCopy == 10) {
+		if(finalizedCopy == windowSize - 1) {
 			this.context.updateCollectionSize(analyzedInitialCapacity);
 		}	
 		

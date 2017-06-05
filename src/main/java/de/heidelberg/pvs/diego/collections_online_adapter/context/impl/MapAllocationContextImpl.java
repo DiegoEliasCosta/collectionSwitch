@@ -6,13 +6,14 @@ import java.util.Map;
 import de.heidelberg.pvs.diego.collections_online_adapter.adaptive.AdaptiveMap;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapPassiveSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
-public class MapAllocationContextImpl implements MapAllocationContext {
+public class MapAllocationContextImpl implements MapAllocationContextInfo {
 
 	
-	private static final int SAMPLE = 1;
+	private int sampleRate = 1;
 	
 	private int analyzedCollectionSize;
 	private int analyzedCollectionInitialCapacity;
@@ -27,6 +28,13 @@ public class MapAllocationContextImpl implements MapAllocationContext {
 		super();
 		this.optimizer = optimizer;
 		this.state = AllocationContextState.WARMUP;
+	}
+	
+	public MapAllocationContextImpl(AllocationOptimizer optimizer, int sampleRate) {
+		super();
+		this.optimizer = optimizer;
+		this.state = AllocationContextState.WARMUP;
+		this.sampleRate = sampleRate;
 	}
 
 	@Override
@@ -49,13 +57,13 @@ public class MapAllocationContextImpl implements MapAllocationContext {
 		switch (state) {
 
 		case ADAPTIVE:
-			if (count++ % SAMPLE == 0) {
+			if (count++ % sampleRate == 0) {
 				return new MapPassiveSizeMonitor<K, V>(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity), optimizer);
 			}
 			return new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
-			if (count++ % SAMPLE == 0) {
+			if (count++ % sampleRate == 0) {
 				return new MapPassiveSizeMonitor<K, V>(new HashMap<K, V>(), optimizer);
 			}
 			return new HashMap<K, V>();
@@ -76,13 +84,13 @@ public class MapAllocationContextImpl implements MapAllocationContext {
 		switch (state) {
 
 		case ADAPTIVE:
-			if (count++ % SAMPLE == 0) {
+			if (count++ % sampleRate == 0) {
 				return new MapPassiveSizeMonitor<K, V>(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity), optimizer);
 			}
 			return new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
-			if (count++ % SAMPLE == 0) {
+			if (count++ % sampleRate == 0) {
 				return new MapPassiveSizeMonitor<K, V>(new HashMap<K, V>(initialCapacity), optimizer);
 			}
 			return new HashMap<K, V>(initialCapacity);
@@ -104,13 +112,13 @@ public class MapAllocationContextImpl implements MapAllocationContext {
 		switch (state) {
 
 		case ADAPTIVE:
-			if (count++ % SAMPLE == 0) {
+			if (count++ % sampleRate == 0) {
 				return new MapPassiveSizeMonitor<K, V>(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity), optimizer);
 			}
 			return new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
-			if (count++ % SAMPLE == 0) {
+			if (count++ % sampleRate == 0) {
 				return new MapPassiveSizeMonitor<K, V>(new HashMap<K, V>(initialCapacity, loadFactor), optimizer);
 			}
 			return new HashMap<K, V>(initialCapacity, loadFactor);
@@ -131,13 +139,13 @@ public class MapAllocationContextImpl implements MapAllocationContext {
 		switch (state) {
 
 		case ADAPTIVE:
-			if (count++ % SAMPLE == 0) {
+			if (count++ % sampleRate == 0) {
 				return new MapPassiveSizeMonitor<K, V>(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity), optimizer);
 			}
 			return new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
-			if (count++ % SAMPLE == 0) {
+			if (count++ % sampleRate == 0) {
 				return new MapPassiveSizeMonitor<K, V>(new HashMap<K, V>(map), optimizer);
 			}
 			return new HashMap<K, V>(map);
@@ -152,10 +160,20 @@ public class MapAllocationContextImpl implements MapAllocationContext {
 		return null;
 	}
 
-	@Override
 	public AllocationContextState getAllocationContextState() {
 		return state;
 	}
+	
+	public int getAnalyzedSize() {
+		return analyzedCollectionSize;
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		return analyzedCollectionInitialCapacity;
+	}
+	
+	
 
 
 }

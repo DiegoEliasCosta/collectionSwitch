@@ -15,7 +15,7 @@ public class SetAllocationContextImplTest {
 	public void sanityTest() throws Exception {
 
 		// Optimizer
-		AllocationOptimizer optimizer = new PassiveOptimizer();
+		AllocationOptimizer optimizer = new PassiveOptimizer(10);
 		
 		// Context
 		SetAllocationContext context = new SetAllocationContextImpl(optimizer);
