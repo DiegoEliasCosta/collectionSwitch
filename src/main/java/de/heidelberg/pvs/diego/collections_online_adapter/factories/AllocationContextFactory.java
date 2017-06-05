@@ -165,6 +165,11 @@ public class AllocationContextFactory {
 		if (logFile != null) {
 			builder.withLog(logFile);
 		}
+		
+		logFile = System.getProperty("logOutput");
+		if (logFile != null) {
+			builder.withLog(logFile);
+		}
 
 		return builder;
 
