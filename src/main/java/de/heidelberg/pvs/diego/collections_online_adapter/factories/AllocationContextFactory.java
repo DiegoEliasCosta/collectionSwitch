@@ -14,12 +14,10 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationO
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.PassiveOptimizer;
 
 public class AllocationContextFactory {
-	
+
 	private static final int SAMPLES = 50;
 	private static final int WINDOW_SIZE = 10;
-	
-	
-	
+
 	public static class AllocationContextBuilder {
 
 		private final CollectionTypeEnum type;
@@ -34,9 +32,7 @@ public class AllocationContextFactory {
 		private int samples = SAMPLES;
 
 		public enum AllocationContextAlgorithm {
-
 			ADAPTIVE;
-
 		}
 
 		public AllocationContextBuilder(CollectionTypeEnum type, String identifier) {
@@ -60,9 +56,9 @@ public class AllocationContextFactory {
 			this.windowSize = windowSize;
 			return this;
 		}
-		
+
 		public AllocationContextBuilder samples(int samples) {
-			this.samples  = samples;
+			this.samples = samples;
 			return this;
 		}
 
@@ -76,32 +72,37 @@ public class AllocationContextFactory {
 		return null;
 	}
 
-	
-	
-	
 	/*
-	 * SETS
+	 * ------------------------------- SETS -------------------------------
 	 */
 	public static <E> SetAllocationContext buildSetContext(CollectionTypeEnum type, String identifier) {
-		
+
 		// Parse command line
 		AllocationContextBuilder builder = parseCommandLine(type, identifier);
-		
+
+		return buildSetContext(builder);
+
+	}
+
+	public static <E> SetAllocationContext buildSetContext(AllocationContextBuilder builder) {
 		// Build the context + optimizer
 		AllocationOptimizer optimizer = new PassiveOptimizer(builder.windowSize);
-		SetAllocationContextInfo context = new SetAllocationContextImpl(optimizer);
+		SetAllocationContextInfo context = new SetAllocationContextImpl(optimizer, builder.samples);
 
 		// Print the log of the changes
 		if (builder.hasLog) {
-			SetAllocationContext logContext = new LogSetAllocationContext(context, identifier, builder.logFile);
+			SetAllocationContext logContext = new LogSetAllocationContext(context, builder.identifier, builder.logFile);
 			optimizer.setContext(logContext);
 			return logContext;
 
+		} else {
+			optimizer.setContext(context);
 		}
 
 		return context;
+
 	}
-	
+
 	public static <E> SetAllocationContext buildSetContext(int sample, int windowSize) {
 		AllocationOptimizer optimizer = new PassiveOptimizer(windowSize);
 		SetAllocationContext context = new SetAllocationContextImpl(optimizer, sample);
@@ -110,27 +111,30 @@ public class AllocationContextFactory {
 	}
 
 	/*
-	 * MAPS
+	 * ------------------------------- MAPS -------------------------------
 	 */
-
 	public static <K, V> MapAllocationContext buildMapContext(CollectionTypeEnum type, String identifier) {
 		// Parse command line
 		AllocationContextBuilder builder = parseCommandLine(type, identifier);
-		
+
+		return buildMapContext(builder);
+
+	}
+
+	public static MapAllocationContext buildMapContext(AllocationContextBuilder builder) {
 		// Build the context + optimizer
 		AllocationOptimizer optimizer = new PassiveOptimizer(builder.windowSize);
-		MapAllocationContextInfo context = new MapAllocationContextImpl(optimizer);
+		MapAllocationContextInfo context = new MapAllocationContextImpl(optimizer, builder.samples);
 
 		// Print the log of the changes
 		if (builder.hasLog) {
-			MapAllocationContext logContext = new LogMapAllocationContext(context, identifier, builder.logFile);
+			MapAllocationContext logContext = new LogMapAllocationContext(context, builder.identifier, builder.logFile);
 			optimizer.setContext(logContext);
 			return logContext;
 
 		}
 
 		return context;
-
 	}
 
 	public static <K, V> MapAllocationContext buildMapContext(int sample, int windowSize) {
@@ -139,7 +143,7 @@ public class AllocationContextFactory {
 		optimizer.setContext(context);
 		return context;
 	}
-	
+
 	/*
 	 * COMMAND LINE
 	 */
@@ -151,21 +155,19 @@ public class AllocationContextFactory {
 		if (windowSizeStr != null) {
 			builder.windowSize(Integer.parseInt(windowSizeStr));
 		}
-		
+
 		String sampleStr = System.getProperty("samples");
-		if(sampleStr != null) {
+		if (sampleStr != null) {
 			builder.samples(Integer.parseInt(sampleStr));
 		}
 
 		String logFile = System.getProperty("log");
-		if(logFile != null) {
+		if (logFile != null) {
 			builder.withLog(logFile);
 		}
-		
+
 		return builder;
 
 	}
-	
 
-	
 }

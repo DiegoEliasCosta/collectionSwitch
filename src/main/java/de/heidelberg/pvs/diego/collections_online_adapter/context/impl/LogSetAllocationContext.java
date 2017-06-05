@@ -22,11 +22,10 @@ public class LogSetAllocationContext implements SetAllocationContext {
 	public LogSetAllocationContext(SetAllocationContextInfo context, String identifier, String dir) {
 		super();
 		this.context = context;
-		
 		long currentTimeMillis = System.currentTimeMillis();
 		
 		try{
-		    writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
+			writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
 		    writer.println("Context initialized");
 		    writer.println("First Status: " + this.context.getAllocationContextState());
 		    writer.flush();
