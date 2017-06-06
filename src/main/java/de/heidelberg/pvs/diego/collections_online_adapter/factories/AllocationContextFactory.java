@@ -6,6 +6,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationC
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InactiveListAllocationContextImpl;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.MapAllocationContextImpl;
@@ -69,7 +70,7 @@ public class AllocationContextFactory {
 	 */
 	public static ListAllocationContext buildListContext(CollectionTypeEnum type, String identifier) {
 
-		return null;
+		return new InactiveListAllocationContextImpl(null);
 	}
 
 	/*
