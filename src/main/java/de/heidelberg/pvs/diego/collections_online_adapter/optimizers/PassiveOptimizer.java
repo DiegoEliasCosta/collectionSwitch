@@ -32,6 +32,7 @@ public class PassiveOptimizer implements AllocationOptimizer {
 		
 		if(finalizedCopy == windowSize - 1) {
 			this.context.updateCollectionSize(analyzedInitialCapacity);
+			finalizedCount = 0;
 		}	
 		
 	}
