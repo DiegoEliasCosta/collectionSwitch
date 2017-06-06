@@ -27,17 +27,17 @@ public class InactiveListAllocationContextImpl implements ListAllocationContext 
 
 	@Override
 	public <E> List<E> createList() {
-		return new ArrayList<>();
+		return new ArrayList<E>();
 	}
 
 	@Override
 	public <E> List<E> createList(int initialCapacity) {
-		return new ArrayList<>(initialCapacity);
+		return new ArrayList<E>(initialCapacity);
 	}
 
 	@Override
 	public <E> List<E> createList(Collection<? extends E> c) {
-		return new ArrayList<>(c);
+		return new ArrayList<E>(c);
 	}
 
 }
