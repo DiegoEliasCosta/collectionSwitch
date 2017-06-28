@@ -2,52 +2,48 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Set;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetAllocationContextImpl;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetPassiveOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.MapAllocationContextImpl;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapPassiveOptimizer;
 import jlibs.core.lang.RuntimeUtil;
 
-public class SetPassiveAllocationContextImplTest {
+public class MapPassiveAllocationContextImplTest {
 	
 	private static final int SAMPLE = 1;
 	private static final int WINDOW_SIZE = 10;
-	private SetAllocationOptimizer optimizer;
-	private SetAllocationContextImpl context;
+	private MapAllocationOptimizer optimizer;
+	private MapAllocationContextImpl context;
 
 	@Before
 	public void setup() {
-		
-		optimizer = new SetPassiveOptimizer(WINDOW_SIZE);
+		optimizer = new MapPassiveOptimizer(WINDOW_SIZE);
 		assertNotNull(optimizer);
 		
-		context = new SetAllocationContextImpl(optimizer, SAMPLE);
+		context = new MapAllocationContextImpl(optimizer, SAMPLE);
+		assertNotNull(context);
+		
+		optimizer.setContext(context);
+	}
+	
+	@Test
+	public void sanityTest() throws Exception {
+		
+		MapAllocationOptimizer optimizer = new MapPassiveOptimizer(WINDOW_SIZE);
+		assertNotNull(optimizer);
+		
+		MapAllocationContext context = new MapAllocationContextImpl(optimizer);
 		assertNotNull(context);
 		
 		optimizer.setContext(context);
 		
-	}
-	
-	
-	@Test
-	public void sanityTest() throws Exception {
-
-		// Optimizer
-		SetAllocationOptimizer optimizer = new SetPassiveOptimizer(10);
-		
-		// Context
-		SetAllocationContext context = new SetAllocationContextImpl(optimizer);
-		Assert.assertNotNull(context);
-		
-		optimizer.setContext(context);
-		
-		Set<Integer> set = context.createSet();
-		Assert.assertNotNull(set);
+		Map<Object, Object> createMap = context.createMap();
+		assertNotNull(createMap);
 		
 	}
 	
@@ -57,13 +53,13 @@ public class SetPassiveAllocationContextImplTest {
 		int n = 7;
 		for(int i = 0; i < WINDOW_SIZE * SAMPLE; i++) {
 			
-			Set<Integer> set = context.createSet();
+			Map<Integer, Integer> map = context.createMap();
 			
 			for(int j = 0; j < n; j++) {
-				set.add(j);
+				map.put(j, j);
 			}
 			
-			set = null;
+			map = null;
 		}
 		
 		RuntimeUtil.gc();
@@ -77,6 +73,5 @@ public class SetPassiveAllocationContextImplTest {
 		Assert.assertEquals(n, analyzedSize);
 		
 	}
-	
 
 }

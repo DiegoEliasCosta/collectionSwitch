@@ -5,10 +5,9 @@ import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.adaptive.AdaptiveMap;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapPassiveSizeMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
 public class MapAllocationContextImpl implements MapAllocationContextInfo {
 
@@ -19,18 +18,18 @@ public class MapAllocationContextImpl implements MapAllocationContextInfo {
 	private int analyzedCollectionInitialCapacity;
 	
 	private AllocationContextState state;
-	private AllocationOptimizer optimizer;
+	private MapAllocationOptimizer optimizer;
 	
 	private int count;
 	
 	
-	public MapAllocationContextImpl(AllocationOptimizer optimizer) {
+	public MapAllocationContextImpl(MapAllocationOptimizer optimizer) {
 		super();
 		this.optimizer = optimizer;
 		this.state = AllocationContextState.WARMUP;
 	}
 	
-	public MapAllocationContextImpl(AllocationOptimizer optimizer, int sampleRate) {
+	public MapAllocationContextImpl(MapAllocationOptimizer optimizer, int sampleRate) {
 		super();
 		this.optimizer = optimizer;
 		this.state = AllocationContextState.WARMUP;
@@ -58,13 +57,13 @@ public class MapAllocationContextImpl implements MapAllocationContextInfo {
 
 		case ADAPTIVE:
 			if (count++ % sampleRate == 0) {
-				return new MapPassiveSizeMonitor<K, V>(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity), optimizer);
+				return optimizer.createMonitor(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity));
 			}
 			return new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
 			if (count++ % sampleRate == 0) {
-				return new MapPassiveSizeMonitor<K, V>(new HashMap<K, V>(), optimizer);
+				return optimizer.createMonitor(new HashMap<K, V>());
 			}
 			return new HashMap<K, V>();
 
@@ -85,13 +84,13 @@ public class MapAllocationContextImpl implements MapAllocationContextInfo {
 
 		case ADAPTIVE:
 			if (count++ % sampleRate == 0) {
-				return new MapPassiveSizeMonitor<K, V>(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity), optimizer);
+				return optimizer.createMonitor(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity));
 			}
 			return new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
 			if (count++ % sampleRate == 0) {
-				return new MapPassiveSizeMonitor<K, V>(new HashMap<K, V>(initialCapacity), optimizer);
+				return optimizer.createMonitor(new HashMap<K, V>(initialCapacity));
 			}
 			return new HashMap<K, V>(initialCapacity);
 
@@ -113,13 +112,13 @@ public class MapAllocationContextImpl implements MapAllocationContextInfo {
 
 		case ADAPTIVE:
 			if (count++ % sampleRate == 0) {
-				return new MapPassiveSizeMonitor<K, V>(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity), optimizer);
+				return optimizer.createMonitor(new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity));
 			}
 			return new AdaptiveMap<K, V>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
 			if (count++ % sampleRate == 0) {
-				return new MapPassiveSizeMonitor<K, V>(new HashMap<K, V>(initialCapacity, loadFactor), optimizer);
+				return optimizer.createMonitor(new HashMap<K, V>(initialCapacity, loadFactor));
 			}
 			return new HashMap<K, V>(initialCapacity, loadFactor);
 

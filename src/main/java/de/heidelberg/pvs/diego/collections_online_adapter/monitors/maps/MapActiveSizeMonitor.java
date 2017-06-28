@@ -24,8 +24,9 @@ public class MapActiveSizeMonitor<K, V> implements Map<K, V> {
 	
 	// PUT
 	public V put(K key, V value) {
+		V put = map.put(key, value);
 		this.context.updateSize(index, size());
-		return map.put(key, value);
+		return put;
 	}
 
 	public void putAll(Map<? extends K, ? extends V> m) {

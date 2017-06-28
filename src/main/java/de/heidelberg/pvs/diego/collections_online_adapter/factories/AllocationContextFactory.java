@@ -11,8 +11,8 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAll
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.MapAllocationContextImpl;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetAllocationContextImpl;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.PassiveOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapPassiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetPassiveOptimizer;
 
@@ -126,7 +126,7 @@ public class AllocationContextFactory {
 
 	public static MapAllocationContext buildMapContext(AllocationContextBuilder builder) {
 		// Build the context + optimizer
-		AllocationOptimizer optimizer = new PassiveOptimizer(builder.windowSize);
+		MapAllocationOptimizer optimizer = new MapPassiveOptimizer(builder.windowSize);
 		MapAllocationContextInfo context = new MapAllocationContextImpl(optimizer, builder.samples);
 
 		// Print the log of the changes
@@ -141,7 +141,7 @@ public class AllocationContextFactory {
 	}
 
 	public static <K, V> MapAllocationContext buildMapContext(int sample, int windowSize) {
-		AllocationOptimizer optimizer = new PassiveOptimizer(windowSize);
+		MapAllocationOptimizer optimizer = new MapPassiveOptimizer(windowSize);
 		MapAllocationContext context = new MapAllocationContextImpl(optimizer, sample);
 		optimizer.setContext(context);
 		return context;

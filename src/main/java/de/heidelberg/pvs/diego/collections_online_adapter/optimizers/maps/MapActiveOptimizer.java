@@ -1,14 +1,18 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets;
+package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapActiveSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetActiveSizeMonitor;
+import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
-public class SetActiveOptimizer implements SetAllocationOptimizer {
+public class MapActiveOptimizer implements MapAllocationOptimizer {
 
 	private static final Object DUMB_OBJECT = new Object();
 
@@ -16,7 +20,7 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 	private int sizes[];
 	private AtomicInteger indexManager = new AtomicInteger(0);
-	protected Map<Set<?>, Object> finalizedManager;
+	protected Map<Map<?, ?>, Object> finalizedManager;
 
 	AllocationContextUpdatable context;
 
@@ -28,12 +32,12 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 	private boolean firstUpdate;
 
-	public SetActiveOptimizer(int windowSize) {
+	public MapActiveOptimizer(int windowSize) {
 		super();
-		this.firstUpdate = true;
+		firstUpdate = true;
 		this.windowSize = windowSize;
 		this.sizes = new int[windowSize];
-		this.finalizedManager = new WeakHashMap<Set<?>, Object>(windowSize);
+		this.finalizedManager = new WeakHashMap<Map<?, ?>, Object>(windowSize);
 
 	}
 
@@ -66,7 +70,8 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 	private void resetOptimizer() {
 		indexManager.set(0);
-		finalizedManager.clear();
+		finalizedManager = new WeakHashMap<Map<?, ?>, Object>(windowSize);
+
 	}
 
 	public void checkFinalizedAnalysis() {
@@ -85,13 +90,12 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 	}
 
 	@Override
-	public <E> Set<E> createMonitor(Set<E> set) {
+	public <K, V> Map<K, V> createMonitor(Map<K, V> map) {
 		int index = indexManager.getAndIncrement();
-		SetActiveSizeMonitor<E> monitor = new SetActiveSizeMonitor<E>(set, this, index);
+		MapActiveSizeMonitor<K, V> monitor = new MapActiveSizeMonitor<K, V>(map, this, index);
 		if(index < windowSize) {
 			this.finalizedManager.put(monitor, DUMB_OBJECT);
 		}
-		
 		return monitor;
 	}
 }
