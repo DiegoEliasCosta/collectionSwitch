@@ -45,7 +45,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 		AllocationContextState afterState = context.getAllocationContextState();
 		
 		writer.println("State updated from " + beforeState + " -- to --" + afterState);
-		writer.println("New Initial Capacity = " + context.getInitialCapacity());
+		writer.println("New Initial Capacity = " + context.getAnalyzedSize());
 		writer.flush();
 		
 	}
@@ -59,16 +59,11 @@ public class LogSetAllocationContext implements SetAllocationContext {
 		
 	}
 
-	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
-		// TODO To implement
-	}
-	
-
 	@Override
 	public <E> Set<E> createSet() {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d sets \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getInitialCapacity() ));
+			writer.println(String.format("Created %d sets \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedSize() ));
 			writer.flush();
 		}
 		return context.createSet();
@@ -79,7 +74,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 	public <E> Set<E> createSet(int initialCapacity) {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d sets \n\t-- initialCapacity (analyzed=%d || described=%s)  ", count, this.context.getInitialCapacity(), initialCapacity));
+			writer.println(String.format("Created %d sets \n\t-- initialCapacity (analyzed=%d || described=%s)  ", count, this.context.getAnalyzedSize(), initialCapacity));
 			writer.flush();
 		}
 		return context.createSet(initialCapacity);
@@ -90,7 +85,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 	public <E> Set<E> createSet(Collection<? extends E> set) {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Copied %d sets \n\t-- initialCapacity (analyzed=%d || described=%s)  ", count, this.context.getInitialCapacity(), set.size()));
+			writer.println(String.format("Copied %d sets \n\t-- initialCapacity (analyzed=%d || described=%s)  ", count, this.context.getAnalyzedSize(), set.size()));
 			writer.flush();
 		}
 		return context.createSet(set);

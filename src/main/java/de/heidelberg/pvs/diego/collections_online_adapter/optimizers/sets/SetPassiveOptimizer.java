@@ -1,8 +1,11 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.optimizers;
+package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets;
+
+import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetPassiveSizeMonitor;
 
-public class PassiveOptimizer implements AllocationOptimizer {
+public class SetPassiveOptimizer implements SetAllocationOptimizer {
 
 	private static final float ALPHA = 0.9f;
 	private AllocationContextUpdatable context;
@@ -10,7 +13,7 @@ public class PassiveOptimizer implements AllocationOptimizer {
 	private int analyzedInitialCapacity;
 	private int windowSize;
 	
-	public PassiveOptimizer(int windowSize) {
+	public SetPassiveOptimizer(int windowSize) {
 		super();
 		this.windowSize = windowSize;
 	}
@@ -40,6 +43,11 @@ public class PassiveOptimizer implements AllocationOptimizer {
 	public void setContext(AllocationContextUpdatable context) {
 		this.context = context;
 		
+	}
+
+	@Override
+	public <E> Set<E> createMonitor(Set<E> set) {
+		return new SetPassiveSizeMonitor<>(set, this);
 	}
 
 

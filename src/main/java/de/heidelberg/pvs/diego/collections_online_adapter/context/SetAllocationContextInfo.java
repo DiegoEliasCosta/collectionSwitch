@@ -4,6 +4,6 @@ public interface SetAllocationContextInfo extends SetAllocationContext {
 
 	AllocationContextState getAllocationContextState();
 
-	int getInitialCapacity();
+	int getAnalyzedSize();
 
 }

@@ -13,6 +13,8 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.MapAlloca
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetAllocationContextImpl;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.PassiveOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetPassiveOptimizer;
 
 public class AllocationContextFactory {
 
@@ -87,7 +89,7 @@ public class AllocationContextFactory {
 
 	public static <E> SetAllocationContext buildSetContext(AllocationContextBuilder builder) {
 		// Build the context + optimizer
-		AllocationOptimizer optimizer = new PassiveOptimizer(builder.windowSize);
+		SetAllocationOptimizer optimizer = new SetPassiveOptimizer(builder.windowSize);
 		SetAllocationContextInfo context = new SetAllocationContextImpl(optimizer, builder.samples);
 
 		// Print the log of the changes
@@ -105,7 +107,7 @@ public class AllocationContextFactory {
 	}
 
 	public static <E> SetAllocationContext buildSetContext(int sample, int windowSize) {
-		AllocationOptimizer optimizer = new PassiveOptimizer(windowSize);
+		SetAllocationOptimizer optimizer = new SetPassiveOptimizer(windowSize);
 		SetAllocationContext context = new SetAllocationContextImpl(optimizer, sample);
 		optimizer.setContext(context);
 		return context;

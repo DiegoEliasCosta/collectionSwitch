@@ -6,13 +6,13 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
-public class ProactiveSetFullMonitor<E> implements Set<E> {
+public class SetProactiveFullMonitor<E> implements Set<E> {
 	
 	private Set<E> set;
 	private AllocationOptimizer context;
 	private final int index;
 
-	public ProactiveSetFullMonitor(Set<E> set, AllocationOptimizer context, int index) {
+	public SetProactiveFullMonitor(Set<E> set, AllocationOptimizer context, int index) {
 		super();
 		this.set = set;
 		this.context = context;

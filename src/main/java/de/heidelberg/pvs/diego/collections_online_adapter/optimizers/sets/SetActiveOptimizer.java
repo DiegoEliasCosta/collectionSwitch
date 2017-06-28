@@ -1,16 +1,14 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.optimizers;
+package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetProactiveFullMonitor;
 
-public class ActiveOptimizer implements AllocationOptimizer {
+public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 	private static final Object DUMB_OBJECT = new Object();
 
@@ -18,7 +16,7 @@ public class ActiveOptimizer implements AllocationOptimizer {
 
 	private int sizes[];
 	private AtomicInteger indexManager = new AtomicInteger(0);
-	protected Map<List<?>, Object> finalizedManager;
+	protected Map<Set<?>, Object> finalizedManager;
 
 	AllocationContextUpdatable context;
 
@@ -30,11 +28,12 @@ public class ActiveOptimizer implements AllocationOptimizer {
 
 	private boolean firstUpdate;
 
-	public ActiveOptimizer(int windowSize, int convergenceRate) {
+	public SetActiveOptimizer(int windowSize) {
 		super();
+		this.firstUpdate = true;
 		this.windowSize = windowSize;
 		this.sizes = new int[windowSize];
-		this.finalizedManager = new WeakHashMap<List<?>, Object>(windowSize);
+		this.finalizedManager = new WeakHashMap<Set<?>, Object>(windowSize);
 
 	}
 
@@ -67,8 +66,7 @@ public class ActiveOptimizer implements AllocationOptimizer {
 
 	private void resetOptimizer() {
 		indexManager.set(0);
-		finalizedManager = new WeakHashMap<List<?>, Object>(windowSize);
-
+		finalizedManager.clear();
 	}
 
 	public void checkFinalizedAnalysis() {
@@ -79,14 +77,21 @@ public class ActiveOptimizer implements AllocationOptimizer {
 		}
 	}
 
-	public void addReference(List<?> list) {
-		this.finalizedManager.put(list, DUMB_OBJECT);
-
-	}
 
 	@Override
 	public void setContext(AllocationContextUpdatable context) {
 		this.context = context;
 
+	}
+
+	@Override
+	public <E> Set<E> createMonitor(Set<E> set) {
+		int index = indexManager.getAndIncrement();
+		SetProactiveFullMonitor<E> monitor = new SetProactiveFullMonitor<E>(set, this, index);
+		if(index < windowSize) {
+			this.finalizedManager.put(monitor, DUMB_OBJECT);
+		}
+		
+		return monitor;
 	}
 }

@@ -6,16 +6,16 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.adaptive.AdaptiveSet;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetPassiveSizeMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
 public class SetAllocationContextImpl implements SetAllocationContextInfo {
 
 	private int sampleRate = 1;
 
-	private AllocationOptimizer optimizer;
+	private SetAllocationOptimizer optimizer;
 
 	private AllocationContextState state;
 
@@ -23,12 +23,12 @@ public class SetAllocationContextImpl implements SetAllocationContextInfo {
 	private int analyzedCollectionInitialCapacity = 0;
 	private int count;
 
-	public SetAllocationContextImpl(AllocationOptimizer optimizer) {
+	public SetAllocationContextImpl(SetAllocationOptimizer optimizer) {
 		this.optimizer = optimizer;
 		this.state = AllocationContextState.WARMUP;
 	}
 	
-	public SetAllocationContextImpl(AllocationOptimizer optimizer, int sampleRate) {
+	public SetAllocationContextImpl(SetAllocationOptimizer optimizer, int sampleRate) {
 		this.optimizer = optimizer;
 		this.state = AllocationContextState.WARMUP;
 		this.sampleRate = sampleRate;
@@ -54,13 +54,13 @@ public class SetAllocationContextImpl implements SetAllocationContextInfo {
 
 		case ADAPTIVE:
 			if (count++ % sampleRate == 0) {
-				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(analyzedCollectionInitialCapacity), optimizer);
+				return optimizer.createMonitor(new AdaptiveSet<E>(analyzedCollectionInitialCapacity));
 			}
 			return new AdaptiveSet<E>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
 			if (count++ % sampleRate == 0) {
-				return new SetPassiveSizeMonitor<E>(new HashSet<E>(), optimizer);
+				return optimizer.createMonitor(new HashSet<E>());
 			}
 			return new HashSet<E>();
 
@@ -81,13 +81,13 @@ public class SetAllocationContextImpl implements SetAllocationContextInfo {
 
 		case ADAPTIVE:
 			if (count++ % sampleRate == 0) {
-				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(analyzedCollectionInitialCapacity), optimizer);
+				return optimizer.createMonitor(new AdaptiveSet<E>(analyzedCollectionInitialCapacity));
 			}
 			return new AdaptiveSet<E>(analyzedCollectionInitialCapacity);
 
 		case WARMUP:
 			if (count++ % sampleRate == 0) {
-				return new SetPassiveSizeMonitor<E>(new HashSet<E>(initialCapacity), optimizer);
+				return optimizer.createMonitor(new HashSet<E>(initialCapacity));
 			}
 			return new HashSet<E>(initialCapacity);
 
@@ -108,13 +108,13 @@ public class SetAllocationContextImpl implements SetAllocationContextInfo {
 
 		case ADAPTIVE:
 			if (count++ % sampleRate == 0) {
-				return new SetPassiveSizeMonitor<E>(new AdaptiveSet<E>(set), optimizer);
+				return optimizer.createMonitor(new AdaptiveSet<E>(set));
 			}
 			return new AdaptiveSet<E>(set);
 
 		case WARMUP:
 			if (count++ % sampleRate == 0) {
-				return new SetPassiveSizeMonitor<E>(new HashSet<E>(set), optimizer);
+				return optimizer.createMonitor(new HashSet<E>(set));
 			}
 			return new HashSet<E>(set);
 
@@ -134,8 +134,8 @@ public class SetAllocationContextImpl implements SetAllocationContextInfo {
 	}
 
 	@Override
-	public int getInitialCapacity() {
-		return analyzedCollectionInitialCapacity;
+	public int getAnalyzedSize() {
+		return analyzedCollectionSize;
 	}
 
 }
