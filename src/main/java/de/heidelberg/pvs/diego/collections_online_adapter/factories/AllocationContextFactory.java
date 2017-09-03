@@ -1,5 +1,9 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.factories;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
@@ -11,8 +15,11 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAll
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.MapAllocationContextImpl;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetAllocationContextImpl;
+import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder.AllocationContextAlgorithm;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapPassiveOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetPassiveOptimizer;
 
@@ -21,21 +28,26 @@ public class AllocationContextFactory {
 	private static final int SAMPLES = 50;
 	private static final int WINDOW_SIZE = 10;
 
+	private static ScheduledExecutorService scheduler;
+
 	public static class AllocationContextBuilder {
 
 		private final CollectionTypeEnum type;
 		private final String identifier;
 
-		private AllocationContextAlgorithm algorithm;
+		// Default: PASSIVE
+		private AllocationContextAlgorithm algorithm = AllocationContextAlgorithm.PASSIVE;
 
 		private boolean hasLog;
 		private String logFile;
 
 		private int windowSize = WINDOW_SIZE;
 		private int samples = SAMPLES;
+		private int initialDelay = 1000;
+		private int delay = 1000;
 
 		public enum AllocationContextAlgorithm {
-			ADAPTIVE;
+			PASSIVE, ACTIVE;
 		}
 
 		public AllocationContextBuilder(CollectionTypeEnum type, String identifier) {
@@ -65,6 +77,18 @@ public class AllocationContextFactory {
 			return this;
 		}
 
+		public AllocationContextBuilder withInitialDelay(int parseInt) {
+			this.initialDelay = parseInt;
+			return this;
+			
+		}
+
+		public AllocationContextBuilder withDelay(int parseInt) {
+			this.delay = parseInt;
+			return this;
+			
+		}
+
 	}
 
 	/*
@@ -88,9 +112,36 @@ public class AllocationContextFactory {
 	}
 
 	public static <E> SetAllocationContext buildSetContext(AllocationContextBuilder builder) {
-		// Build the context + optimizer
-		SetAllocationOptimizer optimizer = new SetPassiveOptimizer(builder.windowSize);
-		SetAllocationContextInfo context = new SetAllocationContextImpl(optimizer, builder.samples);
+
+		final SetAllocationOptimizer optimizer;
+		SetAllocationContextInfo context;
+
+		// Build the optimizer
+		switch (builder.algorithm) {
+
+		case ACTIVE:
+			optimizer = new SetActiveOptimizer(builder.windowSize);
+
+			// Schedule the Online Adapter Thread
+			scheduler = Executors.newScheduledThreadPool(1);
+			scheduler.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					((SetActiveOptimizer) optimizer).checkFinalizedAnalysis();
+				}
+			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
+
+			break;
+		case PASSIVE:
+			optimizer = new SetPassiveOptimizer(builder.windowSize);
+			break;
+		default:
+			optimizer = new SetPassiveOptimizer(builder.windowSize);
+			break;
+		}
+
+		// Build the context
+		context = new SetAllocationContextImpl(optimizer, builder.samples);
 
 		// Print the log of the changes
 		if (builder.hasLog) {
@@ -125,8 +176,34 @@ public class AllocationContextFactory {
 	}
 
 	public static MapAllocationContext buildMapContext(AllocationContextBuilder builder) {
+		
 		// Build the context + optimizer
-		MapAllocationOptimizer optimizer = new MapPassiveOptimizer(builder.windowSize);
+		final MapAllocationOptimizer optimizer;
+
+		// Build the optimizer
+		switch (builder.algorithm) {
+
+		case ACTIVE:
+			optimizer = new MapActiveOptimizer(builder.windowSize);
+
+			// Schedule the Online Adapter Thread
+			scheduler = Executors.newScheduledThreadPool(1);
+			scheduler.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					((MapActiveOptimizer) optimizer).checkFinalizedAnalysis();
+				}
+			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
+
+			break;
+		case PASSIVE:
+			optimizer = new MapPassiveOptimizer(builder.windowSize);
+			break;
+		default:
+			optimizer = new MapPassiveOptimizer(builder.windowSize);
+			break;
+		}
+
 		MapAllocationContextInfo context = new MapAllocationContextImpl(optimizer, builder.samples);
 
 		// Print the log of the changes
@@ -168,10 +245,25 @@ public class AllocationContextFactory {
 		if (logFile != null) {
 			builder.withLog(logFile);
 		}
-		
+
 		logFile = System.getProperty("logOutput");
 		if (logFile != null) {
 			builder.withLog(logFile);
+		}
+
+		String active = System.getProperty("active");
+		if (active != null) {
+			builder.withAlgorithm(AllocationContextAlgorithm.ACTIVE);
+		}
+		
+		String initialDelay = System.getProperty("initialDelay");
+		if (initialDelay != null) {
+			builder.withInitialDelay(Integer.parseInt(initialDelay));
+		}
+		
+		String delay = System.getProperty("delay");
+		if (delay != null) {
+			builder.withDelay(Integer.parseInt(delay));
 		}
 
 		return builder;

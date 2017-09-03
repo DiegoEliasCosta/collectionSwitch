@@ -47,7 +47,7 @@ public class MapPassiveOptimizer implements MapAllocationOptimizer {
 
 	@Override
 	public <K, V> Map<K, V> createMonitor(Map<K, V> map) {
-		return new MapPassiveSizeMonitor<>(map, this);
+		return new MapPassiveSizeMonitor<K, V>(map, this);
 	}
 
 

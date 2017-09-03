@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.custom;
+package de.heidelberg.pvs.diego.collections_online_adapter.custom.sets;
 
 import java.util.AbstractSet;
 import java.util.Collection;
@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 
 
 @SuppressWarnings("rawtypes")
-public class ArraySet extends AbstractSet {
+public class ArraySet_Naive extends AbstractSet {
     private static final Object[] EMPTY_ARRAY = new Object[0];
     
     private class ArrayIterator implements Iterator {
@@ -65,15 +65,15 @@ public class ArraySet extends AbstractSet {
     private int version = 0;
     private Object[] values = EMPTY_ARRAY;
     
-    public ArraySet() { 
+    public ArraySet_Naive() { 
     }
     
-    public ArraySet(int initialCapacity) {
+    public ArraySet_Naive(int initialCapacity) {
     	// IGNORED
     	//values = new Object[initialCapacity];
     }
     
-    public ArraySet(Collection<?> set) {
+    public ArraySet_Naive(Collection<?> set) {
     	this.addAll(set);
     	
     }
@@ -83,7 +83,7 @@ public class ArraySet extends AbstractSet {
     }
     
     public Object clone() {
-        ArraySet ret = new ArraySet();
+        ArraySet_Naive ret = new ArraySet_Naive();
         if(this.values == EMPTY_ARRAY) {
             ret.values = EMPTY_ARRAY;
         } else {

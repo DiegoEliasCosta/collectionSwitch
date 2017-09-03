@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.openjdk.jol.info.GraphLayout;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
+import de.heidelberg.pvs.diego.collections_online_adapter.custom.lists.LazyArrayList;
+import de.heidelberg.pvs.diego.collections_online_adapter.custom.lists.LazyLinkedList;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
 
 public class LazilyAllocatedCollectionsTest {

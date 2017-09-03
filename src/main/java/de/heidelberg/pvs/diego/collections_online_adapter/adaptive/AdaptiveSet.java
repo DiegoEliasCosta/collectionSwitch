@@ -13,9 +13,9 @@ import edu.stanford.nlp.util.ArraySet;
 public class AdaptiveSet<E> implements Set<E> {
 
 	private static final int OPENHASH_HIGH_BOUND = 10000;
-	private static final int ARRAY_HIGH_BOUND = 50;
+	private static final int ARRAY_HIGH_BOUND = 10;
 
-	private static final int SAMPLE = 50;
+	private static final int SAMPLE = 10;
 
 	Set<E> set;
 

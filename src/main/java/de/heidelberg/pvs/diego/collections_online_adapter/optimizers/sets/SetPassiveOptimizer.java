@@ -47,7 +47,7 @@ public class SetPassiveOptimizer implements SetAllocationOptimizer {
 
 	@Override
 	public <E> Set<E> createMonitor(Set<E> set) {
-		return new SetPassiveSizeMonitor<>(set, this);
+		return new SetPassiveSizeMonitor<E>(set, this);
 	}
 
 

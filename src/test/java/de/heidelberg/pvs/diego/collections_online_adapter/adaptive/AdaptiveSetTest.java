@@ -7,7 +7,7 @@ import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 import org.junit.Test;
 import org.openjdk.jol.info.GraphLayout;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.custom.ArraySet;
+import de.heidelberg.pvs.diego.collections_online_adapter.custom.sets.ArraySet_Naive;
 import gnu.trove.set.hash.THashSet;
 
 public class AdaptiveSetTest {
@@ -16,7 +16,7 @@ public class AdaptiveSetTest {
 	public void testTotalFootprint() throws Exception {
 		
 		Set<Integer> set = new AdaptiveSet<Integer>();
-		Set<Integer> arraySet = new ArraySet();
+		Set<Integer> arraySet = new ArraySet_Naive();
 		Set<Integer> arrayNLPSet = new edu.stanford.nlp.util.ArraySet<Integer>();
 		Set<Integer> troveSet = new THashSet<Integer>();
 		Set<Integer> unifiedSet = new UnifiedSet<Integer>();

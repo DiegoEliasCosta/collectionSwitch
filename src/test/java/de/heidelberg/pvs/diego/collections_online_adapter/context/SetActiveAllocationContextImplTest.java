@@ -2,7 +2,6 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,13 +11,9 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.MapAllocationContextImpl;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetAllocationContextImpl;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.PassiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetPassiveOptimizer;
 import jlibs.core.lang.RuntimeUtil;
 
 public class SetActiveAllocationContextImplTest {

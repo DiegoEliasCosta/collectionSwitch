@@ -7,13 +7,15 @@ import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 import org.junit.Test;
 import org.openjdk.jol.info.GraphLayout;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.custom.sets.ArraySet_Naive;
+
 public class CustomCollectionsTest {
 
 	@Test
 	public void testArraySet() throws Exception {
 
 		// Write to the file
-		ArraySet root = new ArraySet();
+		ArraySet_Naive root = new ArraySet_Naive();
 		String footprint = String.format("ArraySet\n%s", GraphLayout.parseInstance(root).toFootprint());
 
 		System.out.println(String.format("%s", footprint));

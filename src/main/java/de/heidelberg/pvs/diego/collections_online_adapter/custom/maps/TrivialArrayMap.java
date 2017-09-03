@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.custom;
+package de.heidelberg.pvs.diego.collections_online_adapter.custom.maps;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
