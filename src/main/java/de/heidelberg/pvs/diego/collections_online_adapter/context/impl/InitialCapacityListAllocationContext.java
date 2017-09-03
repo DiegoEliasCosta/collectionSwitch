@@ -5,27 +5,40 @@ import java.util.Collection;
 import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListOptimizer;
 
 public class InitialCapacityListAllocationContext implements ListAllocationContext {
 
-	private static final int DEFAULT_INITIAL_CAPACITY = 10;
+	private int analyzedInitialCapacity = 10;
 	
-	private int analyzedInitialCapacity;
+	private int windowSize;
+	private int instancesCount;
+
+	private ListOptimizer optimizer;
 	
-	public InitialCapacityListAllocationContext() {
+	public InitialCapacityListAllocationContext(ListOptimizer optimizer, int windowSize, int sampleSize) {
 		super();
-		this.analyzedInitialCapacity = DEFAULT_INITIAL_CAPACITY;
+		this.windowSize = windowSize;
+		this.optimizer = optimizer;
+		this.instancesCount = 0;
+		
 	}
 
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
 		this.analyzedInitialCapacity = size;
+		instancesCount = 0; // reset  
 		
 	}
 
 	@Override
 	public <E> List<E> createList() {
-		return new ArrayList<>(analyzedInitialCapacity);
+		
+		if(instancesCount++ < windowSize) {
+			return optimizer.createMonitor(new ArrayList<E>(analyzedInitialCapacity));
+		}
+		
+		return new ArrayList<E>(analyzedInitialCapacity);
 	}
 
 	@Override

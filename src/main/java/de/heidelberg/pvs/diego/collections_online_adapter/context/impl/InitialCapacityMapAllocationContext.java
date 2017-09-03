@@ -1,16 +1,24 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
 public class InitialCapacityMapAllocationContext implements MapAllocationContext {
 
 	private int analyzedInitialCapacity = 1 << 4;
 	
-	public InitialCapacityMapAllocationContext() {
+	private int windowSize;
+	private int instancesCount;
+
+	private MapAllocationOptimizer optimizer;
+	
+	public InitialCapacityMapAllocationContext(MapAllocationOptimizer optimizer, int windowSize) {
 		super();
+		this.optimizer = optimizer;
 	}
 
 	@Override
@@ -20,6 +28,11 @@ public class InitialCapacityMapAllocationContext implements MapAllocationContext
 
 	@Override
 	public <K, V> Map<K, V> createMap() {
+		
+		if(instancesCount++ < windowSize) {
+			return optimizer.createMonitor(new HashMap<K, V>(analyzedInitialCapacity));
+		}
+		
 		return new HashMap<K, V>(analyzedInitialCapacity);
 	}
 

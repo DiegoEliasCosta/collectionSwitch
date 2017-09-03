@@ -1,24 +1,48 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
 public class InitialCapacitySetAllocationContext implements SetAllocationContext {
 
 	private int analyzedInitialCapacity = 1 << 4;
 	
+	private int windowSize;
+	private int instancesCount;
+
+	private SetAllocationOptimizer optimizer;
+	
+	
+	
+	
+	public InitialCapacitySetAllocationContext(SetAllocationOptimizer optimizer, int windowSize) {
+		super();
+		this.optimizer = optimizer;
+		this.windowSize = windowSize;
+	}
+
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
 		analyzedInitialCapacity = size;
+		instancesCount = 0; // reset
 		
 	}
 
 	@Override
 	public <E> Set<E> createSet() {
+		
+		if(instancesCount++ < windowSize) {
+			return optimizer.createMonitor(new HashSet<E>(analyzedInitialCapacity));
+		}
+		
 		return new HashSet<E>(analyzedInitialCapacity);
+		
 	}
 
 	@Override
