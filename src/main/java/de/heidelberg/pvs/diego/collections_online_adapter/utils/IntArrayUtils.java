@@ -1,6 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.utils;
 
-import java.util.Arrays;import jlibs.core.graph.sequences.ConcatSequence;
+import java.util.Arrays;
 
 public class IntArrayUtils {
 

@@ -1,40 +1,34 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 
-public class SetPerformanceOpportunityContext implements SetAllocationContext {
+public class InitialCapacitySetAllocationContext implements SetAllocationContext {
 
+	private int analyzedInitialCapacity = 1 << 4;
+	
 	@Override
-	public void updateCollectionSize(int size) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void noSizeConvergence() {
-		// TODO Auto-generated method stub
+	public void updateCollectionInitialCapacity(int size) {
+		analyzedInitialCapacity = size;
 		
 	}
 
 	@Override
 	public <E> Set<E> createSet() {
-		// TODO Auto-generated method stub
-		return null;
+		return new HashSet<E>(analyzedInitialCapacity);
 	}
 
 	@Override
 	public <E> Set<E> createSet(int initialCapacity) {
-		// TODO Auto-generated method stub
-		return null;
+		return new HashSet<E>(initialCapacity);
 	}
 
 	@Override
 	public <E> Set<E> createSet(Collection<? extends E> set) {
-		// TODO Auto-generated method stub
-		return null;
+		return new HashSet<E>(set);
 	}
 
 }

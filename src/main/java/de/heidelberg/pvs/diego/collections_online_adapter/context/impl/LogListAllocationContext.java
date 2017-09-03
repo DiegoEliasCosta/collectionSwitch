@@ -40,9 +40,9 @@ public class LogListAllocationContext implements ListAllocationContext {
 
 	
 	@Override
-	public void updateCollectionSize(int size) {
+	public void updateCollectionInitialCapacity(int size) {
 		AllocationContextState beforeState = context.getAllocationContextState();
-		context.updateCollectionSize(size);
+		context.updateCollectionInitialCapacity(size);
 		AllocationContextState afterState = context.getAllocationContextState();
 		
 		writer.println("State updated from " + beforeState + " -- to --" + afterState);
@@ -63,14 +63,6 @@ public class LogListAllocationContext implements ListAllocationContext {
 		return context.createList();
 	}
 	
-	@Override
-	public void noSizeConvergence() {
-		writer.println("No size convergence");
-		writer.flush();
-		context.noSizeConvergence();
-		
-	}
-
 	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
 		
 	}

@@ -6,15 +6,26 @@ import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 
-public class InactiveListAllocationContextImpl implements ListAllocationContext {
+public class InitialCapacityListAllocationContext implements ListAllocationContext {
+
+	private static final int DEFAULT_INITIAL_CAPACITY = 10;
+	
+	private int analyzedInitialCapacity;
+	
+	public InitialCapacityListAllocationContext() {
+		super();
+		this.analyzedInitialCapacity = DEFAULT_INITIAL_CAPACITY;
+	}
 
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
+		this.analyzedInitialCapacity = size;
+		
 	}
 
 	@Override
 	public <E> List<E> createList() {
-		return new ArrayList<E>();
+		return new ArrayList<>(analyzedInitialCapacity);
 	}
 
 	@Override
@@ -24,7 +35,7 @@ public class InactiveListAllocationContextImpl implements ListAllocationContext 
 
 	@Override
 	public <E> List<E> createList(Collection<? extends E> c) {
-		return new ArrayList<E>(c);
+		return new ArrayList<>(c);
 	}
 
 }
