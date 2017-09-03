@@ -8,6 +8,7 @@ import java.util.Set;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetActiveFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetState;
+import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
 public class SetActiveOptimizer implements SetAllocationOptimizer {
 
@@ -33,7 +34,20 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 	@Override
 	public void analyzeAndOptimize() {
-		// TODO To be implemented...
+
+		int[] sizes = new int[collectionsState.size()];
+
+		for (int i = 0; i < collectionsState.size(); i++) {
+			sizes[i] = collectionsState.get(i).getSize();
+
+		}
+
+		double mean = IntArrayUtils.calculateMean(sizes);
+		double std = IntArrayUtils.calculateStandardDeviation(sizes);
+
+		int newInitialCapacity = (int) ((mean + 2 * std) / 0.75 + 1) ;
+
+		context.updateCollectionInitialCapacity(newInitialCapacity);
 
 	}
 
