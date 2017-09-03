@@ -1,17 +1,13 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.custom;
 
-import static org.junit.Assert.*;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.junit.Test;
 import org.openjdk.jol.info.GraphLayout;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.lists.LazyArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.lists.LazyLinkedList;
-import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory;
 
 public class LazilyAllocatedCollectionsTest {
 

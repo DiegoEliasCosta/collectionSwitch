@@ -9,7 +9,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListAct
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListState;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
-public class ListActiveOptimizer implements ListOptimizer {
+public class ListActiveOptimizer implements ListAllocationOptimizer {
 	
 	
 	private List<ListState> collectionsState;
@@ -17,8 +17,7 @@ public class ListActiveOptimizer implements ListOptimizer {
 	private ListAllocationContext context;
 	
 	
-	public ListActiveOptimizer(ListAllocationContext context, int windowSize) {
-		this.context = context;
+	public ListActiveOptimizer(int windowSize) {
 		this.collectionsState = new ArrayList<ListState>(collectionsState);
 	}
 	
@@ -31,7 +30,7 @@ public class ListActiveOptimizer implements ListOptimizer {
 	}
 
 	@Override
-	public void analyzeAndOptimizeContext() {
+	public void analyzeAndOptimize() {
 		
 		int[] sizes = new int[collectionsState.size()];
 		
@@ -46,6 +45,12 @@ public class ListActiveOptimizer implements ListOptimizer {
 		int newInitialCapacity = (int) (mean + 2 * std);
 		
 		context.updateCollectionInitialCapacity(newInitialCapacity);
+		
+	}
+
+	@Override
+	public void setContext(ListAllocationContext context) {
+		this.context = context;
 		
 	}
 	

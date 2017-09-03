@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
-public class InitialCapacityListAllocationContext implements ListAllocationContext {
+public class InitialCapacityListAllocationContext implements ListAllocationContextInfo {
 
 	private int analyzedInitialCapacity = 10;
 	
 	private int windowSize;
 	private int instancesCount;
 
-	private ListOptimizer optimizer;
+	private ListAllocationOptimizer optimizer;
 	
-	public InitialCapacityListAllocationContext(ListOptimizer optimizer, int windowSize, int sampleSize) {
+	public InitialCapacityListAllocationContext(ListAllocationOptimizer optimizer, int windowSize, int sampleSize) {
 		super();
 		this.windowSize = windowSize;
 		this.optimizer = optimizer;
@@ -49,6 +49,16 @@ public class InitialCapacityListAllocationContext implements ListAllocationConte
 	@Override
 	public <E> List<E> createList(Collection<? extends E> c) {
 		return new ArrayList<>(c);
+	}
+
+	@Override
+	public String getCurrentCollectionType() {
+		return "Array";
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		return analyzedInitialCapacity;
 	}
 
 }

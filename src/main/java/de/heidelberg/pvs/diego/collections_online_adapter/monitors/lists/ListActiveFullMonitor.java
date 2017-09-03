@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListOptimizer;
-
 public class ListActiveFullMonitor<E> implements List<E>{
 
 	private List<E> list;

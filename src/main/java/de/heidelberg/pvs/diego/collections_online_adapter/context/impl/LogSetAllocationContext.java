@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
 
@@ -27,7 +26,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 		try{
 			writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
 		    writer.println("Context initialized");
-		    writer.println("First Status: " + this.context.getAllocationContextState());
+		    writer.println("Collecton Type: " + this.context.getCurrentCollectionType());
 		    writer.flush();
 		} catch (IOException e) {
 			if(writer != null) {
@@ -40,9 +39,9 @@ public class LogSetAllocationContext implements SetAllocationContext {
 	
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
-		AllocationContextState beforeState = context.getAllocationContextState();
+		String beforeState = context.getCurrentCollectionType();
 		context.updateCollectionInitialCapacity(size);
-		AllocationContextState afterState = context.getAllocationContextState();
+		String afterState = context.getCurrentCollectionType();
 		
 		writer.println("State updated from " + beforeState + " -- to --" + afterState);
 		writer.println("New Initial Capacity = " + context.getAnalyzedSize());

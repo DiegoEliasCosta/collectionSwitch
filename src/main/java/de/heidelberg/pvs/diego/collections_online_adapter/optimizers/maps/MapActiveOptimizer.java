@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapActiveFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapState;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
@@ -49,6 +50,12 @@ public class MapActiveOptimizer implements MapAllocationOptimizer {
 		int newInitialCapacity = (int) ((mean + 2 * std) / 0.75 + 1) ;
 
 		context.updateCollectionInitialCapacity(newInitialCapacity);
+		
+	}
+
+	@Override
+	public void setContext(MapAllocationContext context) {
+		this.context = context;
 		
 	}
 

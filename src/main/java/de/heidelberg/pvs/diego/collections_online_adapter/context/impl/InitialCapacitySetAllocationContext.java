@@ -1,15 +1,13 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
-public class InitialCapacitySetAllocationContext implements SetAllocationContext {
+public class InitialCapacitySetAllocationContext implements SetAllocationContextInfo {
 
 	private int analyzedInitialCapacity = 1 << 4;
 	
@@ -53,6 +51,17 @@ public class InitialCapacitySetAllocationContext implements SetAllocationContext
 	@Override
 	public <E> Set<E> createSet(Collection<? extends E> set) {
 		return new HashSet<E>(set);
+	}
+
+	@Override
+	public int getAnalyzedSize() {
+		return analyzedInitialCapacity; 
+				
+	}
+
+	@Override
+	public String getCurrentCollectionType() {
+		return "Hash";
 	}
 
 }

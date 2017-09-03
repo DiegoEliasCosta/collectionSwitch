@@ -1,13 +1,12 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 
-public class InitialCapacityMapAllocationContext implements MapAllocationContext {
+public class InitialCapacityMapAllocationContext implements MapAllocationContextInfo {
 
 	private int analyzedInitialCapacity = 1 << 4;
 	
@@ -49,6 +48,16 @@ public class InitialCapacityMapAllocationContext implements MapAllocationContext
 	@Override
 	public <K, V> Map<K, V> createMap(Map<K, V> map) {
 		return new HashMap<K, V>(map);
+	}
+
+	@Override
+	public String getCurrentCollectionType() {
+		return "Hash";
+	}
+
+	@Override
+	public int getInitialCapacity() {
+		return analyzedInitialCapacity;
 	}
 
 }

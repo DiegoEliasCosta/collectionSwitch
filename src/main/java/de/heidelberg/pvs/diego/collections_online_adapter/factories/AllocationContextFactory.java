@@ -1,17 +1,35 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.factories;
 
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder.AllocationContextAlgorithm;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacitySetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListActiveOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapActiveOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetActiveOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
 public class AllocationContextFactory {
 
 	private static final int SAMPLES = 50;
 	private static final int WINDOW_SIZE = 10;
+	private static final int DELAY = 1000;
+	private static final int INITIAL_DELAY = 1000;
 
 	private static ScheduledExecutorService scheduler;
 
@@ -21,18 +39,18 @@ public class AllocationContextFactory {
 		private final String identifier;
 
 		// Default: PASSIVE
-		private AllocationContextAlgorithm algorithm = AllocationContextAlgorithm.PASSIVE;
+		private AllocationContextAlgorithm algorithm = AllocationContextAlgorithm.INITIAL_CAPACITY;
 
 		private boolean hasLog;
 		private String logFile;
 
 		private int windowSize = WINDOW_SIZE;
 		private int samples = SAMPLES;
-		private int initialDelay = 1000;
-		private int delay = 1000;
+		private int initialDelay = INITIAL_DELAY;
+		private int delay = DELAY;
 
 		public enum AllocationContextAlgorithm {
-			PASSIVE, ACTIVE;
+			INITIAL_CAPACITY;
 		}
 
 		public AllocationContextBuilder(CollectionTypeEnum type, String identifier) {
@@ -65,13 +83,13 @@ public class AllocationContextFactory {
 		public AllocationContextBuilder withInitialDelay(int parseInt) {
 			this.initialDelay = parseInt;
 			return this;
-			
+
 		}
 
 		public AllocationContextBuilder withDelay(int parseInt) {
 			this.delay = parseInt;
 			return this;
-			
+
 		}
 
 	}
@@ -81,7 +99,51 @@ public class AllocationContextFactory {
 	 */
 	public static ListAllocationContext buildListContext(CollectionTypeEnum type, String identifier) {
 
-		return null;
+		// Parse command line
+		AllocationContextBuilder builder = parseCommandLine(type, identifier);
+
+		return buildListContext(builder);
+	}
+
+	private static ListAllocationContext buildListContext(AllocationContextBuilder builder) {
+
+		final ListAllocationOptimizer optimizer;
+		ListAllocationContextInfo context = null;
+
+		// Build the optimizer
+		switch (builder.algorithm) {
+
+		case INITIAL_CAPACITY:
+		default:
+			// TODO: Put this into the Switch Thread Manager
+			optimizer = new ListActiveOptimizer(builder.windowSize);
+
+			// Schedule the Online Adapter Thread
+			scheduler = Executors.newScheduledThreadPool(1);
+			scheduler.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					((ListActiveOptimizer) optimizer).analyzeAndOptimize();
+				}
+			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
+
+			context = new InitialCapacityListAllocationContext(optimizer, builder.windowSize, builder.samples);
+			break;
+
+		}
+
+		// Print the log of the changes
+		if (builder.hasLog) {
+			ListAllocationContext logContext = new LogListAllocationContext(context, builder.identifier,
+					builder.logFile);
+			optimizer.setContext(logContext);
+			return logContext;
+
+		} else {
+			optimizer.setContext(context);
+		}
+
+		return context;
 	}
 
 	/*
@@ -98,52 +160,44 @@ public class AllocationContextFactory {
 
 	public static <E> SetAllocationContext buildSetContext(AllocationContextBuilder builder) {
 
-//		final SetAllocationOptimizer optimizer;
-//		SetAllocationContextInfo context;
-//
-//		// Build the optimizer
-//		switch (builder.algorithm) {
-//
-//		case ACTIVE:
-//			optimizer = new SetActiveOptimizer(builder.windowSize);
-//
-//			// Schedule the Online Adapter Thread
-//			scheduler = Executors.newScheduledThreadPool(1);
-//			scheduler.scheduleAtFixedRate(new Runnable() {
-//				@Override
-//				public void run() {
-//					((SetActiveOptimizer) optimizer).checkFinalizedAnalysis();
-//				}
-//			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
-//
-//			break;
-//		case PASSIVE:
-//			optimizer = new SetPassiveOptimizer(builder.windowSize);
-//			break;
-//		default:
-//			optimizer = new SetPassiveOptimizer(builder.windowSize);
-//			break;
-//		}
-//
-//		// Build the context
-//		context = new SetAllocationContextImpl(optimizer, builder.samples);
-//
-//		// Print the log of the changes
-//		if (builder.hasLog) {
-//			SetAllocationContext logContext = new LogSetAllocationContext(context, builder.identifier, builder.logFile);
-//			optimizer.setContext(logContext);
-//			return logContext;
-//
-//		} else {
-//			optimizer.setContext(context);
-//		}
-//
-//		return context;
-		
-		return null;
+		final SetAllocationOptimizer optimizer;
+		SetAllocationContextInfo context = null;
+
+		// Build the optimizer
+		switch (builder.algorithm) {
+
+		case INITIAL_CAPACITY:
+		default:
+			// TODO: Put this into the Switch Thread Manager
+			optimizer = new SetActiveOptimizer(builder.windowSize);
+
+			// Schedule the Online Adapter Thread
+			scheduler = Executors.newScheduledThreadPool(1);
+			scheduler.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					((SetActiveOptimizer) optimizer).analyzeAndOptimize();
+				}
+			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
+
+			context = new InitialCapacitySetAllocationContext(optimizer, builder.windowSize);
+			break;
+
+		}
+
+		// Print the log of the changes
+		if (builder.hasLog) {
+			SetAllocationContext logContext = new LogSetAllocationContext(context, builder.identifier, builder.logFile);
+			optimizer.setContext(logContext);
+			return logContext;
+
+		} else {
+			optimizer.setContext(context);
+		}
+
+		return context;
 
 	}
-
 
 	/*
 	 * ------------------------------- MAPS -------------------------------
@@ -157,47 +211,40 @@ public class AllocationContextFactory {
 	}
 
 	public static MapAllocationContext buildMapContext(AllocationContextBuilder builder) {
-		
-//		// Build the context + optimizer
-//		final MapAllocationOptimizer optimizer;
-//
-//		// Build the optimizer
-//		switch (builder.algorithm) {
-//
-//		case ACTIVE:
-//			optimizer = new MapActiveOptimizer(builder.windowSize);
-//
-//			// Schedule the Online Adapter Thread
-//			scheduler = Executors.newScheduledThreadPool(1);
-//			scheduler.scheduleAtFixedRate(new Runnable() {
-//				@Override
-//				public void run() {
-//					((MapActiveOptimizer) optimizer).checkFinalizedAnalysis();
-//				}
-//			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
-//
-//			break;
-//		case PASSIVE:
-//			optimizer = new MapPassiveOptimizer(builder.windowSize);
-//			break;
-//		default:
-//			optimizer = new MapPassiveOptimizer(builder.windowSize);
-//			break;
-//		}
-//
-//		MapAllocationContextInfo context = new MapAllocationContextImpl(optimizer, builder.samples);
-//
-//		// Print the log of the changes
-//		if (builder.hasLog) {
-//			MapAllocationContext logContext = new LogMapAllocationContext(context, builder.identifier, builder.logFile);
-//			optimizer.setContext(logContext);
-//			return logContext;
-//
-//		}
-//
-//		return context;
-		
-		return null;
+
+		// Build the context + optimizer
+		final MapAllocationOptimizer optimizer;
+
+		// Build the optimizer
+		switch (builder.algorithm) {
+
+		case INITIAL_CAPACITY:
+		default:
+			optimizer = new MapActiveOptimizer(builder.windowSize);
+
+			// Schedule the Online Adapter Thread
+			scheduler = Executors.newScheduledThreadPool(1);
+			scheduler.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					((MapActiveOptimizer) optimizer).analyzeAndOptimizeContext();
+				}
+			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
+
+			break;
+		}
+
+		MapAllocationContextInfo context = new InitialCapacityMapAllocationContext(optimizer, builder.samples);
+
+		// Print the log of the changes
+		if (builder.hasLog) {
+			MapAllocationContext logContext = new LogMapAllocationContext(context, builder.identifier, builder.logFile);
+			optimizer.setContext(logContext);
+			return logContext;
+
+		}
+
+		return context;
 	}
 
 	/*
@@ -227,16 +274,11 @@ public class AllocationContextFactory {
 			builder.withLog(logFile);
 		}
 
-		String active = System.getProperty("active");
-		if (active != null) {
-			builder.withAlgorithm(AllocationContextAlgorithm.ACTIVE);
-		}
-		
 		String initialDelay = System.getProperty("initialDelay");
 		if (initialDelay != null) {
 			builder.withInitialDelay(Integer.parseInt(initialDelay));
 		}
-		
+
 		String delay = System.getProperty("delay");
 		if (delay != null) {
 			builder.withDelay(Integer.parseInt(delay));

@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
 
@@ -28,7 +27,7 @@ public class LogListAllocationContext implements ListAllocationContext {
 		try{
 		    writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
 		    writer.println("Context initialized");
-		    writer.println("First Status: " + this.context.getAllocationContextState());
+		    writer.println("Collecton Type: " + this.context.getCurrentCollectionType());
 		    writer.flush();
 		} catch (IOException e) {
 			if(writer != null) {
@@ -41,11 +40,11 @@ public class LogListAllocationContext implements ListAllocationContext {
 	
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
-		AllocationContextState beforeState = context.getAllocationContextState();
+		String beforeState = context.getCurrentCollectionType();
 		context.updateCollectionInitialCapacity(size);
-		AllocationContextState afterState = context.getAllocationContextState();
+		String afterState = context.getCurrentCollectionType();
 		
-		writer.println("State updated from " + beforeState + " -- to --" + afterState);
+		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
 		writer.println("New Initial Capacity = " + context.getInitialCapacity());
 		writer.flush();
 		

@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 
@@ -27,7 +26,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 		try{
 		    writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
 		    writer.println("Context initialized");
-		    writer.println("First Status: " + this.context.getAllocationContextState());
+		    writer.println("Collecton Type: " + this.context.getCurrentCollectionType());
 		    writer.flush();
 		} catch (IOException e) {
 			if(writer != null) {
@@ -40,9 +39,9 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
-		AllocationContextState beforeState = context.getAllocationContextState();
+		String beforeState = context.getCurrentCollectionType();
 		context.updateCollectionInitialCapacity(size);
-		AllocationContextState afterState = context.getAllocationContextState();
+		String afterState = context.getCurrentCollectionType();
 		
 		writer.println("State updated from " + beforeState + " -- to --" + afterState);
 		writer.println("New Initial Capacity = " + context.getInitialCapacity());
