@@ -1,27 +1,12 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.factories;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InactiveListAllocationContextImpl;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.MapAllocationContextImpl;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetAllocationContextImpl;
 import de.heidelberg.pvs.diego.collections_online_adapter.factories.AllocationContextFactory.AllocationContextBuilder.AllocationContextAlgorithm;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapActiveOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapPassiveOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetActiveOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetPassiveOptimizer;
 
 public class AllocationContextFactory {
 
@@ -96,7 +81,7 @@ public class AllocationContextFactory {
 	 */
 	public static ListAllocationContext buildListContext(CollectionTypeEnum type, String identifier) {
 
-		return new InactiveListAllocationContextImpl(null);
+		return null;
 	}
 
 	/*
@@ -113,56 +98,52 @@ public class AllocationContextFactory {
 
 	public static <E> SetAllocationContext buildSetContext(AllocationContextBuilder builder) {
 
-		final SetAllocationOptimizer optimizer;
-		SetAllocationContextInfo context;
-
-		// Build the optimizer
-		switch (builder.algorithm) {
-
-		case ACTIVE:
-			optimizer = new SetActiveOptimizer(builder.windowSize);
-
-			// Schedule the Online Adapter Thread
-			scheduler = Executors.newScheduledThreadPool(1);
-			scheduler.scheduleAtFixedRate(new Runnable() {
-				@Override
-				public void run() {
-					((SetActiveOptimizer) optimizer).checkFinalizedAnalysis();
-				}
-			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
-
-			break;
-		case PASSIVE:
-			optimizer = new SetPassiveOptimizer(builder.windowSize);
-			break;
-		default:
-			optimizer = new SetPassiveOptimizer(builder.windowSize);
-			break;
-		}
-
-		// Build the context
-		context = new SetAllocationContextImpl(optimizer, builder.samples);
-
-		// Print the log of the changes
-		if (builder.hasLog) {
-			SetAllocationContext logContext = new LogSetAllocationContext(context, builder.identifier, builder.logFile);
-			optimizer.setContext(logContext);
-			return logContext;
-
-		} else {
-			optimizer.setContext(context);
-		}
-
-		return context;
+//		final SetAllocationOptimizer optimizer;
+//		SetAllocationContextInfo context;
+//
+//		// Build the optimizer
+//		switch (builder.algorithm) {
+//
+//		case ACTIVE:
+//			optimizer = new SetActiveOptimizer(builder.windowSize);
+//
+//			// Schedule the Online Adapter Thread
+//			scheduler = Executors.newScheduledThreadPool(1);
+//			scheduler.scheduleAtFixedRate(new Runnable() {
+//				@Override
+//				public void run() {
+//					((SetActiveOptimizer) optimizer).checkFinalizedAnalysis();
+//				}
+//			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
+//
+//			break;
+//		case PASSIVE:
+//			optimizer = new SetPassiveOptimizer(builder.windowSize);
+//			break;
+//		default:
+//			optimizer = new SetPassiveOptimizer(builder.windowSize);
+//			break;
+//		}
+//
+//		// Build the context
+//		context = new SetAllocationContextImpl(optimizer, builder.samples);
+//
+//		// Print the log of the changes
+//		if (builder.hasLog) {
+//			SetAllocationContext logContext = new LogSetAllocationContext(context, builder.identifier, builder.logFile);
+//			optimizer.setContext(logContext);
+//			return logContext;
+//
+//		} else {
+//			optimizer.setContext(context);
+//		}
+//
+//		return context;
+		
+		return null;
 
 	}
 
-	public static <E> SetAllocationContext buildSetContext(int sample, int windowSize) {
-		SetAllocationOptimizer optimizer = new SetPassiveOptimizer(windowSize);
-		SetAllocationContext context = new SetAllocationContextImpl(optimizer, sample);
-		optimizer.setContext(context);
-		return context;
-	}
 
 	/*
 	 * ------------------------------- MAPS -------------------------------
@@ -177,51 +158,46 @@ public class AllocationContextFactory {
 
 	public static MapAllocationContext buildMapContext(AllocationContextBuilder builder) {
 		
-		// Build the context + optimizer
-		final MapAllocationOptimizer optimizer;
-
-		// Build the optimizer
-		switch (builder.algorithm) {
-
-		case ACTIVE:
-			optimizer = new MapActiveOptimizer(builder.windowSize);
-
-			// Schedule the Online Adapter Thread
-			scheduler = Executors.newScheduledThreadPool(1);
-			scheduler.scheduleAtFixedRate(new Runnable() {
-				@Override
-				public void run() {
-					((MapActiveOptimizer) optimizer).checkFinalizedAnalysis();
-				}
-			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
-
-			break;
-		case PASSIVE:
-			optimizer = new MapPassiveOptimizer(builder.windowSize);
-			break;
-		default:
-			optimizer = new MapPassiveOptimizer(builder.windowSize);
-			break;
-		}
-
-		MapAllocationContextInfo context = new MapAllocationContextImpl(optimizer, builder.samples);
-
-		// Print the log of the changes
-		if (builder.hasLog) {
-			MapAllocationContext logContext = new LogMapAllocationContext(context, builder.identifier, builder.logFile);
-			optimizer.setContext(logContext);
-			return logContext;
-
-		}
-
-		return context;
-	}
-
-	public static <K, V> MapAllocationContext buildMapContext(int sample, int windowSize) {
-		MapAllocationOptimizer optimizer = new MapPassiveOptimizer(windowSize);
-		MapAllocationContext context = new MapAllocationContextImpl(optimizer, sample);
-		optimizer.setContext(context);
-		return context;
+//		// Build the context + optimizer
+//		final MapAllocationOptimizer optimizer;
+//
+//		// Build the optimizer
+//		switch (builder.algorithm) {
+//
+//		case ACTIVE:
+//			optimizer = new MapActiveOptimizer(builder.windowSize);
+//
+//			// Schedule the Online Adapter Thread
+//			scheduler = Executors.newScheduledThreadPool(1);
+//			scheduler.scheduleAtFixedRate(new Runnable() {
+//				@Override
+//				public void run() {
+//					((MapActiveOptimizer) optimizer).checkFinalizedAnalysis();
+//				}
+//			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
+//
+//			break;
+//		case PASSIVE:
+//			optimizer = new MapPassiveOptimizer(builder.windowSize);
+//			break;
+//		default:
+//			optimizer = new MapPassiveOptimizer(builder.windowSize);
+//			break;
+//		}
+//
+//		MapAllocationContextInfo context = new MapAllocationContextImpl(optimizer, builder.samples);
+//
+//		// Print the log of the changes
+//		if (builder.hasLog) {
+//			MapAllocationContext logContext = new LogMapAllocationContext(context, builder.identifier, builder.logFile);
+//			optimizer.setContext(logContext);
+//			return logContext;
+//
+//		}
+//
+//		return context;
+		
+		return null;
 	}
 
 	/*

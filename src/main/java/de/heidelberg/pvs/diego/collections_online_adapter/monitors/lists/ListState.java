@@ -1,6 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists;
 
-import java.lang.ref.PhantomReference;
+import java.lang.ref.WeakReference;
 
 public class ListState {
 
@@ -10,7 +10,12 @@ public class ListState {
 	private int indexOp;
 	private int iterationOp;
 
-	private PhantomReference<?> list;
+	private WeakReference<?> list;
+	
+	public ListState(WeakReference<?> list) {
+		super();
+		this.list = list;
+	}
 
 	public boolean hasCollectionFinished() {
 		return list == null;

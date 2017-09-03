@@ -1,5 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +22,11 @@ public class ListActiveOptimizer implements ListOptimizer {
 	}
 	
 	@Override
-	public List<?> createMonitor(List<?> list) {
+	public <E> List<E> createMonitor(List<E> list) {
 
-		ListState newState = new ListState();
-		collectionsState.add(newState);
-		List<?> monitor = new ListActiveFullMonitor<>(list, newState);
-		return monitor;
+		ListState state = new ListState(new WeakReference<List<E>>(list));
+		collectionsState.add(state);
+		return new ListActiveFullMonitor<E>(list, state);
 	}
 
 	@Override

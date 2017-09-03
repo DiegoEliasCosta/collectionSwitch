@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface ListOptimizer {
 	
-	List<?> createMonitor(List<?> monitor);
+	<E> List<E> createMonitor(List<E> monitor);
 	
 	void analyzeAndOptimizeContext();
 
