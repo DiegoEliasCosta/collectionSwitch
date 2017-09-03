@@ -7,6 +7,7 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapState;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetActiveFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetState;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
@@ -19,10 +20,13 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 	private final int windowSize;
 
-	public SetActiveOptimizer(int windowSize) {
+	private double finishedRatio;
+
+	public SetActiveOptimizer(int windowSize, double finishedRatio) {
 		super();
 		this.windowSize = windowSize;
-		collectionsState = new ArrayList<SetState>(windowSize);
+		this.collectionsState = new ArrayList<SetState>(windowSize);
+		this.finishedRatio = finishedRatio;
 	}
 
 	@Override
@@ -36,26 +40,40 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 	@Override
 	public void analyzeAndOptimize() {
 
-		int[] sizes = new int[collectionsState.size()];
+		int n = collectionsState.size();
+		int[] sizes = new int[n];
 
-		for (int i = 0; i < collectionsState.size(); i++) {
-			sizes[i] = collectionsState.get(i).getSize();
+		int amountFinishedCollections = 0;
+		for (int i = 0; i < n; i++) {
+			SetState state = collectionsState.get(i);
+
+			if (state.hasCollectionFinished()) {
+				amountFinishedCollections++;
+				sizes[i] = state.getSize();
+			} else {
+				// TODO: IMPLEMENT THIS
+			}
 
 		}
 
-		double mean = IntArrayUtils.calculateMean(sizes);
-		double std = IntArrayUtils.calculateStandardDeviation(sizes);
+		// Only analyze it when
+		if (amountFinishedCollections > n / finishedRatio) {
 
-		int newInitialCapacity = (int) ((mean + 2 * std) / 0.75 + 1) ;
+			double mean = IntArrayUtils.calculateMean(sizes);
+			double std = IntArrayUtils.calculateStandardDeviation(sizes);
 
-		context.updateCollectionInitialCapacity(newInitialCapacity);
+			int newInitialCapacity = (int) ((mean + 2 * std) / 0.75 + 1);
+
+			context.updateCollectionInitialCapacity(newInitialCapacity);
+
+		}
 
 	}
 
 	@Override
 	public void setContext(SetAllocationContext context) {
 		this.context = context;
-		
+
 	}
 
 }

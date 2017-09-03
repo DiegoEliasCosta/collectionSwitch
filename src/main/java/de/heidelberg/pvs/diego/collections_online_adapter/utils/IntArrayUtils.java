@@ -30,7 +30,7 @@ public class IntArrayUtils {
 			sd = (sd + Math.pow(array[i] - mean, 2));
 		}
 
-		return sd;
+		return Math.sqrt(sd);
 
 	}
 

@@ -15,10 +15,13 @@ public class ListActiveOptimizer implements ListAllocationOptimizer {
 	private List<ListState> collectionsState;
 	
 	private ListAllocationContext context;
+
+	private double finishedRatio;
 	
 	
-	public ListActiveOptimizer(int windowSize) {
-		this.collectionsState = new ArrayList<ListState>(collectionsState);
+	public ListActiveOptimizer(int windowSize, double finishedRatio) {
+		this.collectionsState = new ArrayList<ListState>(windowSize);
+		this.finishedRatio = finishedRatio;
 	}
 	
 	@Override
@@ -32,19 +35,35 @@ public class ListActiveOptimizer implements ListAllocationOptimizer {
 	@Override
 	public void analyzeAndOptimize() {
 		
-		int[] sizes = new int[collectionsState.size()];
+		int n = collectionsState.size();
+		int[] sizes = new int[n];
+		int amountFinishedCollections = 0;
 		
-		for(int i = 0; i < collectionsState.size(); i++) {
-			sizes[i] = collectionsState.get(i).getSize();
+		for(int i = 0; i < n; i++) {
+			ListState state = collectionsState.get(i);
+			
+			if(state.hasCollectionFinished()) {
+				amountFinishedCollections++;
+				sizes[i] = state.getSize();
+			} else {
+				// TODO: IMPLEMENT THIS
+			}
 			
 		}
 		
-		double mean = IntArrayUtils.calculateMean(sizes);
-		double std = IntArrayUtils.calculateStandardDeviation(sizes);
+		// Only analyze it when 
+		if(amountFinishedCollections > n / finishedRatio) {
+			
+			double mean = IntArrayUtils.calculateMean(sizes);
+			double std = IntArrayUtils.calculateStandardDeviation(sizes);
+			
+			// 
+			int newInitialCapacity = (int) (mean + 2 * std);
+			
+			context.updateCollectionInitialCapacity(newInitialCapacity);
+		}
 		
-		int newInitialCapacity = (int) (mean + 2 * std);
-		
-		context.updateCollectionInitialCapacity(newInitialCapacity);
+
 		
 	}
 

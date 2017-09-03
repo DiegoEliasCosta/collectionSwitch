@@ -26,6 +26,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAll
 
 public class AllocationContextFactory {
 
+	private static final double FINISHED_RATIO = 1;
 	private static final int SAMPLES = 50;
 	private static final int WINDOW_SIZE = 10;
 	private static final int DELAY = 1000;
@@ -116,7 +117,7 @@ public class AllocationContextFactory {
 		case INITIAL_CAPACITY:
 		default:
 			// TODO: Put this into the Switch Thread Manager
-			optimizer = new ListActiveOptimizer(builder.windowSize);
+			optimizer = new ListActiveOptimizer(builder.windowSize, FINISHED_RATIO);
 
 			// Schedule the Online Adapter Thread
 			scheduler = Executors.newScheduledThreadPool(1);
@@ -169,7 +170,7 @@ public class AllocationContextFactory {
 		case INITIAL_CAPACITY:
 		default:
 			// TODO: Put this into the Switch Thread Manager
-			optimizer = new SetActiveOptimizer(builder.windowSize);
+			optimizer = new SetActiveOptimizer(builder.windowSize, FINISHED_RATIO);
 
 			// Schedule the Online Adapter Thread
 			scheduler = Executors.newScheduledThreadPool(1);
@@ -220,7 +221,7 @@ public class AllocationContextFactory {
 
 		case INITIAL_CAPACITY:
 		default:
-			optimizer = new MapActiveOptimizer(builder.windowSize);
+			optimizer = new MapActiveOptimizer(builder.windowSize, FINISHED_RATIO);
 
 			// Schedule the Online Adapter Thread
 			scheduler = Executors.newScheduledThreadPool(1);
