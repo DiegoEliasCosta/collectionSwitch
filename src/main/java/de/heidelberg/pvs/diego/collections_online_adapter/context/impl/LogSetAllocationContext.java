@@ -44,7 +44,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 		String afterState = context.getCurrentCollectionType();
 		
 		writer.println("State updated from " + beforeState + " -- to --" + afterState);
-		writer.println("New Initial Capacity = " + context.getAnalyzedSize());
+		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
 		writer.flush();
 		
 	}
@@ -54,7 +54,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 	public <E> Set<E> createSet() {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d sets \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedSize() ));
+			writer.println(String.format("Created %d sets \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
 			writer.flush();
 		}
 		return context.createSet();
@@ -65,7 +65,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 	public <E> Set<E> createSet(int initialCapacity) {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d sets \n\t-- initialCapacity (analyzed=%d || described=%s)  ", count, this.context.getAnalyzedSize(), initialCapacity));
+			writer.println(String.format("Created %d sets \n\t-- initialCapacity (analyzed=%d || described=%s)  ", count, this.context.getAnalyzedInitialCapacity(), initialCapacity));
 			writer.flush();
 		}
 		return context.createSet(initialCapacity);
@@ -76,7 +76,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 	public <E> Set<E> createSet(Collection<? extends E> set) {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Copied %d sets \n\t-- initialCapacity (analyzed=%d || described=%s)  ", count, this.context.getAnalyzedSize(), set.size()));
+			writer.println(String.format("Copied %d sets \n\t-- initialCapacity (analyzed=%d || described=%s)  ", count, this.context.getAnalyzedInitialCapacity(), set.size()));
 			writer.flush();
 		}
 		return context.createSet(set);

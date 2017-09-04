@@ -52,7 +52,7 @@ public class ListActiveOptimizer implements ListAllocationOptimizer {
 		}
 		
 		// Only analyze it when 
-		if(amountFinishedCollections > n / finishedRatio) {
+		if(amountFinishedCollections >= n / finishedRatio) {
 			
 			double mean = IntArrayUtils.calculateMean(sizes);
 			double std = IntArrayUtils.calculateStandardDeviation(sizes);

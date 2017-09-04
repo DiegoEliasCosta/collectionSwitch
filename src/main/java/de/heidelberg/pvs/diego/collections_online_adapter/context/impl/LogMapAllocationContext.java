@@ -44,7 +44,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 		String afterState = context.getCurrentCollectionType();
 		
 		writer.println("State updated from " + beforeState + " -- to --" + afterState);
-		writer.println("New Initial Capacity = " + context.getInitialCapacity());
+		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
 		writer.flush();
 		
 	}
@@ -58,7 +58,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	public <K, V> Map<K, V> createMap() {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getInitialCapacity() ));
+			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
 			writer.flush();
 		}
 		
@@ -70,7 +70,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	public <K, V> Map<K, V> createMap(int initialCapacity) {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getInitialCapacity() ));
+			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
 			writer.flush();
 		}
 		
@@ -82,7 +82,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	public <K, V> Map<K, V> createMap(int initialCapacity, float loadFactor) {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getInitialCapacity() ));
+			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
 			writer.flush();
 		}
 		
@@ -94,7 +94,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	public <K, V> Map<K, V> createMap(Map<K, V> map) {
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getInitialCapacity() ));
+			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
 			writer.flush();
 		}
 		

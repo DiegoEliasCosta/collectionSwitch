@@ -18,7 +18,7 @@ public class ListState {
 	}
 
 	public boolean hasCollectionFinished() {
-		return list == null;
+		return list.get() == null;
 	}
 
 	public int getSize() {

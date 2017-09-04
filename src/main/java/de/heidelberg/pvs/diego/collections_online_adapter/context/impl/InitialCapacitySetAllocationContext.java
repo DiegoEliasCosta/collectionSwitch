@@ -54,7 +54,7 @@ public class InitialCapacitySetAllocationContext implements SetAllocationContext
 	}
 
 	@Override
-	public int getAnalyzedSize() {
+	public int getAnalyzedInitialCapacity() {
 		return analyzedInitialCapacity; 
 				
 	}

@@ -4,6 +4,6 @@ public interface MapAllocationContextInfo extends MapAllocationContext {
 
 	String getCurrentCollectionType();
 
-	int getInitialCapacity();
+	int getAnalyzedInitialCapacity();
 
 }

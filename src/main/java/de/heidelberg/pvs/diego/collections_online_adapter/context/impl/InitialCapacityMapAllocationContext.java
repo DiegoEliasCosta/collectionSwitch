@@ -18,6 +18,7 @@ public class InitialCapacityMapAllocationContext implements MapAllocationContext
 	public InitialCapacityMapAllocationContext(MapAllocationOptimizer optimizer, int windowSize) {
 		super();
 		this.optimizer = optimizer;
+		this.windowSize = windowSize;
 	}
 
 	@Override
@@ -56,7 +57,7 @@ public class InitialCapacityMapAllocationContext implements MapAllocationContext
 	}
 
 	@Override
-	public int getInitialCapacity() {
+	public int getAnalyzedInitialCapacity() {
 		return analyzedInitialCapacity;
 	}
 

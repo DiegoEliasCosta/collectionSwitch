@@ -57,7 +57,7 @@ public class InitialCapacityListAllocationContext implements ListAllocationConte
 	}
 
 	@Override
-	public int getInitialCapacity() {
+	public int getAnalyzedInitialCapacity() {
 		return analyzedInitialCapacity;
 	}
 

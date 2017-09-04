@@ -16,7 +16,7 @@ public class MapState {
 	}
 
 	public boolean hasCollectionFinished() {
-		return mapReference == null;
+		return mapReference.get() == null;
 	}
 	
 	public int getSize() {

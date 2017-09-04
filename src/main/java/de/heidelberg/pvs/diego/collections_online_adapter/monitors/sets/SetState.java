@@ -16,7 +16,7 @@ public class SetState {
 	}
 
 	public boolean hasCollectionFinished() {
-		return setReference == null;
+		return setReference.get() == null;
 	}
 	
 	public int getSize() {

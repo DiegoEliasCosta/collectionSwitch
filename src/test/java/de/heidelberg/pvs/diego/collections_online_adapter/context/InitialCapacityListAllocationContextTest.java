@@ -10,6 +10,7 @@ import org.junit.Test;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
+import jlibs.core.lang.RuntimeUtil;
 
 public class InitialCapacityListAllocationContextTest {
 	
@@ -36,7 +37,7 @@ public class InitialCapacityListAllocationContextTest {
 		
 		for (int i = 0; i < windowsSize; i++) {
 			
-			int analyzed = context.getInitialCapacity();
+			int analyzed = context.getAnalyzedInitialCapacity();
 			assertEquals(windowsSize, analyzed);
 			
 			List<Object> createList2 = context.createList();
@@ -48,9 +49,11 @@ public class InitialCapacityListAllocationContextTest {
 			createList2 = null;
 		}
 		
+		RuntimeUtil.gc();
+		
 		optimizer.analyzeAndOptimize();
 		
-		int analyzed = context.getInitialCapacity();
+		int analyzed = context.getAnalyzedInitialCapacity();
 		assertEquals(100, analyzed);
 		
 	}

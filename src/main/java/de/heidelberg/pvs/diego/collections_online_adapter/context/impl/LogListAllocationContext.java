@@ -45,7 +45,7 @@ public class LogListAllocationContext implements ListAllocationContext {
 		String afterState = context.getCurrentCollectionType();
 		
 		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
-		writer.println("New Initial Capacity = " + context.getInitialCapacity());
+		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
 		writer.flush();
 		
 	}
@@ -54,7 +54,7 @@ public class LogListAllocationContext implements ListAllocationContext {
 		
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d lists \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getInitialCapacity() ));
+			writer.println(String.format("Created %d lists \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
 			writer.flush();
 		}
 	
@@ -70,7 +70,7 @@ public class LogListAllocationContext implements ListAllocationContext {
 		
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d lists \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getInitialCapacity(), initialCapacity));
+			writer.println(String.format("Created %d lists \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getAnalyzedInitialCapacity(), initialCapacity));
 			writer.flush();
 		}
 		
@@ -81,7 +81,7 @@ public class LogListAllocationContext implements ListAllocationContext {
 		
 		count++;
 		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Copied %d lists \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getInitialCapacity(), c.size()));
+			writer.println(String.format("Copied %d lists \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getAnalyzedInitialCapacity(), c.size()));
 			writer.flush();
 		}
 		
