@@ -38,7 +38,7 @@ public class MapActiveOptimizer implements MapAllocationOptimizer {
 	}
 
 	@Override
-	public void analyzeAndOptimizeContext() {
+	public void analyzeAndOptimize() {
 
 		int n = collectionsState.size();
 		int[] sizes = new int[n];

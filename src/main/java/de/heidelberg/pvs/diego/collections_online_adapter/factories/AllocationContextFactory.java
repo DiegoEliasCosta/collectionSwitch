@@ -3,6 +3,7 @@ package de.heidelberg.pvs.diego.collections_online_adapter.factories;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ForkJoinPool.ManagedBlocker;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
@@ -17,6 +18,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCa
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.manager.SwitchManager;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapActiveOptimizer;
@@ -31,11 +33,12 @@ public class AllocationContextFactory {
 	private static final int WINDOW_SIZE = 10;
 	private static final int DELAY = 1000;
 	private static final int INITIAL_DELAY = 1000;
-
-	private static ScheduledExecutorService scheduler;
+	
+	protected static SwitchManager manager;
 
 	public static class AllocationContextBuilder {
 
+		private static final int DEFAULT_THREADS_NUMBER = 1;
 		private final CollectionTypeEnum type;
 		private final String identifier;
 
@@ -49,6 +52,7 @@ public class AllocationContextFactory {
 		private int samples = SAMPLES;
 		private int initialDelay = INITIAL_DELAY;
 		private int delay = DELAY;
+		private int threadsNumber = DEFAULT_THREADS_NUMBER;
 
 		public enum AllocationContextAlgorithm {
 			INITIAL_CAPACITY;
@@ -93,6 +97,12 @@ public class AllocationContextFactory {
 
 		}
 
+		public AllocationContextBuilder withThreadsNumber(int parseInt) {
+			this.threadsNumber  = parseInt;
+			return this;
+			
+		}
+
 	}
 
 	/*
@@ -119,15 +129,7 @@ public class AllocationContextFactory {
 			// TODO: Put this into the Switch Thread Manager
 			optimizer = new ListActiveOptimizer(builder.windowSize, FINISHED_RATIO);
 
-			// Schedule the Online Adapter Thread
-			scheduler = Executors.newScheduledThreadPool(1);
-			scheduler.scheduleAtFixedRate(new Runnable() {
-				@Override
-				public void run() {
-					((ListActiveOptimizer) optimizer).analyzeAndOptimize();
-				}
-			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
-
+			manager.addOptimizer(optimizer);
 			context = new InitialCapacityListAllocationContext(optimizer, builder.windowSize, builder.samples);
 			break;
 
@@ -171,16 +173,8 @@ public class AllocationContextFactory {
 		default:
 			// TODO: Put this into the Switch Thread Manager
 			optimizer = new SetActiveOptimizer(builder.windowSize, FINISHED_RATIO);
-
-			// Schedule the Online Adapter Thread
-			scheduler = Executors.newScheduledThreadPool(1);
-			scheduler.scheduleAtFixedRate(new Runnable() {
-				@Override
-				public void run() {
-					((SetActiveOptimizer) optimizer).analyzeAndOptimize();
-				}
-			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
-
+			manager.addOptimizer(optimizer);
+			
 			context = new InitialCapacitySetAllocationContext(optimizer, builder.windowSize);
 			break;
 
@@ -222,16 +216,8 @@ public class AllocationContextFactory {
 		case INITIAL_CAPACITY:
 		default:
 			optimizer = new MapActiveOptimizer(builder.windowSize, FINISHED_RATIO);
-
-			// Schedule the Online Adapter Thread
-			scheduler = Executors.newScheduledThreadPool(1);
-			scheduler.scheduleAtFixedRate(new Runnable() {
-				@Override
-				public void run() {
-					((MapActiveOptimizer) optimizer).analyzeAndOptimizeContext();
-				}
-			}, builder.initialDelay, builder.delay, TimeUnit.MILLISECONDS);
-
+			manager.addOptimizer(optimizer);
+			
 			break;
 		}
 
@@ -284,6 +270,14 @@ public class AllocationContextFactory {
 		if (delay != null) {
 			builder.withDelay(Integer.parseInt(delay));
 		}
+		
+		String threads = System.getProperty("threads");
+		if (threads!= null) {
+			builder.withThreadsNumber(Integer.parseInt(threads));
+		}
+		
+		// FIXME: Fix this workflow
+		manager.configureAndScheduleManager(builder.threadsNumber, builder.initialDelay, builder.delay); 
 
 		return builder;
 
