@@ -6,13 +6,13 @@ import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListActiveFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListState;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListMetrics;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
 public class ListActiveOptimizer implements ListAllocationOptimizer {
 	
 	
-	private List<ListState> collectionsState;
+	private List<ListMetrics> collectionsState;
 	
 	private ListAllocationContext context;
 
@@ -20,14 +20,14 @@ public class ListActiveOptimizer implements ListAllocationOptimizer {
 	
 	
 	public ListActiveOptimizer(int windowSize, double finishedRatio) {
-		this.collectionsState = new ArrayList<ListState>(windowSize);
+		this.collectionsState = new ArrayList<ListMetrics>(windowSize);
 		this.finishedRatio = finishedRatio;
 	}
 	
 	@Override
 	public <E> List<E> createMonitor(List<E> list) {
 
-		ListState state = new ListState(new WeakReference<List<E>>(list));
+		ListMetrics state = new ListMetrics(new WeakReference<List<E>>(list));
 		collectionsState.add(state);
 		return new ListActiveFullMonitor<E>(list, state);
 	}
@@ -40,7 +40,7 @@ public class ListActiveOptimizer implements ListAllocationOptimizer {
 		int amountFinishedCollections = 0;
 		
 		for(int i = 0; i < n; i++) {
-			ListState state = collectionsState.get(i);
+			ListMetrics state = collectionsState.get(i);
 			
 			if(state.hasCollectionFinished()) {
 				amountFinishedCollections++;

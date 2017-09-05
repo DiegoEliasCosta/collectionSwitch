@@ -8,9 +8,9 @@ public class SetActiveFullMonitor<E> implements Set<E> {
 
 	private Set<E> set;
 	
-	private SetState state;
+	private SetMetrics state;
 	
-	public SetActiveFullMonitor(Set<E> set, SetState state) {
+	public SetActiveFullMonitor(Set<E> set, SetMetrics state) {
 		super();
 		this.set = set;
 		this.state = state;

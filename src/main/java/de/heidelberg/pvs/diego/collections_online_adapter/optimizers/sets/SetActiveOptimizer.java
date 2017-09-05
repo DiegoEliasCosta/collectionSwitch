@@ -7,16 +7,16 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapState;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapMetrics;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetActiveFullMonitor;
-import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetState;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetrics;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
 public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 	AllocationContextUpdatable context;
 
-	List<SetState> collectionsState;
+	List<SetMetrics> collectionsState;
 
 	private final int windowSize;
 
@@ -25,14 +25,14 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 	public SetActiveOptimizer(int windowSize, double finishedRatio) {
 		super();
 		this.windowSize = windowSize;
-		this.collectionsState = new ArrayList<SetState>(windowSize);
+		this.collectionsState = new ArrayList<SetMetrics>(windowSize);
 		this.finishedRatio = finishedRatio;
 	}
 
 	@Override
 	public <E> Set<E> createMonitor(Set<E> set) {
 
-		SetState state = new SetState(new WeakReference<Set<E>>(set));
+		SetMetrics state = new SetMetrics(new WeakReference<Set<E>>(set));
 		collectionsState.add(state);
 		return new SetActiveFullMonitor<>(set, state);
 	}
@@ -45,7 +45,7 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 		int amountFinishedCollections = 0;
 		for (int i = 0; i < n; i++) {
-			SetState state = collectionsState.get(i);
+			SetMetrics state = collectionsState.get(i);
 
 			if (state.hasCollectionFinished()) {
 				amountFinishedCollections++;

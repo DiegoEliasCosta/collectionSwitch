@@ -2,7 +2,7 @@ package de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists;
 
 import java.lang.ref.WeakReference;
 
-public class ListState {
+public class ListMetrics {
 
 	private int size;
 	private int maxSize;
@@ -12,7 +12,7 @@ public class ListState {
 
 	private WeakReference<?> list;
 	
-	public ListState(WeakReference<?> list) {
+	public ListMetrics(WeakReference<?> list) {
 		super();
 		this.list = list;
 	}

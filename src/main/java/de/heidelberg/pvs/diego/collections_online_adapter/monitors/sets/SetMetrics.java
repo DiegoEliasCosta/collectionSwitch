@@ -1,22 +1,22 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps;
+package de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets;
 
 import java.lang.ref.WeakReference;
 
-public class MapState {
+public class SetMetrics {
 	
 	private int size;
 	private int containsOp;
 	private int iterationOp;
 	
-	private WeakReference<?> mapReference;
+	private WeakReference<?> setReference;
 	
-	public MapState(WeakReference<?> map) {
+	public SetMetrics(WeakReference<?> map) {
 		super();
-		this.mapReference = map;
+		this.setReference = map;
 	}
 
 	public boolean hasCollectionFinished() {
-		return mapReference.get() == null;
+		return setReference.get() == null;
 	}
 	
 	public int getSize() {

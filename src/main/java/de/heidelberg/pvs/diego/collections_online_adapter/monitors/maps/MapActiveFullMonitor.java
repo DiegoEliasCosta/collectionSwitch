@@ -8,9 +8,9 @@ import java.util.Set;
 public class MapActiveFullMonitor<K, V> implements Map<K, V> {
 	
 	private Map<K, V> map;
-	private MapState state;
+	private MapMetrics state;
 	
-	public MapActiveFullMonitor(Map<K, V> map, MapState state) {
+	public MapActiveFullMonitor(Map<K, V> map, MapMetrics state) {
 		super();
 		this.map = map;
 		this.state = state;

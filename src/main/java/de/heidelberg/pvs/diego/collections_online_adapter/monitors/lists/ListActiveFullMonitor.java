@@ -8,10 +8,10 @@ import java.util.ListIterator;
 public class ListActiveFullMonitor<E> implements List<E>{
 
 	private List<E> list;
-	private ListState state;
+	private ListMetrics state;
 	private int monitorIndex;
 
-	public ListActiveFullMonitor(List<E> list, ListState optimizer) {
+	public ListActiveFullMonitor(List<E> list, ListMetrics optimizer) {
 		super();
 		this.list = list;
 		this.state = optimizer;
