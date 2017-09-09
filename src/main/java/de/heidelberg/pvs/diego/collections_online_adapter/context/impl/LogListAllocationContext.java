@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
 
@@ -40,11 +41,11 @@ public class LogListAllocationContext implements ListAllocationContext {
 	
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
-		String beforeState = context.getCurrentCollectionType();
+		int prevInitial = context.getAnalyzedInitialCapacity();
 		context.updateCollectionInitialCapacity(size);
-		String afterState = context.getCurrentCollectionType();
+		int updatedInitialCapacity = context.getAnalyzedInitialCapacity();
 		
-		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
+		writer.println("Initial Capacity updated from " + prevInitial + " -- to --" + updatedInitialCapacity);
 		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
 		writer.flush();
 		
@@ -86,6 +87,19 @@ public class LogListAllocationContext implements ListAllocationContext {
 		}
 		
 		return context.createList(c);
+	}
+
+
+	@Override
+	public void updateCollectionType(CollectionTypeEnum type) {
+		String beforeState = context.getCurrentCollectionType();
+		context.updateCollectionType(type);
+		String afterState = context.getCurrentCollectionType();
+		
+		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
+		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
+		writer.flush();
+		
 	}
 
 	

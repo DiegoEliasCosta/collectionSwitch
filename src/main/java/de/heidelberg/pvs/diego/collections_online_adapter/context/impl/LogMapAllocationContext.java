@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 
@@ -39,11 +40,11 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
-		String beforeState = context.getCurrentCollectionType();
+		int prevInitial = context.getAnalyzedInitialCapacity();
 		context.updateCollectionInitialCapacity(size);
-		String afterState = context.getCurrentCollectionType();
+		int updatedInitialCapacity = context.getAnalyzedInitialCapacity();
 		
-		writer.println("State updated from " + beforeState + " -- to --" + afterState);
+		writer.println("Initial Capacity updated from " + prevInitial + " -- to --" + updatedInitialCapacity);
 		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
 		writer.flush();
 		
@@ -99,6 +100,18 @@ public class LogMapAllocationContext implements MapAllocationContext {
 		}
 		
 		return context.createMap(map);
+	}
+
+
+	@Override
+	public void updateCollectionType(CollectionTypeEnum type) {
+		String beforeState = context.getCurrentCollectionType();
+		context.updateCollectionType(type);
+		String afterState = context.getCurrentCollectionType();
+		
+		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
+		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
+		writer.flush();		
 	}
 
 	

@@ -34,7 +34,7 @@ public class SwitchManager {
 
 	public void configureAndScheduleManager(int threadsNumber, int initialDelay, int delay2) {
 		
-		// FIXME: 
+		// FIXME: Use a better singleton implementation 
 		if(scheduler == null) {
 			// Schedule the Online Adapter Thread
 			scheduler = Executors.newScheduledThreadPool(threadsNumber);

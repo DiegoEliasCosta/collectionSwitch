@@ -9,7 +9,6 @@ public class ListActiveFullMonitor<E> implements List<E>{
 
 	private List<E> list;
 	private ListMetrics state;
-	private int monitorIndex;
 
 	public ListActiveFullMonitor(List<E> list, ListMetrics optimizer) {
 		super();

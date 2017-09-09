@@ -8,6 +8,7 @@ public class ListMetrics {
 	private int maxSize;
 	private int containsOp;
 	private int indexOp;
+	private int middleOp;
 	private int iterationOp;
 
 	private WeakReference<?> list;
@@ -39,6 +40,10 @@ public class ListMetrics {
 
 	public int getIterationOp() {
 		return iterationOp;
+	}
+	
+	public int getMiddleOp() {
+		return middleOp;
 	}
 
 	public void updateIteratorOp(int delta) {

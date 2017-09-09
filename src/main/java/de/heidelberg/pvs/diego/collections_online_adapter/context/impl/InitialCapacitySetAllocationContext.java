@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
@@ -62,6 +63,12 @@ public class InitialCapacitySetAllocationContext implements SetAllocationContext
 	@Override
 	public String getCurrentCollectionType() {
 		return "Hash";
+	}
+
+	@Override
+	public void updateCollectionType(CollectionTypeEnum type) {
+		// Do nothing
+		
 	}
 
 }

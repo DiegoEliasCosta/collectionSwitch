@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
@@ -59,6 +60,12 @@ public class InitialCapacityListAllocationContext implements ListAllocationConte
 	@Override
 	public int getAnalyzedInitialCapacity() {
 		return analyzedInitialCapacity;
+	}
+
+	@Override
+	public void updateCollectionType(CollectionTypeEnum type) {
+		// Do nothing
+		
 	}
 
 }

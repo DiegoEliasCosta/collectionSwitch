@@ -4,4 +4,6 @@ public interface AllocationContextUpdatable {
 	
 	void updateCollectionInitialCapacity(int size);
 	
+	void updateCollectionType(CollectionTypeEnum type);
+	
 }
