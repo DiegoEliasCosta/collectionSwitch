@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
 
@@ -85,7 +84,7 @@ public class LogSetAllocationContext implements SetAllocationContext {
 
 
 	@Override
-	public void updateCollectionType(CollectionTypeEnum type) {
+	public void updateCollectionType(SetCollectionType type) {
 		String beforeState = context.getCurrentCollectionType();
 		context.updateCollectionType(type);
 		String afterState = context.getCurrentCollectionType();

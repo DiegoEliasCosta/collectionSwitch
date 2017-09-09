@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter;
+package de.heidelberg.pvs.diego.collections_online_adapter.utils;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

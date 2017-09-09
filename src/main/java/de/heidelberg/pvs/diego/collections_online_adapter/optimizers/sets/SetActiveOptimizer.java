@@ -5,16 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapMetrics;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetActiveFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetrics;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
 
 public class SetActiveOptimizer implements SetAllocationOptimizer {
 
-	AllocationContextUpdatable context;
+	SetAllocationContextUpdatable context;
 
 	List<SetMetrics> collectionsState;
 

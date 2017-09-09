@@ -4,11 +4,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
-public class InitialCapacitySetAllocationContext implements SetAllocationContextInfo {
+public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo {
 
 	private int analyzedInitialCapacity = 1 << 4;
 	
@@ -17,13 +16,14 @@ public class InitialCapacitySetAllocationContext implements SetAllocationContext
 
 	private SetAllocationOptimizer optimizer;
 	
+	private SetCollectionType type;
 	
-	
-	
-	public InitialCapacitySetAllocationContext(SetAllocationOptimizer optimizer, int windowSize) {
+	public EmpiricalSetAllocationContext(SetCollectionType type, SetAllocationOptimizer optimizer, int windowSize) {
 		super();
+		this.type = type;
 		this.optimizer = optimizer;
 		this.windowSize = windowSize;
+		this.instancesCount = 0;
 	}
 
 	@Override
@@ -35,17 +35,19 @@ public class InitialCapacitySetAllocationContext implements SetAllocationContext
 
 	@Override
 	public <E> Set<E> createSet() {
-		
-		if(instancesCount++ < windowSize) {
-			return optimizer.createMonitor(new HashSet<E>(analyzedInitialCapacity));
-		}
-		
-		return new HashSet<E>(analyzedInitialCapacity);
+		return createSet(analyzedInitialCapacity);
 		
 	}
 
 	@Override
 	public <E> Set<E> createSet(int initialCapacity) {
+		
+		Set<E> set = type.createSet(initialCapacity);
+				
+		if(instancesCount++ < windowSize) {
+			return this.optimizer.createMonitor(set);
+		}
+		
 		return new HashSet<E>(initialCapacity);
 	}
 
@@ -62,13 +64,12 @@ public class InitialCapacitySetAllocationContext implements SetAllocationContext
 
 	@Override
 	public String getCurrentCollectionType() {
-		return "Hash";
+		return type.toString();
 	}
 
 	@Override
 	public void updateCollectionType(SetCollectionType type) {
-		// Do nothing
-		
+		this.type = type;
 	}
 
 }

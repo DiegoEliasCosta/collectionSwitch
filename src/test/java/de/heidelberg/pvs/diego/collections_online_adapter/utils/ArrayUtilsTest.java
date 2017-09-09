@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter;
+package de.heidelberg.pvs.diego.collections_online_adapter.utils;
 
 import static org.junit.Assert.assertEquals;
 
