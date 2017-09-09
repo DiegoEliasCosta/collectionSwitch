@@ -12,10 +12,12 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.Empirical
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
+import de.heidelberg.pvs.diego.collections_online_adapter.manager.SwitchManager;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalPerformanceEvaluator;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetPerformanceModel;
+import jlibs.core.lang.RuntimeUtil;
 
 public class SetEmpiricalAllocationContextTest {
 
@@ -24,6 +26,28 @@ public class SetEmpiricalAllocationContextTest {
 
 		PerformanceGoal.INSTANCE.init(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 0.9, 2);
 
+		List<SetPerformanceModel> performanceModel = new ArrayList<>();
+
+		// Faster on Contains
+		SetPerformanceModel arraySetModel = new SetPerformanceModel(SetCollectionType.NLP_ARRAYSET,
+				new double[] { 10, 1 }, new double[] { 10, 2 }, new double[] { 10, 2 });
+
+		performanceModel.add(arraySetModel);
+
+		// Default
+		SetPerformanceModel hashSetModel = new SetPerformanceModel(SetCollectionType.JDK_HASHSET,
+				new double[] { 10, 2 }, new double[] { 10, 2 }, new double[] { 10, 2 });
+
+		performanceModel.add(hashSetModel);
+
+		// Faster on iterate
+		SetPerformanceModel gscollectionsModel = new SetPerformanceModel(SetCollectionType.GSCOLLECTIONS_UNIFIEDSET,
+				new double[] { 10, 2 }, new double[] { 10, 2 }, new double[] { 10, 1 });
+		
+		performanceModel.add(gscollectionsModel);
+		
+		SetEmpiricalPerformanceEvaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		
 	}
 
 	@Test
@@ -37,23 +61,9 @@ public class SetEmpiricalAllocationContextTest {
 	}
 
 	@Test
-	public void testEmpiricalContextBasicOptimization() throws Exception {
+	public void testEmpiricalContextNLPChampion() throws Exception {
 
 		int windowSize = 10;
-
-		List<SetPerformanceModel> performanceModel = new ArrayList<>();
-
-		SetPerformanceModel arraySetModel = new SetPerformanceModel(SetCollectionType.NLP_ARRAYSET,
-				new double[] { 10, 2 }, new double[] { 10, 2 }, new double[] { 10, 2 });
-
-		performanceModel.add(arraySetModel);
-
-		SetPerformanceModel hashSetModel = new SetPerformanceModel(SetCollectionType.JDK_HASHSET,
-				new double[] { 10, 3 }, new double[] { 10, 3 }, new double[] { 10, 3 });
-
-		performanceModel.add(hashSetModel);
-
-		SetEmpiricalPerformanceEvaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
 		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, windowSize, 0.0);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
@@ -68,6 +78,7 @@ public class SetEmpiricalAllocationContextTest {
 				createSet.add(j);
 			}
 
+			// Contains is faster on NLP
 			for (int j = 0; j < 10; j++) {
 				createSet.contains(j);
 			}
@@ -77,5 +88,118 @@ public class SetEmpiricalAllocationContextTest {
 		Assert.assertEquals(SetCollectionType.NLP_ARRAYSET.toString(), context.getCurrentCollectionType());
 
 	}
+	
+	@Test
+	public void testEmpiricalContextGSCollectionsChampion() throws Exception {
 
+		int windowSize = 10;
+
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, windowSize, 0.0);
+		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
+				windowSize);
+
+		optimizer.setContext(context);
+
+		for (int i = 0; i < windowSize; i++) {
+			Set<Integer> createSet = context.createSet();
+
+			for (int j = 0; j < 100; j++) {
+				createSet.add(j);
+			}
+
+			// Iterate is faster on GSCollections
+			for(Integer e : createSet) {
+				e += 10;
+			}
+		}
+
+		optimizer.analyzeAndOptimize();
+		Assert.assertEquals(SetCollectionType.GSCOLLECTIONS_UNIFIEDSET.toString(), context.getCurrentCollectionType());
+
+	}
+
+	@Test
+	public void testWithSwitchManager() throws Exception {
+		
+		int windowSize = 10;
+
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, windowSize, 1);
+		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
+				windowSize);
+		
+		optimizer.setContext(context);
+		
+		SwitchManager manager = new SwitchManager();
+		
+		manager.addOptimizer(optimizer);
+		manager.configureAndScheduleManager(1, 100, 100);
+		
+		for (int i = 0; i < windowSize; i++) {
+			Set<Integer> createSet = context.createSet();
+
+			for (int j = 0; j < 100; j++) {
+				createSet.add(j);
+			}
+
+			// Iterate is faster on GSCollections
+			for(Integer e : createSet) {
+				e += 10;
+			}
+		}
+		
+		RuntimeUtil.gc();
+		Thread.sleep(200);
+		
+		Assert.assertEquals(SetCollectionType.GSCOLLECTIONS_UNIFIEDSET.toString(), context.getCurrentCollectionType());
+		
+		
+	}
+	
+	@Test
+	public void testBestOptionWithSwitchManager() throws Exception {
+		
+		int windowSize = 10;
+
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, windowSize, 1);
+		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
+				windowSize);
+
+		optimizer.setContext(context);
+		
+		SwitchManager manager = new SwitchManager();
+		manager.addOptimizer(optimizer);
+		manager.configureAndScheduleManager(1, 100, 50);
+		
+		for (int i = 0; i < windowSize; i++) {
+			Set<Integer> createSet = context.createSet();
+
+			for (int j = 0; j < 100; j++) {
+				createSet.add(j);
+			}
+
+			// Iterate is faster on GSCollections
+			for (int j = 0; j < 100; j++) {
+				for(Integer e : createSet) {
+					e += 10;
+				}
+			}
+			
+			// Contains is faster on NLP 
+			for (int j = 0; j < 100 + 1; j++) {
+				createSet.contains(j);
+			}
+			
+			createSet = null;
+		}
+		
+		RuntimeUtil.gc();
+		Thread.sleep(500);
+		RuntimeUtil.gc();
+		Thread.sleep(500);
+		
+		Assert.assertEquals(SetCollectionType.NLP_ARRAYSET.toString(), context.getCurrentCollectionType());
+		
+		
+	}
+	
 }

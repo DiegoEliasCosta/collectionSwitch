@@ -30,7 +30,6 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 	public void updateCollectionInitialCapacity(int size) {
 		analyzedInitialCapacity = size;
 		instancesCount = 0; // reset
-		
 	}
 
 	@Override
@@ -69,7 +68,9 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 
 	@Override
 	public void updateCollectionType(SetCollectionType type) {
+		System.out.println(String.format("Type udated to %s", type));
 		this.type = type;
+		this.instancesCount = 0; // reset
 	}
 
 }

@@ -12,7 +12,7 @@ public class SwitchManager {
 
 	List<AllocationOptimizer> optimizers;
 
-	private static ScheduledExecutorService scheduler;
+	private ScheduledExecutorService scheduler;
 
 	public SwitchManager() {
 		super();

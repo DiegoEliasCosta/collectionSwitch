@@ -11,9 +11,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetCollec
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetrics;
 
-public enum SetEmpiricalPerformanceEvaluator {
-
-	INSTANCE;
+public class SetEmpiricalPerformanceEvaluator {
 
 	private static Map<PerformanceDimension, List<SetPerformanceModel>> empiricalModel = new UnifiedMap<>();
 

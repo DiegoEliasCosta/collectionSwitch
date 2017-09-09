@@ -88,10 +88,11 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 			}
 			
 			context.updateCollectionType(champion);	
+
+			// Reset
+			collectionsState.clear();
 		}
 
-		// Reset
-		collectionsState.clear();
 
 	}
 
