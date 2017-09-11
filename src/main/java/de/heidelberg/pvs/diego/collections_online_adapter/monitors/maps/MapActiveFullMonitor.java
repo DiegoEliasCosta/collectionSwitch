@@ -14,6 +14,7 @@ public class MapActiveFullMonitor<K, V> implements Map<K, V> {
 		super();
 		this.map = map;
 		this.state = state;
+		this.state.updateSize(map.size()); // first record
 	}
 	
 	public boolean containsKey(Object key) {

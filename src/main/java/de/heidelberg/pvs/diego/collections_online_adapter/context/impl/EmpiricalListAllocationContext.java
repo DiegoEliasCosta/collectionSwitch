@@ -1,27 +1,34 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
-import de.heidelberg.pvs.diego.collections_online_adapter.custom.lists.HashArrayList;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListEmpiricalOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
-public class EmpiricalListAllocationContext implements ListAllocationContext {
+public class EmpiricalListAllocationContext implements ListAllocationContextInfo {
 
 	// Default value used for most list implementations
 	private int analyzedInitialCapacity = 10;
 	
-	private ListCollectionType collectionType;
+	private ListCollectionType type;
 
 	private int instancesCount;
 	private int windowSize;
 
-	private ListEmpiricalOptimizer optimizer;
+	private ListAllocationOptimizer optimizer;
 	
+	
+	public EmpiricalListAllocationContext(ListCollectionType defaultCollectionType, ListAllocationOptimizer optimizer, int windowSize) {
+		super();
+		this.type = defaultCollectionType;
+		this.windowSize = windowSize;
+		this.optimizer = optimizer;
+		instancesCount = 0;
+	}
+
+
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
 		this.analyzedInitialCapacity = size;
@@ -37,7 +44,7 @@ public class EmpiricalListAllocationContext implements ListAllocationContext {
 	@Override
 	public <E> List<E> createList(int initialCapacity) {
 
-		List<E> list = collectionType.createList(initialCapacity);
+		List<E> list = type.createList(initialCapacity);
 		
 		if(instancesCount++ < windowSize) {
 			return optimizer.createMonitor(list);
@@ -50,7 +57,7 @@ public class EmpiricalListAllocationContext implements ListAllocationContext {
 	@Override
 	public <E> List<E> createList(Collection<? extends E> c) {
 		
-		List<E> list = collectionType.createList(c);
+		List<E> list = type.createList(c);
 		
 		if(instancesCount++ < windowSize) {
 			return optimizer.createMonitor(list);
@@ -63,8 +70,20 @@ public class EmpiricalListAllocationContext implements ListAllocationContext {
 
 	@Override
 	public void updateCollectionType(ListCollectionType type) {
-		this.collectionType = type;
-		this.instancesCount = 0;
+		this.type = type;
+		this.instancesCount = 0; // reset
+	}
+
+
+	@Override
+	public String getCurrentCollectionType() {
+		return type.toString();
+	}
+
+
+	@Override
+	public int getAnalyzedInitialCapacity() {
+		return 0;
 	}
 
 }

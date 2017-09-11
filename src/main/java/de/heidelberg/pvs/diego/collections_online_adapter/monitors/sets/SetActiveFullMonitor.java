@@ -14,6 +14,7 @@ public class SetActiveFullMonitor<E> implements Set<E> {
 		super();
 		this.set = set;
 		this.state = state;
+		this.state.updateSize(set.size()); // first record
 	}
 
 	/**

@@ -23,6 +23,8 @@ public class ListPerformanceModel {
 		this.iterate = new PolynomialFunction(iterate);
 		this.index = new PolynomialFunction(index);
 	}
+	
+	
 
 	public double calculatePerformance(ListMetrics state) {
 

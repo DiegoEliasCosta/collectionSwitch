@@ -14,6 +14,7 @@ public class ListActiveFullMonitor<E> implements List<E>{
 		super();
 		this.list = list;
 		this.state = optimizer;
+		state.updateSize(list.size()); // First Record
 	}
 
 	/**

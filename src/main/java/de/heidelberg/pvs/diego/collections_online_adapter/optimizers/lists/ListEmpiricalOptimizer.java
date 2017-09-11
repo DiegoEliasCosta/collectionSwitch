@@ -26,7 +26,7 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 
 	private int finishedRatio;
 
-	public ListEmpiricalOptimizer(int windowSize, double finishedRatio, ListCollectionType defaultType) {
+	public ListEmpiricalOptimizer(ListCollectionType defaultType, int windowSize, double finishedRatio) {
 		this.collectionsState = new ArrayList<ListMetrics>(windowSize);
 		this.finishedRatio = (int) (collectionsState.size() / finishedRatio);
 		this.defaultType = defaultType;
@@ -34,7 +34,6 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 
 	@Override
 	public <E> List<E> createMonitor(List<E> list) {
-
 		ListMetrics state = new ListMetrics(new WeakReference<List<E>>(list));
 		collectionsState.add(state);
 		return new ListActiveFullMonitor<E>(list, state);
