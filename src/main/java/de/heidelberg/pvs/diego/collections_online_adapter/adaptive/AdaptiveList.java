@@ -23,9 +23,9 @@ public class AdaptiveList<E> implements List<E> {
 	public AdaptiveList(int initialCapacity) {
 
 		if (initialCapacity <= TURNING_POINT) {
-			list = new ArrayList<>(initialCapacity);
+			list = new ArrayList<E>(initialCapacity);
 		} else {
-			list = new HashArrayList<>(initialCapacity);
+			list = new HashArrayList<E>(initialCapacity);
 			transformed = true;
 		}
 	}
@@ -33,7 +33,7 @@ public class AdaptiveList<E> implements List<E> {
 	public AdaptiveList(Collection<? extends E> c) {
 
 		if (c.size() < TURNING_POINT) {
-			list = new ArrayList<>(c);
+			list = new ArrayList<E>(c);
 		} else {
 			list = new HashArrayList<>(c);
 			transformed = true;

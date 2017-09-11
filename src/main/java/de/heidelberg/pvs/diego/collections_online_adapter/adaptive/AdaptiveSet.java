@@ -1,13 +1,11 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.adaptive;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import edu.stanford.nlp.util.ArraySet;
 import net.openhft.koloboke.collect.set.hash.HashObjSets;
 
@@ -24,13 +22,12 @@ public class AdaptiveSet<E> implements Set<E> {
 		set = new ArraySet<E>();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public AdaptiveSet(int capacity) {
 		super();
 		if (capacity < TURNING_POINT) {
-			set = new ArraySet(capacity);
+			set = new ArraySet<E>(capacity);
 		} else  {
-			set = new UnifiedSet<E>(capacity);
+			set = HashObjSets.newMutableSet(capacity);
 			transformed = true;
 		} 
 	}
