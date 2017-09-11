@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.collections.impl.set.mutable.UnifiedSet;
-
 import edu.stanford.nlp.util.ArraySet;
 import net.openhft.koloboke.collect.set.hash.HashObjSets;
 

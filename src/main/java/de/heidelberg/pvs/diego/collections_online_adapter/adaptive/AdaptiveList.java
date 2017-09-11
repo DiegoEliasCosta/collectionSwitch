@@ -14,7 +14,7 @@ public class AdaptiveList<E> implements List<E> {
 
 	private boolean transformed;
 
-	private static final int TURNING_POINT = 40;
+	private static final int TURNING_POINT = 80;
 
 	public AdaptiveList() {
 		list = new ArrayList<E>();
