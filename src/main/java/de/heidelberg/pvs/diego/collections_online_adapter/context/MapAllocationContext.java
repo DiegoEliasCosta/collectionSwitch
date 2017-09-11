@@ -2,8 +2,6 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
 import java.util.Map;
 
-import org.eclipse.collections.impl.block.procedure.MapCollectProcedure;
-
 public interface MapAllocationContext  extends AllocationContextUpdatable<MapCollectionType> {
 	
 	public <K, V> Map<K, V> createMap();

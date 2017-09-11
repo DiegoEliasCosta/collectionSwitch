@@ -1,5 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists;
 
+import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
@@ -9,10 +10,10 @@ public class ListPerformanceModel {
 
 	private final ListCollectionType type;
 
-	private final PolynomialFunction contains;
-	private final PolynomialFunction populate;
-	private final PolynomialFunction iterate;
-	private final PolynomialFunction index;
+	private final UnivariateFunction contains;
+	private final UnivariateFunction populate;
+	private final UnivariateFunction iterate;
+	private final UnivariateFunction index;
 
 	public ListPerformanceModel(ListCollectionType type, double[] populate, double[] contains, 
 			double[] iterate, double[] index) {

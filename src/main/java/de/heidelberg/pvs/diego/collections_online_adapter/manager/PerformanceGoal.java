@@ -19,7 +19,7 @@ public enum PerformanceGoal {
 
 	public PerformanceDimension majorDimension = PerformanceDimension.TIME;
 	public PerformanceDimension minorDimension = PerformanceDimension.ALLOCATION;
-	public double maxPenalty = 1 + 0.2;
-	public double minImprovement = 0.9;
+	public double maxPenalty = 0.7;
+	public double minImprovement = 1.2;
 	
 }

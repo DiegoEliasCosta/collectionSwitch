@@ -36,7 +36,7 @@ public class SetEmpiricalPerformanceEvaluator {
 
 				// Accumulate the performance of each implementation
 				performanceResult.addToValue(model.getType(),
-						model.calculatePerformance(state.getSize(), 1, state.getContainsOp(), state.getIterationOp()));
+						model.calculatePerformance(state));
 			}
 		}
 

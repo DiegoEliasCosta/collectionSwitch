@@ -99,6 +99,14 @@ public class SetEmpiricalAllocationContextTest {
 
 		optimizer.setContext(context);
 
+		buildGSCollectionsBestScenario(windowSize, context);
+
+		optimizer.analyzeAndOptimize();
+		Assert.assertEquals(SetCollectionType.GSCOLLECTIONS_UNIFIEDSET.toString(), context.getCurrentCollectionType());
+
+	}
+
+	private void buildGSCollectionsBestScenario(int windowSize, SetAllocationContextInfo context) {
 		for (int i = 0; i < windowSize; i++) {
 			Set<Integer> createSet = context.createSet();
 
@@ -111,10 +119,6 @@ public class SetEmpiricalAllocationContextTest {
 				e += 10;
 			}
 		}
-
-		optimizer.analyzeAndOptimize();
-		Assert.assertEquals(SetCollectionType.GSCOLLECTIONS_UNIFIEDSET.toString(), context.getCurrentCollectionType());
-
 	}
 
 	@Test
@@ -132,18 +136,7 @@ public class SetEmpiricalAllocationContextTest {
 		manager.addOptimizer(optimizer);
 		manager.configureAndScheduleManager(1, 100, 100);
 		
-		for (int i = 0; i < windowSize; i++) {
-			Set<Integer> createSet = context.createSet();
-
-			for (int j = 0; j < 100; j++) {
-				createSet.add(j);
-			}
-
-			// Iterate is faster on GSCollections
-			for(Integer e : createSet) {
-				e += 10;
-			}
-		}
+		buildGSCollectionsBestScenario(windowSize, context);
 		
 		RuntimeUtil.gc();
 		Thread.sleep(200);

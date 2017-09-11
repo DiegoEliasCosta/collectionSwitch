@@ -9,7 +9,6 @@ import org.eclipse.collections.api.block.predicate.primitive.ObjectDoublePredica
 import org.eclipse.collections.api.map.primitive.MutableObjectDoubleMap;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
@@ -96,7 +95,7 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 
 	}
 
-	private MutableObjectDoubleMap<SetCollectionType> getCandidates(PerformanceDimension performanceDimension, double tolerance) {
+	private MutableObjectDoubleMap<SetCollectionType> getCandidates(PerformanceDimension performanceDimension, double factor) {
 
 		// Gets the performance prediction for each instance
 		MutableObjectDoubleMap<SetCollectionType> majorPerformance = SetEmpiricalPerformanceEvaluator
@@ -111,7 +110,7 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 				.select(new ObjectDoublePredicate<SetCollectionType>() {
 					@Override
 					public boolean accept(SetCollectionType object, double value) {
-						return value < tolerance * defaultPerformance;
+						return defaultPerformance / value > factor;
 					}
 				});
 

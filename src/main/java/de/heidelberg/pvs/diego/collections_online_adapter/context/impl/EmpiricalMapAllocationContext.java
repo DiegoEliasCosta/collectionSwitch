@@ -4,9 +4,7 @@ import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapCollectionType;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 
 public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 
@@ -43,14 +41,19 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 
 	@Override
 	public <K, V> Map<K, V> createMap() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.createMap(analyzedInitialCapacity);
 	}
 
 	@Override
 	public <K, V> Map<K, V> createMap(int initialCapacity) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		Map<K, V> map = type.createMap(initialCapacity);
+		
+		if(instancesCount++ < windowSize) {
+			return this.optimizer.createMonitor(map);
+		}
+		
+		return map;
 	}
 
 	@Override
@@ -66,15 +69,13 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 	}
 
 	@Override
-	public String getCurrentCollectionType() {
-		// TODO Auto-generated method stub
-		return null;
+	public MapCollectionType getCurrentCollectionType() {
+		return type;
 	}
 
 	@Override
 	public int getAnalyzedInitialCapacity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return analyzedInitialCapacity;
 	}
 
 }

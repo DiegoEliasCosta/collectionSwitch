@@ -47,10 +47,8 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 			if (state.hasCollectionFinished()) {
 				amountFinishedCollections++;
-				sizes[i] = state.getSize();
-			} else {
-				// TODO: IMPLEMENT THIS
-			}
+			} 
+			sizes[i] = state.getSize();
 
 		}
 

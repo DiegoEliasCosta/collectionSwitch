@@ -3,7 +3,6 @@ package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
@@ -54,8 +53,8 @@ public class InitialCapacityMapAllocationContext implements MapAllocationContext
 	}
 
 	@Override
-	public String getCurrentCollectionType() {
-		return "Hash";
+	public MapCollectionType getCurrentCollectionType() {
+		return MapCollectionType.JDK_HASHMAP;
 	}
 
 	@Override

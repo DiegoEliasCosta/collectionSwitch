@@ -1,7 +1,6 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
@@ -48,12 +47,18 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 			return this.optimizer.createMonitor(set);
 		}
 		
-		return new HashSet<E>(initialCapacity);
+		return set;
 	}
 
 	@Override
-	public <E> Set<E> createSet(Collection<? extends E> set) {
-		return new HashSet<E>(set);
+	public <E> Set<E> createSet(Collection<? extends E> setToCopy) {
+		
+		Set<E> set = type.createSet(setToCopy);
+		if(instancesCount++ < windowSize) {
+			return this.optimizer.createMonitor(set);
+		}
+		
+		return set;
 	}
 
 	@Override
@@ -69,7 +74,7 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 
 	@Override
 	public void updateCollectionType(SetCollectionType type) {
-		System.out.println(String.format("Type udated to %s", type));
+//		System.out.println(String.format("Type udated to %s", type));
 		this.type = type;
 		this.instancesCount = 0; // reset
 	}

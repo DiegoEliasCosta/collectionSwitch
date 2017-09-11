@@ -95,7 +95,7 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 
 	}
 	
-	private MutableObjectDoubleMap<ListCollectionType> getCandidates(PerformanceDimension performanceDimension, double tolerance) {
+	private MutableObjectDoubleMap<ListCollectionType> getCandidates(PerformanceDimension performanceDimension, double factor) {
 
 		// Gets the performance prediction for each instance
 		MutableObjectDoubleMap<ListCollectionType> majorPerformance = ListEmpiricalPerformanceEvaluator
@@ -110,7 +110,7 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 				.select(new ObjectDoublePredicate<ListCollectionType>() {
 					@Override
 					public boolean accept(ListCollectionType object, double value) {
-						return value < tolerance * defaultPerformance;
+						return defaultPerformance / value > factor;
 					}
 				});
 

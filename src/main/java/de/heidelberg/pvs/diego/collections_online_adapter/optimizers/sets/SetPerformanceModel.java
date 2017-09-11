@@ -1,17 +1,19 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets;
 
+import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetrics;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.PerformanceModel;
 
-public class SetPerformanceModel {
+public class SetPerformanceModel implements PerformanceModel<SetMetrics, SetCollectionType>{
 	
 	private final SetCollectionType type;
 	
-	private final PolynomialFunction contains;
-	private final PolynomialFunction populate;
-	private final PolynomialFunction iterate;
+	private final UnivariateFunction contains;
+	private final UnivariateFunction populate;
+	private final UnivariateFunction iterate;
 	
 	public SetPerformanceModel(SetCollectionType type, double[] contains, double[] populate, double[] iterate) {
 		super();
@@ -19,13 +21,6 @@ public class SetPerformanceModel {
 		this.contains = new PolynomialFunction(contains);
 		this.populate = new PolynomialFunction(populate);
 		this.iterate = new PolynomialFunction(iterate);
-	}
-	
-	public double calculatePerformance(int size, int nPopulate, int nContains, int cIterate) {
-		
-		return nPopulate * populate.value(size) + 
-				nContains * contains.value(size) +
-				cIterate * iterate.value(size);
 	}
 	
 	public double calculatePerformance(SetMetrics state) {

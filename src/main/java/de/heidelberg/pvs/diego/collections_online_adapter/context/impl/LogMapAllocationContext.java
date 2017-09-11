@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapCollectionType;
@@ -106,9 +105,9 @@ public class LogMapAllocationContext implements MapAllocationContext {
 
 	@Override
 	public void updateCollectionType(MapCollectionType type) {
-		String beforeState = context.getCurrentCollectionType();
+		MapCollectionType beforeState = context.getCurrentCollectionType();
 		context.updateCollectionType(type);
-		String afterState = context.getCurrentCollectionType();
+		MapCollectionType afterState = context.getCurrentCollectionType();
 		
 		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
 		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());

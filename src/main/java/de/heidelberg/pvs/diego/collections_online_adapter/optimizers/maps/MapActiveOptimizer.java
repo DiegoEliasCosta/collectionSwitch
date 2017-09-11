@@ -7,7 +7,6 @@ import java.util.Map;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListMetrics;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapActiveFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapMetrics;
 import de.heidelberg.pvs.diego.collections_online_adapter.utils.IntArrayUtils;
@@ -49,10 +48,8 @@ public class MapActiveOptimizer implements MapAllocationOptimizer {
 
 			if (state.hasCollectionFinished()) {
 				amountFinishedCollections++;
-				sizes[i] = state.getSize();
-			} else {
-				// TODO: IMPLEMENT THIS
-			}
+			} 
+			sizes[i] = state.getSize();
 
 		}
 
