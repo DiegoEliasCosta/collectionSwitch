@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
 
 public class InactiveListAllocationContextImpl implements ListAllocationContext {
 
@@ -29,7 +30,7 @@ public class InactiveListAllocationContextImpl implements ListAllocationContext 
 	}
 
 	@Override
-	public void updateCollectionType(CollectionTypeEnum type) {
+	public void updateCollectionType(ListCollectionType type) {
 		
 	}
 

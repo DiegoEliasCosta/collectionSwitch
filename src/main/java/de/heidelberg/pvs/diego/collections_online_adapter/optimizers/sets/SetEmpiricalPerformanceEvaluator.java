@@ -7,25 +7,27 @@ import org.eclipse.collections.api.map.primitive.MutableObjectDoubleMap;
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectDoubleHashMap;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetCollectionType;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetrics;
 
 public class SetEmpiricalPerformanceEvaluator {
 
-	private static Map<PerformanceDimension, List<SetPerformanceModel>> empiricalModel = new UnifiedMap<>();
+	private static Map<PerformanceDimension, List<SetPerformanceModel>> setEmpiricalModel = new UnifiedMap<>();
 
 	public static void addEmpiricalModel(PerformanceDimension dimension, List<SetPerformanceModel> performanceModel) {
-		empiricalModel.put(dimension, performanceModel);
+		// FIXME: This method REWRITES the empirical model every time
+		// We need to find a better way of handling this
+		setEmpiricalModel.put(dimension, performanceModel);
 	}
-
+	
 	public static MutableObjectDoubleMap<SetCollectionType> predictPerformance(List<SetMetrics> collectionsState,
 			PerformanceDimension dimension) {
 
-		MutableObjectDoubleMap<SetCollectionType> performanceResult = new ObjectDoubleHashMap<>(empiricalModel.size());
+		MutableObjectDoubleMap<SetCollectionType> performanceResult = new ObjectDoubleHashMap<>(setEmpiricalModel.size());
 
-		List<SetPerformanceModel> models = empiricalModel.get(dimension);
-
+		List<SetPerformanceModel> models = setEmpiricalModel.get(dimension);
+		
 		// For each monitored collection
 		for (SetMetrics state : collectionsState) {
 
@@ -36,7 +38,6 @@ public class SetEmpiricalPerformanceEvaluator {
 				performanceResult.addToValue(model.getType(),
 						model.calculatePerformance(state.getSize(), 1, state.getContainsOp(), state.getIterationOp()));
 			}
-
 		}
 
 		return performanceResult;

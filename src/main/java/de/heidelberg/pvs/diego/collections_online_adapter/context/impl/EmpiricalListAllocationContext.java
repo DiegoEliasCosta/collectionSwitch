@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.custom.lists.HashArrayList;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListEmpiricalOptimizer;
 
@@ -15,9 +15,9 @@ public class EmpiricalListAllocationContext implements ListAllocationContext {
 	// Default value used for most list implementations
 	private int analyzedInitialCapacity = 10;
 	
-	private CollectionTypeEnum collectionType;
+	private ListCollectionType collectionType;
 
-	private int count;
+	private int instancesCount;
 	private int windowSize;
 
 	private ListEmpiricalOptimizer optimizer;
@@ -30,7 +30,6 @@ public class EmpiricalListAllocationContext implements ListAllocationContext {
 
 	@Override
 	public <E> List<E> createList() {
-		
 		return this.createList(analyzedInitialCapacity);
 		
 	}
@@ -38,25 +37,9 @@ public class EmpiricalListAllocationContext implements ListAllocationContext {
 	@Override
 	public <E> List<E> createList(int initialCapacity) {
 
-		List<E> list;
+		List<E> list = collectionType.createList(initialCapacity);
 		
-		switch(collectionType) {
-		
-		case ARRAY:
-			list = new ArrayList<>(initialCapacity);
-			
-		case HASH:
-			list = new HashArrayList<>(initialCapacity);
-			
-		case LINKED:
-			list = new LinkedList<>();
-			
-		default:
-			// Thread-safe case: Use the default implementation just in case
-			list = new ArrayList<>(initialCapacity);
-		}
-		
-		if(count++ < windowSize) {
+		if(instancesCount++ < windowSize) {
 			return optimizer.createMonitor(list);
 		}
 		
@@ -67,25 +50,9 @@ public class EmpiricalListAllocationContext implements ListAllocationContext {
 	@Override
 	public <E> List<E> createList(Collection<? extends E> c) {
 		
-		List<E> list;
+		List<E> list = collectionType.createList(c);
 		
-		switch(collectionType) {
-		
-		case ARRAY:
-			list = new ArrayList<>(c);
-			
-		case HASH:
-			list = new HashArrayList<>(c);
-			
-		case LINKED:
-			list = new LinkedList<>();
-			
-		default:
-			// Thread-safe case: Use the default implementation just in case
-			list = new ArrayList<>(c);
-		}
-		
-		if(count++ < windowSize) {
+		if(instancesCount++ < windowSize) {
 			return optimizer.createMonitor(list);
 		}
 		
@@ -95,9 +62,9 @@ public class EmpiricalListAllocationContext implements ListAllocationContext {
 
 
 	@Override
-	public void updateCollectionType(CollectionTypeEnum type) {
+	public void updateCollectionType(ListCollectionType type) {
 		this.collectionType = type;
-		this.count = 0;
+		this.instancesCount = 0;
 	}
 
 }

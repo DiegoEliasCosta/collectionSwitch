@@ -8,6 +8,7 @@ import java.util.List;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
 
 public class LogListAllocationContext implements ListAllocationContext {
 	
@@ -91,7 +92,7 @@ public class LogListAllocationContext implements ListAllocationContext {
 
 
 	@Override
-	public void updateCollectionType(CollectionTypeEnum type) {
+	public void updateCollectionType(ListCollectionType type) {
 		String beforeState = context.getCurrentCollectionType();
 		context.updateCollectionType(type);
 		String afterState = context.getCurrentCollectionType();

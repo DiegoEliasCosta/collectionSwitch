@@ -1,122 +1,88 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.adaptive;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.collections.impl.map.mutable.UnifiedMap;
+import com.google.api.client.util.ArrayMap;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import edu.stanford.nlp.util.ArrayMap;
+import net.openhft.koloboke.collect.map.hash.HashObjObjMaps;
 
 public class AdaptiveMap<K, V> implements Map<K, V> {
 	
-	private static final int OPENHASH_HIGH_BOUND = 10000;
-	private static final int ARRAY_HIGH_BOUND = 10;
-	
-	private static final int SAMPLE = 50;
+	private static final int TURNING_POINT = 50;
 	
 	private Map<K,V> map;
-	CollectionTypeEnum type;
-	private int count;
+
+	private boolean transformed;
 	
 	public AdaptiveMap() {
 		super();
 		map = new ArrayMap<K,V>();
-		type = CollectionTypeEnum.ARRAY;
 	}
 	
 	public AdaptiveMap(int initialCapacity) {
 		super();
-		
-		if (initialCapacity < ARRAY_HIGH_BOUND) {
-			map = new ArrayMap<K, V>(initialCapacity);
-			type = CollectionTypeEnum.ARRAY;
+		if (initialCapacity < TURNING_POINT) {
+			map = new ArrayMap<K, V>();
 			
-		} else if(initialCapacity < OPENHASH_HIGH_BOUND) {
-			map = new UnifiedMap<K, V>(initialCapacity);
-			type = CollectionTypeEnum.OPEN_HASH;
-
-		} else {
-			map = new HashMap<K, V>(initialCapacity);
-			type = CollectionTypeEnum.HASH;
-		}
-		
+		} else  {
+			map = HashObjObjMaps.newMutableMap(initialCapacity);
+			transformed = true;
+		} 
 	}
 	
 	public AdaptiveMap(int initialCapacity, float loadFactor) {
 		super();
-		
-		if (initialCapacity < ARRAY_HIGH_BOUND) {
-			map = new ArrayMap<K, V>(initialCapacity);
-			type = CollectionTypeEnum.ARRAY;
+		if (initialCapacity < TURNING_POINT) {
+			map = new ArrayMap<K, V>();
 			
-		} else if(initialCapacity < OPENHASH_HIGH_BOUND) {
-			map = new UnifiedMap<K, V>(initialCapacity, loadFactor);
-			type = CollectionTypeEnum.OPEN_HASH;
-
-		} else {
-			map = new HashMap<K, V>(initialCapacity, loadFactor);
-			type = CollectionTypeEnum.HASH;
-		}
-		
+		} else  {
+			map = HashObjObjMaps.newMutableMap(initialCapacity);
+			transformed = true;
+		} 
 	}
 	
 	public AdaptiveMap(Map<? extends K, ? extends V> m) {
 		super();
-		
-		if (m.size() < ARRAY_HIGH_BOUND) {
-			map = new ArrayMap<K, V>(m);
-			type = CollectionTypeEnum.ARRAY;
+		if (m.size() < TURNING_POINT) {
+			map = new ArrayMap<K, V>();
+			map.putAll(m);
 			
-		} else if(m.size() < OPENHASH_HIGH_BOUND) {
-			map = new UnifiedMap<K, V>(m);
-			type = CollectionTypeEnum.OPEN_HASH;
-
-		} else {
-			map = new HashMap<K, V>(m);
-			type = CollectionTypeEnum.HASH;
-		}
-		
+		} else  {
+			map = HashObjObjMaps.newMutableMap(m);
+			transformed = true;
+		} 
 	}
 	
 
-	private void manageImplementation(int size) {
-		switch(type) {
-		case ARRAY:
-			if(size() > ARRAY_HIGH_BOUND) {
-				map= new UnifiedMap<K, V>(map);
-				type = CollectionTypeEnum.OPEN_HASH;
-			}
-			break;
-			
-		case OPEN_HASH:
-			if(size() > OPENHASH_HIGH_BOUND) {
-				map = new HashMap<K, V>(map);
-				type = CollectionTypeEnum.HASH;
-			}
-			
-			break;
-		default:
-			break;
-			
+	private void manageImplementation(int delta) {
+		int newSize = size() + delta;
+		if (!transformed && newSize > TURNING_POINT) {
+			map = HashObjObjMaps.newMutableMap(map);
+			transformed = true;
 		}
 	}
 	
+	// -----------------------------------------------------
+	// 						ADD	
+	// -----------------------------------------------------
 
 	public V put(K key, V value) {
-		if (count++ % SAMPLE == 0)
-			manageImplementation(1);
+		if(!transformed) {
+			manageImplementation(size() + 1);
+		}
 		return map.put(key, value);
 	}
 	
 	public void putAll(Map<? extends K, ? extends V> m) {
-		manageImplementation(m.size());
+		if(!transformed) {
+			manageImplementation(m.size());
+		}
 		map.putAll(m);
 	}
-
 	
+	// -----------------------------------------------------
 	
 	public int size() {
 		return map.size();
@@ -137,7 +103,6 @@ public class AdaptiveMap<K, V> implements Map<K, V> {
 	public V get(Object key) {
 		return map.get(key);
 	}
-
 
 	public V remove(Object key) {
 		return map.remove(key);

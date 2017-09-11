@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalSetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.SwitchManager;

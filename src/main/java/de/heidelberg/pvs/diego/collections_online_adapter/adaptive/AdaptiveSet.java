@@ -9,109 +9,77 @@ import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import edu.stanford.nlp.util.ArraySet;
+import net.openhft.koloboke.collect.set.hash.HashObjSets;
 
 public class AdaptiveSet<E> implements Set<E> {
 
-	private static final int OPENHASH_HIGH_BOUND = 10000;
-	private static final int ARRAY_HIGH_BOUND = 10;
-
-	private static final int SAMPLE = 10;
+	private static final int TURNING_POINT = 40;
 
 	Set<E> set;
 
-	CollectionTypeEnum type;
-
-	private int count;
+	private boolean transformed;
 
 	public AdaptiveSet() {
 		super();
 		set = new ArraySet<E>();
-		type = CollectionTypeEnum.ARRAY;
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public AdaptiveSet(int capacity) {
 		super();
-		if (capacity < ARRAY_HIGH_BOUND) {
+		if (capacity < TURNING_POINT) {
 			set = new ArraySet(capacity);
-			type = CollectionTypeEnum.ARRAY;
-		} else if (capacity < OPENHASH_HIGH_BOUND) {
+		} else  {
 			set = new UnifiedSet<E>(capacity);
-			type = CollectionTypeEnum.OPEN_HASH;
-		} else {
-			set = new HashSet<E>(capacity);
-			type = CollectionTypeEnum.HASH;
-
-		}
+			transformed = true;
+		} 
 	}
 
 	public AdaptiveSet(int capacity, float loadFactor) {
 		super();
 		
-		/*
-		 * if (capacity < ARRAY_HIGH_BOUND) { set = new ArraySet(capacity,
-		 * loadFactor); type = CollectionTypeEnum.ARRAY; } else
-		 */
-
-		if (capacity < OPENHASH_HIGH_BOUND) {
-			set = new UnifiedSet<E>(capacity, loadFactor);
-			type = CollectionTypeEnum.OPEN_HASH;
-
-		} else {
-			set = new HashSet<E>(capacity, loadFactor);
-			type = CollectionTypeEnum.HASH;
-
-		}
+		if (capacity < TURNING_POINT) {
+			set = new ArraySet<E>(capacity);
+		} else  {
+			set = HashObjSets.newMutableSet(capacity);
+			transformed = true;
+		} 
 	}
 
 	public AdaptiveSet(Collection<? extends E> set) {
 
-		// if (set.size() < ARRAY_HIGH_BOUND) {
-		// set = new ArraySet<E>(capacity, loadFactor);
-		// type = CollectionTypeEnum.ARRAY;
-		// }
-
-		if (set.size() < OPENHASH_HIGH_BOUND) {
-			this.set = new UnifiedSet<E>(set);
-			type = CollectionTypeEnum.OPEN_HASH;
-		}
-
-		else {
-			set = new HashSet<E>(set);
-			type = CollectionTypeEnum.HASH;
-		}
+		if (set.size() < TURNING_POINT) {
+			this.set = new ArraySet<E>();
+			this.set.addAll(set);
+		} else  {
+			set = HashObjSets.newMutableSet(set);
+			transformed = true;
+		} 
 
 	}
 
-	private void manageImplementation(int elementsAdded) {
-		int newSize = size() + elementsAdded;
-		switch (type) {
-		case ARRAY:
-			if (newSize > ARRAY_HIGH_BOUND) {
-				set = new UnifiedSet<E>(set);
-				type = CollectionTypeEnum.OPEN_HASH;
-			}
-			break;
-
-		case OPEN_HASH:
-			if (newSize > OPENHASH_HIGH_BOUND) {
-				set = new HashSet<E>(set);
-				type = CollectionTypeEnum.HASH;
-			}
-			break;
-		default:
-			break;
-
-		}
+	private void manageImplementation(int delta) {
+		int newSize = size() + delta;
+		
+		// Double-check on transformed
+		if (newSize > TURNING_POINT && !transformed) {
+			set = HashObjSets.newMutableSet(set);
+			transformed = true;
+		} 
+		
 	}
 
 	public boolean add(E e) {
-		if (count++ % SAMPLE == 0)
+		if(!transformed) {
 			manageImplementation(1);
+		}
 		return set.add(e);
 	}
 
 	public boolean addAll(Collection<? extends E> c) {
+		if(!transformed) {
+			manageImplementation(c.size());
+		}
 		manageImplementation(c.size());
 		return set.addAll(c);
 	}

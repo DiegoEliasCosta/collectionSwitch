@@ -1,4 +1,4 @@
-package de.heidelberg.pvs.diego.collections_online_adapter.context.impl;
+package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
 import java.util.HashSet;
 import java.util.Set;

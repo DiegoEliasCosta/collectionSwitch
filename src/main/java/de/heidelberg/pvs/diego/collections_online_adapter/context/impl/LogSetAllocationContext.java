@@ -7,6 +7,7 @@ import java.util.Set;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
 
 public class LogSetAllocationContext implements SetAllocationContext {
 	

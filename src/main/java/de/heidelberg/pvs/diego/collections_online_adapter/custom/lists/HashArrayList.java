@@ -25,7 +25,7 @@ public class HashArrayList<E> extends ArrayList<E> implements Serializable {
 	
 
 	public HashArrayList(Collection<? extends E> c) {
-		super();
+		super(c);
 		bag = new HashBag<E>();
 		bag.addAll(c);
 	}

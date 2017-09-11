@@ -10,7 +10,7 @@ import org.eclipse.collections.api.map.primitive.MutableObjectDoubleMap;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextUpdatable;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetCollectionType;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetActiveFullMonitor;

@@ -2,7 +2,8 @@ package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets;
 
 import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.SetCollectionType;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
+import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetrics;
 
 public class SetPerformanceModel {
 	
@@ -25,6 +26,15 @@ public class SetPerformanceModel {
 		return nPopulate * populate.value(size) + 
 				nContains * contains.value(size) +
 				cIterate * iterate.value(size);
+	}
+	
+	public double calculatePerformance(SetMetrics state) {
+		
+		int size = state.getSize();
+		
+		return 1 * populate.value(size) + 
+				state.getContainsOp() * contains.value(size) +
+				state.getIterationOp() * iterate.value(size);
 	}
 	
 	public SetCollectionType getType() {

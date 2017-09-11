@@ -6,6 +6,7 @@ import java.util.List;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 
 public class InitialCapacityListAllocationContext implements ListAllocationContextInfo {
@@ -63,7 +64,7 @@ public class InitialCapacityListAllocationContext implements ListAllocationConte
 	}
 
 	@Override
-	public void updateCollectionType(CollectionTypeEnum type) {
+	public void updateCollectionType(ListCollectionType type) {
 		// Do nothing
 		
 	}
