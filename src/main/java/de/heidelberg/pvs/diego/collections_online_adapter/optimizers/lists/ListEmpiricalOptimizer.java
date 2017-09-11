@@ -28,8 +28,15 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 
 	public ListEmpiricalOptimizer(ListCollectionType defaultType, int windowSize, double finishedRatio) {
 		this.collectionsState = new ArrayList<ListMetrics>(windowSize);
-		this.finishedRatio = (int) (collectionsState.size() / finishedRatio);
 		this.defaultType = defaultType;
+		
+		if(finishedRatio == 0.0) {
+			this.finishedRatio = 0;
+		} else {
+			this.finishedRatio = (int) (windowSize / finishedRatio);
+			
+		}
+		
 	}
 
 	@Override

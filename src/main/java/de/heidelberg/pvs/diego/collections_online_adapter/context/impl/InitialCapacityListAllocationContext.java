@@ -54,8 +54,8 @@ public class InitialCapacityListAllocationContext implements ListAllocationConte
 	}
 
 	@Override
-	public String getCurrentCollectionType() {
-		return "Array";
+	public ListCollectionType getCurrentCollectionType() {
+		return ListCollectionType.JDK_ARRAYLIST; // default
 	}
 
 	@Override

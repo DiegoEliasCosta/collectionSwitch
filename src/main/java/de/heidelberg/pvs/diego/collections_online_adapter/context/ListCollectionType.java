@@ -10,7 +10,10 @@ import de.heidelberg.pvs.diego.collections_online_adapter.custom.lists.HashArray
 
 public enum ListCollectionType {
 
-	JDK_ARRAYLIST, JDK_LINKEDLIST, SWITCH_HASHARRAYLIST, SWITCH_ADAPTIVELIST;
+	JDK_ARRAYLIST, 
+	JDK_LINKEDLIST, 
+	SWITCH_HASHARRAYLIST, 
+	SWITCH_ADAPTIVELIST;
 
 	public <E> List<E> createList(int initialCapacity) {
 

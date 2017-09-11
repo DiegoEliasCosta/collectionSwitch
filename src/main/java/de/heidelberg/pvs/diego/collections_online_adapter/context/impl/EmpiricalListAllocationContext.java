@@ -76,8 +76,8 @@ public class EmpiricalListAllocationContext implements ListAllocationContextInfo
 
 
 	@Override
-	public String getCurrentCollectionType() {
-		return type.toString();
+	public ListCollectionType getCurrentCollectionType() {
+		return type;
 	}
 
 

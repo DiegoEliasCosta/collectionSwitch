@@ -129,7 +129,6 @@ public class SetEmpiricalAllocationContextTest {
 		optimizer.setContext(context);
 		
 		SwitchManager manager = new SwitchManager();
-		
 		manager.addOptimizer(optimizer);
 		manager.configureAndScheduleManager(1, 100, 100);
 		

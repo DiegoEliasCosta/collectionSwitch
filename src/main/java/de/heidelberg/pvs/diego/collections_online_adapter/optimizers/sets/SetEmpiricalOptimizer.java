@@ -18,7 +18,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetri
 
 public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 
-	SetAllocationContextUpdatable context;
+	SetAllocationContext context;
 
 	List<SetMetrics> collectionsState;
 

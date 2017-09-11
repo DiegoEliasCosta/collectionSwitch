@@ -93,9 +93,9 @@ public class LogListAllocationContext implements ListAllocationContext {
 
 	@Override
 	public void updateCollectionType(ListCollectionType type) {
-		String beforeState = context.getCurrentCollectionType();
+		ListCollectionType beforeState = context.getCurrentCollectionType();
 		context.updateCollectionType(type);
-		String afterState = context.getCurrentCollectionType();
+		ListCollectionType afterState = context.getCurrentCollectionType();
 		
 		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
 		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
