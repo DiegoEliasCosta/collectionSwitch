@@ -19,15 +19,18 @@ import jlibs.core.lang.RuntimeUtil;
 
 public class ListEmpiricalAllocationContextTest {
 
+	private ArrayList<ListPerformanceModel> performanceModel;
+
 	@Before
+	@SuppressWarnings("deprecation")
 	public void setup() {
 
 		PerformanceGoal.INSTANCE.init(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 0.8, 2);
 
-		List<ListPerformanceModel> performanceModel = new ArrayList<>();
+		performanceModel = new ArrayList<ListPerformanceModel>();
 
 		// Faster on Contains
-		ListPerformanceModel arraySetModel = new ListPerformanceModel(ListCollectionType.SWITCH_ADAPTIVELIST,
+		ListPerformanceModel arraySetModel = new ListPerformanceModel(ListCollectionType.ONLINEADAPTER_ADAPTIVELIST,
 				new double[] { 10, 2 }, new double[] { 10, 1 }, new double[] { 10, 2 }, new double[] { 10, 2 });
 
 		performanceModel.add(arraySetModel);
@@ -44,14 +47,15 @@ public class ListEmpiricalAllocationContextTest {
 
 		performanceModel.add(gscollectionsModel);
 
-		ListEmpiricalPerformanceEvaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
-
 	}
 
 	@Test
 	public void testEmpiricalContextInitialization() throws Exception {
+		
+		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(ListCollectionType.JDK_ARRAYLIST, 10, 1);
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 1);
 		ListAllocationContext context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST, optimizer,
 				10);
 
@@ -61,8 +65,11 @@ public class ListEmpiricalAllocationContextTest {
 
 	@Test
 	public void testEmpiricalContextAdaptiveChampion() throws Exception {
+		
+		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(ListCollectionType.JDK_ARRAYLIST, 10, 0);
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 0);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
 				optimizer, 10);
 
@@ -72,14 +79,17 @@ public class ListEmpiricalAllocationContextTest {
 
 		optimizer.analyzeAndOptimize();
 
-		Assert.assertEquals(ListCollectionType.SWITCH_ADAPTIVELIST, context.getCurrentCollectionType());
+		Assert.assertEquals(ListCollectionType.ONLINEADAPTER_ADAPTIVELIST, context.getCurrentCollectionType());
 
 	}
 
 	@Test
 	public void testEmpiricalContextLinkedListChampion() throws Exception {
 
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(ListCollectionType.JDK_ARRAYLIST, 10, 0);
+		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 0);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
 				optimizer, 10);
 
@@ -95,8 +105,11 @@ public class ListEmpiricalAllocationContextTest {
 
 	@Test
 	public void testWithSwitchManager() throws Exception {
+		
+		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(ListCollectionType.JDK_ARRAYLIST, 10, 1);
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 1);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
 				optimizer, 10);
 
@@ -119,7 +132,10 @@ public class ListEmpiricalAllocationContextTest {
 	@Test
 	public void testWithSwitchMultipleStages() throws Exception {
 
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(ListCollectionType.JDK_ARRAYLIST, 10, 1);
+		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 1);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
 				optimizer, 10);
 
@@ -142,7 +158,7 @@ public class ListEmpiricalAllocationContextTest {
 		RuntimeUtil.gc();
 		Thread.sleep(200);
 
-		Assert.assertEquals(ListCollectionType.SWITCH_ADAPTIVELIST, context.getCurrentCollectionType());
+		Assert.assertEquals(ListCollectionType.ONLINEADAPTER_ADAPTIVELIST, context.getCurrentCollectionType());
 		
 		bestScenarioArrayList(context, 10);
 

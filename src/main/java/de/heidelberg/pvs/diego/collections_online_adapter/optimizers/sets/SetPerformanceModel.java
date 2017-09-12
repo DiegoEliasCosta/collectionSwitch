@@ -5,9 +5,8 @@ import org.apache.commons.math3.analysis.polynomials.PolynomialFunction;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetrics;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.PerformanceModel;
 
-public class SetPerformanceModel implements PerformanceModel<SetMetrics, SetCollectionType>{
+public class SetPerformanceModel  {
 	
 	private final SetCollectionType type;
 	

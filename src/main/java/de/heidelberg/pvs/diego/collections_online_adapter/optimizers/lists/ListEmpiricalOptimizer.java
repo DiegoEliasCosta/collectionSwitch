@@ -26,17 +26,21 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 
 	private int finishedRatio;
 
-	public ListEmpiricalOptimizer(ListCollectionType defaultType, int windowSize, double finishedRatio) {
+	private ListEmpiricalPerformanceEvaluator evaluator;
+
+	public ListEmpiricalOptimizer(ListEmpiricalPerformanceEvaluator evaluator, ListCollectionType defaultType,
+			int windowSize, double finishedRatio) {
 		this.collectionsState = new ArrayList<ListMetrics>(windowSize);
 		this.defaultType = defaultType;
+		this.evaluator = evaluator;
 		
-		if(finishedRatio == 0.0) {
+		if (finishedRatio == 0.0) {
 			this.finishedRatio = 0;
 		} else {
 			this.finishedRatio = (int) (windowSize / finishedRatio);
-			
+
 		}
-		
+
 	}
 
 	@Override
@@ -94,12 +98,13 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 		}
 
 	}
-	
-	private MutableObjectDoubleMap<ListCollectionType> getCandidates(PerformanceDimension performanceDimension, double factor) {
+
+	private MutableObjectDoubleMap<ListCollectionType> getCandidates(PerformanceDimension performanceDimension,
+			double factor) {
 
 		// Gets the performance prediction for each instance
-		MutableObjectDoubleMap<ListCollectionType> majorPerformance = ListEmpiricalPerformanceEvaluator
-				.predictPerformance(collectionsState, PerformanceGoal.INSTANCE.majorDimension);
+		MutableObjectDoubleMap<ListCollectionType> majorPerformance = evaluator.predictPerformance(collectionsState,
+				PerformanceGoal.INSTANCE.majorDimension);
 
 		// Gets the default performance
 		double defaultPerformance = majorPerformance.get(defaultType);
@@ -116,7 +121,6 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 
 		return candidates;
 	}
-
 
 	@Override
 	public void setContext(ListAllocationContext context) {

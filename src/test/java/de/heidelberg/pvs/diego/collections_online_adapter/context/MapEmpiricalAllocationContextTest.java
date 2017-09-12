@@ -12,22 +12,20 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.Empirical
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.SwitchManager;
-import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapMetrics;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.EmpiricalPerformanceEvaluator;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.PerformanceModel;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalPerformanceEvaluator;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapPerformanceModel;
 import jlibs.core.lang.RuntimeUtil;
 
 public class MapEmpiricalAllocationContextTest {
 	
-	private List<PerformanceModel<MapMetrics, MapCollectionType>> performanceModel;
+	private List<MapPerformanceModel> performanceModel;
 
 	@Before
 	public void setup() {
 
-		performanceModel = new ArrayList<PerformanceModel<MapMetrics, MapCollectionType>>();
+		performanceModel = new ArrayList<MapPerformanceModel>();
 
 		// Faster on Contains
 		MapPerformanceModel arraySetModel = new MapPerformanceModel(MapCollectionType.NLP_ARRAYMAP,
@@ -54,7 +52,7 @@ public class MapEmpiricalAllocationContextTest {
 		
 		int windowSize = 10;
 		
-		EmpiricalPerformanceEvaluator<MapMetrics, MapCollectionType> evaluator = new EmpiricalPerformanceEvaluator<>();
+		MapEmpiricalPerformanceEvaluator evaluator = new MapEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 		
 		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, 10, 1);
@@ -70,7 +68,7 @@ public class MapEmpiricalAllocationContextTest {
 		
 		int windowSize = 10;
 		
-		EmpiricalPerformanceEvaluator<MapMetrics, MapCollectionType> evaluator = new EmpiricalPerformanceEvaluator<>();
+		MapEmpiricalPerformanceEvaluator evaluator = new MapEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 		
 		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, 10, 0);
@@ -96,7 +94,7 @@ public class MapEmpiricalAllocationContextTest {
 		PerformanceGoal.INSTANCE.majorDimension = PerformanceDimension.TIME;
 		PerformanceGoal.INSTANCE.minImprovement = 1.1;
 		
-		EmpiricalPerformanceEvaluator<MapMetrics, MapCollectionType> evaluator = new EmpiricalPerformanceEvaluator<>();
+		MapEmpiricalPerformanceEvaluator evaluator = new MapEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 		
 		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, 10, 1);

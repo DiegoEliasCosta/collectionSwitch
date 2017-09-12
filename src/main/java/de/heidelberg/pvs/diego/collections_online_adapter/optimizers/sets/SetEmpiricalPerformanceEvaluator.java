@@ -13,15 +13,15 @@ import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetri
 
 public class SetEmpiricalPerformanceEvaluator {
 
-	private static Map<PerformanceDimension, List<SetPerformanceModel>> setEmpiricalModel = new UnifiedMap<>();
+	private Map<PerformanceDimension, List<SetPerformanceModel>> setEmpiricalModel = new UnifiedMap<>();
 
-	public static void addEmpiricalModel(PerformanceDimension dimension, List<SetPerformanceModel> performanceModel) {
+	public void addEmpiricalModel(PerformanceDimension dimension, List<SetPerformanceModel> performanceModel) {
 		// FIXME: This method REWRITES the empirical model every time
 		// We need to find a better way of handling this
 		setEmpiricalModel.put(dimension, performanceModel);
 	}
 	
-	public static MutableObjectDoubleMap<SetCollectionType> predictPerformance(List<SetMetrics> collectionsState,
+	public MutableObjectDoubleMap<SetCollectionType> predictPerformance(List<SetMetrics> collectionsState,
 			PerformanceDimension dimension) {
 
 		MutableObjectDoubleMap<SetCollectionType> performanceResult = new ObjectDoubleHashMap<>(setEmpiricalModel.size());

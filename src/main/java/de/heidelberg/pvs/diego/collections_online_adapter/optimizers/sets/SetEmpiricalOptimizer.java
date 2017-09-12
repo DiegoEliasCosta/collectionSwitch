@@ -24,16 +24,20 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 	private int finishedRatio;
 	private SetCollectionType defaultType;
 
-	public SetEmpiricalOptimizer(SetCollectionType defaultType, int windowSize, double finishedRatio) {
+	private SetEmpiricalPerformanceEvaluator evaluator;
+
+	public SetEmpiricalOptimizer(SetEmpiricalPerformanceEvaluator evaluator, SetCollectionType defaultType,
+			int windowSize, double finishedRatio) {
 		super();
 		this.defaultType = defaultType;
 		this.collectionsState = new ArrayList<SetMetrics>(windowSize);
-		
-		if(finishedRatio == 0.0) {
+		this.evaluator = evaluator;
+
+		if (finishedRatio == 0.0) {
 			this.finishedRatio = 0;
 		} else {
 			this.finishedRatio = (int) (windowSize / finishedRatio);
-			
+
 		}
 
 	}
@@ -61,45 +65,47 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 		if (amountFinishedCollections >= finishedRatio) {
 
 			// Get candidates from the major performance goal
-			MutableObjectDoubleMap<SetCollectionType> majorCandidates = getCandidates(PerformanceGoal.INSTANCE.majorDimension, PerformanceGoal.INSTANCE.minImprovement);
-			
+			MutableObjectDoubleMap<SetCollectionType> majorCandidates = getCandidates(
+					PerformanceGoal.INSTANCE.majorDimension, PerformanceGoal.INSTANCE.minImprovement);
+
 			// Get candidates that fulfill the minor performance goal
-			MutableObjectDoubleMap<SetCollectionType> minorCandidates = getCandidates(PerformanceGoal.INSTANCE.minorDimension, PerformanceGoal.INSTANCE.maxPenalty);
-			
-			MutableObjectDoubleMap<SetCollectionType> bestOptions = majorCandidates.select( new ObjectDoublePredicate<SetCollectionType>() {
-				@Override
-				public boolean accept(SetCollectionType key, double value) {
-					return minorCandidates.containsKey(key);
-				}
-			});
-			
-			
+			MutableObjectDoubleMap<SetCollectionType> minorCandidates = getCandidates(
+					PerformanceGoal.INSTANCE.minorDimension, PerformanceGoal.INSTANCE.maxPenalty);
+
+			MutableObjectDoubleMap<SetCollectionType> bestOptions = majorCandidates
+					.select(new ObjectDoublePredicate<SetCollectionType>() {
+						@Override
+						public boolean accept(SetCollectionType key, double value) {
+							return minorCandidates.containsKey(key);
+						}
+					});
+
 			// Get the top implementation - Finding the minimum value
 			// FIXME: Find a better implementation for this
 			double min = Double.MAX_VALUE;
 			SetCollectionType champion = defaultType;
-			for(SetCollectionType type: bestOptions.keySet()) {
+			for (SetCollectionType type : bestOptions.keySet()) {
 				double perf = bestOptions.get(type);
-				if(perf < min) {
+				if (perf < min) {
 					champion = type;
 					min = perf;
 				}
 			}
-			
-			context.updateCollectionType(champion);	
+
+			context.updateCollectionType(champion);
 
 			// Reset
 			collectionsState.clear();
 		}
 
-
 	}
 
-	private MutableObjectDoubleMap<SetCollectionType> getCandidates(PerformanceDimension performanceDimension, double factor) {
+	private MutableObjectDoubleMap<SetCollectionType> getCandidates(PerformanceDimension performanceDimension,
+			double factor) {
 
 		// Gets the performance prediction for each instance
-		MutableObjectDoubleMap<SetCollectionType> majorPerformance = SetEmpiricalPerformanceEvaluator
-				.predictPerformance(collectionsState, PerformanceGoal.INSTANCE.majorDimension);
+		MutableObjectDoubleMap<SetCollectionType> majorPerformance = evaluator.predictPerformance(collectionsState,
+				PerformanceGoal.INSTANCE.majorDimension);
 
 		// Gets the default performance
 		double defaultPerformance = majorPerformance.get(defaultType);

@@ -20,12 +20,14 @@ import jlibs.core.lang.RuntimeUtil;
 
 public class SetEmpiricalAllocationContextTest {
 
+	private ArrayList<SetPerformanceModel> performanceModel;
+
 	@Before
 	public void setup() {
 
 		PerformanceGoal.INSTANCE.init(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 0.9, 2);
 
-		List<SetPerformanceModel> performanceModel = new ArrayList<>();
+		performanceModel = new ArrayList<SetPerformanceModel>();
 
 		// Faster on Contains
 		SetPerformanceModel arraySetModel = new SetPerformanceModel(SetCollectionType.NLP_ARRAYSET,
@@ -45,14 +47,15 @@ public class SetEmpiricalAllocationContextTest {
 		
 		performanceModel.add(gscollectionsModel);
 		
-		SetEmpiricalPerformanceEvaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
-		
 	}
 
 	@Test
 	public void testEmpiricalContextInitialization() throws Exception {
+		
+		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, 10, 1);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, 10, 1);
 		SetAllocationContext context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer, 10);
 
 		context.createSet();
@@ -63,8 +66,11 @@ public class SetEmpiricalAllocationContextTest {
 	public void testEmpiricalContextNLPChampion() throws Exception {
 
 		int windowSize = 10;
+		
+		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, windowSize, 0.0);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, windowSize, 0.0);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
 				windowSize);
 
@@ -92,8 +98,11 @@ public class SetEmpiricalAllocationContextTest {
 	public void testEmpiricalContextGSCollectionsChampion() throws Exception {
 
 		int windowSize = 10;
+		
+		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, windowSize, 0.0);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, windowSize, 0.0);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
 				windowSize);
 
@@ -125,8 +134,11 @@ public class SetEmpiricalAllocationContextTest {
 	public void testWithSwitchManager() throws Exception {
 		
 		int windowSize = 10;
+		
+		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, windowSize, 1);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, windowSize, 1);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
 				windowSize);
 		
@@ -150,8 +162,11 @@ public class SetEmpiricalAllocationContextTest {
 	public void testBestOptionWithSwitchManager() throws Exception {
 		
 		int windowSize = 10;
+		
+		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(SetCollectionType.JDK_HASHSET, windowSize, 1);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, windowSize, 1);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
 				windowSize);
 

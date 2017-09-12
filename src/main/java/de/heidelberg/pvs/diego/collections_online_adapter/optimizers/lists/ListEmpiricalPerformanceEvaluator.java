@@ -13,13 +13,13 @@ import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListMet
 
 public class ListEmpiricalPerformanceEvaluator {
 
-	private static Map<PerformanceDimension, List<ListPerformanceModel>> listEmpiricalModel = new UnifiedMap<>();
+	private Map<PerformanceDimension, List<ListPerformanceModel>> listEmpiricalModel = new UnifiedMap<>();
 
-	public static void addEmpiricalModel(PerformanceDimension dimension, List<ListPerformanceModel> performanceModel) {
+	public void addEmpiricalModel(PerformanceDimension dimension, List<ListPerformanceModel> performanceModel) {
 		listEmpiricalModel.put(dimension, performanceModel);
 	}
 	
-	public static MutableObjectDoubleMap<ListCollectionType> predictPerformance(List<ListMetrics> collectionsState,
+	public MutableObjectDoubleMap<ListCollectionType> predictPerformance(List<ListMetrics> collectionsState,
 			PerformanceDimension dimension) {
 
 		MutableObjectDoubleMap<ListCollectionType> performanceResult = new ObjectDoubleHashMap<>(listEmpiricalModel.size());

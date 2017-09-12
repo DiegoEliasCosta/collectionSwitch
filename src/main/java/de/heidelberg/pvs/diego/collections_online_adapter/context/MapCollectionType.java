@@ -10,6 +10,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.adaptive.AdaptiveMap;
 import edu.stanford.nlp.util.ArrayMap;
 import gnu.trove.map.hash.THashMap;
 import net.openhft.koloboke.collect.map.hash.HashObjObjMaps;
+import vlsi.utils.CompactHashMap;
 
 public enum MapCollectionType {
 
@@ -23,7 +24,7 @@ public enum MapCollectionType {
 	GSCOLLECTIONS_UNIFIEDMAP, 
 	
 	NLP_ARRAYMAP,
-	GOOGLE_ARRAYMAP;
+	GOOGLE_ARRAYMAP, NAYUKI_COMPACTHASHMAP;
 
 	public <K, V> Map<K, V> createMap(int initialCapacity) {
 
@@ -54,6 +55,9 @@ public enum MapCollectionType {
 			
 		case NLP_ARRAYMAP:
 			map = new ArrayMap<>(initialCapacity);
+			
+		case NAYUKI_COMPACTHASHMAP:
+			map = new CompactHashMap<K, V>();
 			
 		default:
 			map = new HashMap<>(initialCapacity);
@@ -92,6 +96,9 @@ public enum MapCollectionType {
 		case NLP_ARRAYMAP:
 			map = new ArrayMap<>();
 			
+		case NAYUKI_COMPACTHASHMAP:
+			map = new CompactHashMap<K, V>();
+			
 		default:
 			map = new HashMap<>();
 		}
@@ -129,6 +136,10 @@ public enum MapCollectionType {
 			
 		case NLP_ARRAYMAP:
 			map = new ArrayMap<>(mapToCopy);
+			
+		case NAYUKI_COMPACTHASHMAP:
+			map = new CompactHashMap<K, V>();
+			map.putAll(mapToCopy);
 			
 		default:
 			map = new HashMap<>(mapToCopy);

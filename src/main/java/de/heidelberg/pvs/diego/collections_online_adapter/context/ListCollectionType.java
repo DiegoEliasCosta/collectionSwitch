@@ -12,8 +12,8 @@ public enum ListCollectionType {
 
 	JDK_ARRAYLIST, 
 	JDK_LINKEDLIST, 
-	SWITCH_HASHARRAYLIST, 
-	SWITCH_ADAPTIVELIST;
+	ONLINEADAPTER_HASHARRAYLIST, 
+	ONLINEADAPTER_ADAPTIVELIST;
 
 	public <E> List<E> createList(int initialCapacity) {
 
@@ -24,10 +24,10 @@ public enum ListCollectionType {
 		case JDK_ARRAYLIST:
 			list = new ArrayList<E>(initialCapacity);
 
-		case SWITCH_ADAPTIVELIST:
+		case ONLINEADAPTER_ADAPTIVELIST:
 			list = new AdaptiveList<E>(initialCapacity);
 		
-		case SWITCH_HASHARRAYLIST:
+		case ONLINEADAPTER_HASHARRAYLIST:
 			list = new HashArrayList<E>(initialCapacity);
 
 		case JDK_LINKEDLIST:
@@ -49,7 +49,7 @@ public enum ListCollectionType {
 		case JDK_ARRAYLIST:
 			list = new ArrayList<E>();
 
-		case SWITCH_HASHARRAYLIST:
+		case ONLINEADAPTER_HASHARRAYLIST:
 			list = new HashArrayList<E>();
 
 		case JDK_LINKEDLIST:
@@ -71,7 +71,7 @@ public enum ListCollectionType {
 		case JDK_ARRAYLIST:
 			list = new ArrayList<E>(c);
 
-		case SWITCH_HASHARRAYLIST:
+		case ONLINEADAPTER_HASHARRAYLIST:
 			list = new HashArrayList<E>(c);
 
 		case JDK_LINKEDLIST:

@@ -14,7 +14,6 @@ import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoa
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapActiveFullMonitor;
 import de.heidelberg.pvs.diego.collections_online_adapter.monitors.maps.MapMetrics;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.EmpiricalPerformanceEvaluator;
 
 public class MapEmpiricalOptimizer implements MapAllocationOptimizer {
 
@@ -26,9 +25,9 @@ public class MapEmpiricalOptimizer implements MapAllocationOptimizer {
 
 	private MapCollectionType defaultType;
 
-	private EmpiricalPerformanceEvaluator<MapMetrics, MapCollectionType> evaluator;
+	private MapEmpiricalPerformanceEvaluator evaluator;
 
-	public MapEmpiricalOptimizer(EmpiricalPerformanceEvaluator<MapMetrics, MapCollectionType> evaluator, 
+	public MapEmpiricalOptimizer(MapEmpiricalPerformanceEvaluator evaluator, 
 			MapCollectionType defaultType, int windowSize, double finishedRatio) {
 		super();
 		

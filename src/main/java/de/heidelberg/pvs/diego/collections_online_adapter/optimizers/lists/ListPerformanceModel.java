@@ -13,8 +13,9 @@ public class ListPerformanceModel {
 	private final UnivariateFunction contains;
 	private final UnivariateFunction populate;
 	private final UnivariateFunction iterate;
-	private final UnivariateFunction index;
+	private  UnivariateFunction index;
 
+	@Deprecated
 	public ListPerformanceModel(ListCollectionType type, double[] populate, double[] contains, 
 			double[] iterate, double[] index) {
 		super();
@@ -23,6 +24,15 @@ public class ListPerformanceModel {
 		this.populate = new PolynomialFunction(populate);
 		this.iterate = new PolynomialFunction(iterate);
 		this.index = new PolynomialFunction(index);
+	}
+	
+	public ListPerformanceModel(ListCollectionType type, double[] contains, double[] populate, 
+			double[] iterate) {
+		super();
+		this.type = type;
+		this.contains = new PolynomialFunction(contains);
+		this.populate = new PolynomialFunction(populate);
+		this.iterate = new PolynomialFunction(iterate);
 	}
 	
 	
