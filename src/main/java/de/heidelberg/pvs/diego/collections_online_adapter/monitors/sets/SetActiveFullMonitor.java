@@ -52,7 +52,6 @@ public class SetActiveFullMonitor<E> implements Set<E> {
 	}
 	
 	public boolean remove(Object o) {
-		state.updateContainsOp(1);
 		state.updateSize(-1);
 		return set.remove(o);
 	}
