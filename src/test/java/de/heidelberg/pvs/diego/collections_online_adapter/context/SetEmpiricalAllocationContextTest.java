@@ -21,11 +21,13 @@ import jlibs.core.lang.RuntimeUtil;
 public class SetEmpiricalAllocationContextTest {
 
 	private ArrayList<SetPerformanceModel> performanceModel;
+	
+	private PerformanceGoal goal;
 
 	@Before
 	public void setup() {
-
-		PerformanceGoal.INSTANCE.init(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 0.9, 2);
+		
+		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 0.9, 2);
 
 		performanceModel = new ArrayList<SetPerformanceModel>();
 
@@ -55,7 +57,7 @@ public class SetEmpiricalAllocationContextTest {
 		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, 10, 1);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, goal, 10, 1);
 		SetAllocationContext context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer, 10);
 
 		context.createSet();
@@ -70,7 +72,7 @@ public class SetEmpiricalAllocationContextTest {
 		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, windowSize, 0.0);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, goal, windowSize, 0.0);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
 				windowSize);
 
@@ -102,7 +104,7 @@ public class SetEmpiricalAllocationContextTest {
 		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, windowSize, 0.0);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, goal, windowSize, 0.0);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
 				windowSize);
 
@@ -138,7 +140,7 @@ public class SetEmpiricalAllocationContextTest {
 		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, windowSize, 1);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, goal, windowSize, 1);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
 				windowSize);
 		
@@ -166,7 +168,7 @@ public class SetEmpiricalAllocationContextTest {
 		SetEmpiricalPerformanceEvaluator evaluator = new SetEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, windowSize, 1);
+		SetAllocationOptimizer optimizer = new SetEmpiricalOptimizer(evaluator, SetCollectionType.JDK_HASHSET, goal, windowSize, 1);
 		SetAllocationContextInfo context = new EmpiricalSetAllocationContext(SetCollectionType.JDK_HASHSET, optimizer,
 				windowSize);
 

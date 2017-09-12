@@ -20,13 +20,15 @@ import jlibs.core.lang.RuntimeUtil;
 public class ListEmpiricalAllocationContextTest {
 
 	private ArrayList<ListPerformanceModel> performanceModel;
+	
+	private PerformanceGoal goal;
 
 	@Before
 	@SuppressWarnings("deprecation")
 	public void setup() {
 
-		PerformanceGoal.INSTANCE.init(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 0.8, 2);
-
+		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 1.2, 0.8);
+		
 		performanceModel = new ArrayList<ListPerformanceModel>();
 
 		// Faster on Contains
@@ -55,7 +57,7 @@ public class ListEmpiricalAllocationContextTest {
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 1);
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 1);
 		ListAllocationContext context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST, optimizer,
 				10);
 
@@ -69,7 +71,7 @@ public class ListEmpiricalAllocationContextTest {
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 0);
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 0);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
 				optimizer, 10);
 
@@ -89,7 +91,7 @@ public class ListEmpiricalAllocationContextTest {
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 		
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 0);
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 0);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
 				optimizer, 10);
 
@@ -109,7 +111,7 @@ public class ListEmpiricalAllocationContextTest {
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 1);
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 1);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
 				optimizer, 10);
 
@@ -135,7 +137,7 @@ public class ListEmpiricalAllocationContextTest {
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 		
-		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, 10, 1);
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 1);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
 				optimizer, 10);
 

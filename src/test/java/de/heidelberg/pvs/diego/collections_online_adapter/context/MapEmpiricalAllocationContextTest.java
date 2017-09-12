@@ -21,12 +21,16 @@ import jlibs.core.lang.RuntimeUtil;
 public class MapEmpiricalAllocationContextTest {
 	
 	private List<MapPerformanceModel> performanceModel;
+	
+	private PerformanceGoal goal;
 
 	@Before
 	public void setup() {
 
 		performanceModel = new ArrayList<MapPerformanceModel>();
-
+		
+		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 1.2, 0.8);
+		
 		// Faster on Contains
 		MapPerformanceModel arraySetModel = new MapPerformanceModel(MapCollectionType.NLP_ARRAYMAP,
 				new double[] { 10, 1 }, new double[] { 10, 2 }, new double[] { 10, 2 });
@@ -55,7 +59,7 @@ public class MapEmpiricalAllocationContextTest {
 		MapEmpiricalPerformanceEvaluator evaluator = new MapEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 		
-		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, 10, 1);
+		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, goal, 10, 1);
 		MapAllocationContext context = new EmpiricalMapAllocationContext(MapCollectionType.JDK_HASHMAP, optimizer , windowSize);
 		
 		optimizer.setContext(context);
@@ -71,7 +75,7 @@ public class MapEmpiricalAllocationContextTest {
 		MapEmpiricalPerformanceEvaluator evaluator = new MapEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 		
-		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, 10, 0);
+		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, goal, 10, 0);
 		MapAllocationContextInfo context = new EmpiricalMapAllocationContext(MapCollectionType.JDK_HASHMAP, optimizer , windowSize);
 		
 		optimizer.setContext(context);
@@ -91,13 +95,10 @@ public class MapEmpiricalAllocationContextTest {
 		
 		int windowSize = 10;
 		
-		PerformanceGoal.INSTANCE.majorDimension = PerformanceDimension.TIME;
-		PerformanceGoal.INSTANCE.minImprovement = 1.1;
-		
 		MapEmpiricalPerformanceEvaluator evaluator = new MapEmpiricalPerformanceEvaluator();
 		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
 		
-		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, 10, 1);
+		MapAllocationOptimizer optimizer = new MapEmpiricalOptimizer(evaluator, MapCollectionType.JDK_HASHMAP, goal, 10, 1);
 		MapAllocationContextInfo context = new EmpiricalMapAllocationContext(MapCollectionType.JDK_HASHMAP, optimizer , windowSize);
 		
 		optimizer.setContext(context);

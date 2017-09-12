@@ -27,12 +27,14 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 	private int finishedRatio;
 
 	private ListEmpiricalPerformanceEvaluator evaluator;
+	private PerformanceGoal goal;
 
-	public ListEmpiricalOptimizer(ListEmpiricalPerformanceEvaluator evaluator, ListCollectionType defaultType,
+	public ListEmpiricalOptimizer(ListEmpiricalPerformanceEvaluator evaluator, ListCollectionType defaultType, PerformanceGoal goal,
 			int windowSize, double finishedRatio) {
 		this.collectionsState = new ArrayList<ListMetrics>(windowSize);
 		this.defaultType = defaultType;
 		this.evaluator = evaluator;
+		this.goal = goal;
 		
 		if (finishedRatio == 0.0) {
 			this.finishedRatio = 0;
@@ -64,11 +66,11 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 
 			// Get candidates from the major performance goal
 			MutableObjectDoubleMap<ListCollectionType> majorCandidates = getCandidates(
-					PerformanceGoal.INSTANCE.majorDimension, PerformanceGoal.INSTANCE.minImprovement);
+					goal.majorDimension, goal.minImprovement);
 
 			// Get candidates that fulfill the minor performance goal
 			MutableObjectDoubleMap<ListCollectionType> minorCandidates = getCandidates(
-					PerformanceGoal.INSTANCE.minorDimension, PerformanceGoal.INSTANCE.maxPenalty);
+					goal.minorDimension, goal.maxPenalty);
 
 			@SuppressWarnings("serial")
 			MutableObjectDoubleMap<ListCollectionType> bestOptions = majorCandidates
@@ -104,7 +106,7 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 
 		// Gets the performance prediction for each instance
 		MutableObjectDoubleMap<ListCollectionType> majorPerformance = evaluator.predictPerformance(collectionsState,
-				PerformanceGoal.INSTANCE.majorDimension);
+				performanceDimension);
 
 		// Gets the default performance
 		double defaultPerformance = majorPerformance.get(defaultType);

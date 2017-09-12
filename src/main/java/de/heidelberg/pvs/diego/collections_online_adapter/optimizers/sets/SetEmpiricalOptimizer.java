@@ -25,13 +25,16 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 	private SetCollectionType defaultType;
 
 	private SetEmpiricalPerformanceEvaluator evaluator;
+	
+	private PerformanceGoal goal;
 
-	public SetEmpiricalOptimizer(SetEmpiricalPerformanceEvaluator evaluator, SetCollectionType defaultType,
+	public SetEmpiricalOptimizer(SetEmpiricalPerformanceEvaluator evaluator, SetCollectionType defaultType, PerformanceGoal goal,
 			int windowSize, double finishedRatio) {
 		super();
 		this.defaultType = defaultType;
 		this.collectionsState = new ArrayList<SetMetrics>(windowSize);
 		this.evaluator = evaluator;
+		this.goal = goal;
 
 		if (finishedRatio == 0.0) {
 			this.finishedRatio = 0;
@@ -66,11 +69,11 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 
 			// Get candidates from the major performance goal
 			MutableObjectDoubleMap<SetCollectionType> majorCandidates = getCandidates(
-					PerformanceGoal.INSTANCE.majorDimension, PerformanceGoal.INSTANCE.minImprovement);
+					goal.majorDimension, goal.minImprovement);
 
 			// Get candidates that fulfill the minor performance goal
 			MutableObjectDoubleMap<SetCollectionType> minorCandidates = getCandidates(
-					PerformanceGoal.INSTANCE.minorDimension, PerformanceGoal.INSTANCE.maxPenalty);
+					goal.minorDimension, goal.maxPenalty);
 
 			MutableObjectDoubleMap<SetCollectionType> bestOptions = majorCandidates
 					.select(new ObjectDoublePredicate<SetCollectionType>() {
@@ -105,7 +108,7 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 
 		// Gets the performance prediction for each instance
 		MutableObjectDoubleMap<SetCollectionType> majorPerformance = evaluator.predictPerformance(collectionsState,
-				PerformanceGoal.INSTANCE.majorDimension);
+				performanceDimension);
 
 		// Gets the default performance
 		double defaultPerformance = majorPerformance.get(defaultType);

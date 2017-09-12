@@ -1,8 +1,11 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.manager;
 
-public enum PerformanceGoal {
+public class PerformanceGoal {
 	
-	INSTANCE;
+	public final PerformanceDimension majorDimension;
+	public final PerformanceDimension minorDimension;
+	public final double maxPenalty;
+	public final double minImprovement;
 	
 	public enum PerformanceDimension {
 		TIME,
@@ -10,16 +13,20 @@ public enum PerformanceGoal {
 		MEMORY_FOOTPRINT;
 	}
 	
-	public void init(PerformanceDimension major, PerformanceDimension minor, double minInprovement, double maxPenalty) {
+	public PerformanceGoal(PerformanceDimension major, PerformanceDimension minor, double minInprovement, double maxPenalty) {
 		this.majorDimension = major;
 		this.minorDimension = minor;
 		this.minImprovement = minInprovement;
 		this.maxPenalty = maxPenalty;
 	}
+	
+	public PerformanceGoal() {
+		majorDimension = PerformanceDimension.TIME;
+		minorDimension = PerformanceDimension.ALLOCATION;
+		maxPenalty = 0.7;
+		minImprovement = 1.2;
+	}
 
-	public PerformanceDimension majorDimension = PerformanceDimension.TIME;
-	public PerformanceDimension minorDimension = PerformanceDimension.ALLOCATION;
-	public double maxPenalty = 0.7;
-	public double minImprovement = 1.2;
+	
 	
 }

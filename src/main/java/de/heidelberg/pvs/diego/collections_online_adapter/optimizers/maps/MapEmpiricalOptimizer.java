@@ -26,14 +26,17 @@ public class MapEmpiricalOptimizer implements MapAllocationOptimizer {
 	private MapCollectionType defaultType;
 
 	private MapEmpiricalPerformanceEvaluator evaluator;
+	
+	private PerformanceGoal goal;
 
 	public MapEmpiricalOptimizer(MapEmpiricalPerformanceEvaluator evaluator, 
-			MapCollectionType defaultType, int windowSize, double finishedRatio) {
+			MapCollectionType defaultType, PerformanceGoal goal, int windowSize, double finishedRatio) {
 		super();
 		
 		this.defaultType = defaultType;
 		this.collectionsState = new ArrayList<MapMetrics>(windowSize);
 		this.evaluator = evaluator;
+		this.goal = goal;
 		
 		if(finishedRatio == 0.0) {
 			this.finishedRatio = 0;
@@ -59,11 +62,11 @@ public class MapEmpiricalOptimizer implements MapAllocationOptimizer {
 
 			// Get candidates from the major performance goal
 			MutableObjectDoubleMap<MapCollectionType> majorCandidates = getCandidates(
-					PerformanceGoal.INSTANCE.majorDimension, PerformanceGoal.INSTANCE.minImprovement);
+					goal.majorDimension, goal.minImprovement);
 
 			// Get candidates that fulfill the minor performance goal
 			MutableObjectDoubleMap<MapCollectionType> minorCandidates = getCandidates(
-					PerformanceGoal.INSTANCE.minorDimension, PerformanceGoal.INSTANCE.maxPenalty);
+					goal.minorDimension, goal.maxPenalty);
 
 			@SuppressWarnings("serial")
 			MutableObjectDoubleMap<MapCollectionType> bestOptions = majorCandidates
@@ -99,7 +102,7 @@ public class MapEmpiricalOptimizer implements MapAllocationOptimizer {
 
 		// Gets the performance prediction for each instance
 		MutableObjectDoubleMap<MapCollectionType> majorPerformance = evaluator
-				.predictPerformance(collectionsState, PerformanceGoal.INSTANCE.majorDimension);
+				.predictPerformance(collectionsState, performanceDimension);
 
 		// Gets the default performance
 		double defaultPerformance = majorPerformance.get(defaultType);
