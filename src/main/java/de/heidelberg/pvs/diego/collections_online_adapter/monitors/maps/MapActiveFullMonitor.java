@@ -23,7 +23,7 @@ public class MapActiveFullMonitor<K, V> implements Map<K, V> {
 	}
 
 	public boolean containsValue(Object value) {
-		this.state.updateIteration(1);
+		this.state.updateContainsOp(1);
 		return map.containsValue(value);
 	}
 	
@@ -37,6 +37,33 @@ public class MapActiveFullMonitor<K, V> implements Map<K, V> {
 		return map.put(key, value);
 	}
 	
+	public Set<java.util.Map.Entry<K, V>> entrySet() {
+		state.updateIteration(1);
+		return map.entrySet();
+	}
+	
+	public void putAll(Map<? extends K, ? extends V> m) {
+		state.updateSize(m.size());
+		map.putAll(m);
+	}
+
+	public Set<K> keySet() {
+		state.updateIteration(1);
+		return map.keySet();
+	}
+
+	public Collection<V> values() {
+		state.updateIteration(1);
+		return map.values();
+	}
+	
+	public V remove(Object key) {
+		state.updateSize(-1);
+		return map.remove(key);
+	}
+	
+	// --------------------------
+	
 	public int size() {
 		return map.size();
 	}
@@ -45,28 +72,9 @@ public class MapActiveFullMonitor<K, V> implements Map<K, V> {
 		return map.isEmpty();
 	}
 
-	public V remove(Object key) {
-		return map.remove(key);
-	}
-
-	public void putAll(Map<? extends K, ? extends V> m) {
-		map.putAll(m);
-	}
-
 	public void clear() {
+		state.updateSize(-map.size());
 		map.clear();
-	}
-
-	public Set<K> keySet() {
-		return map.keySet();
-	}
-
-	public Collection<V> values() {
-		return map.values();
-	}
-
-	public Set<java.util.Map.Entry<K, V>> entrySet() {
-		return map.entrySet();
 	}
 
 	public boolean equals(Object o) {

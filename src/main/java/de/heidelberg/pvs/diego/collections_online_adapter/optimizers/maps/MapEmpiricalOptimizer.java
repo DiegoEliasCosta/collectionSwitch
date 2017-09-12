@@ -64,18 +64,25 @@ public class MapEmpiricalOptimizer implements MapAllocationOptimizer {
 			MutableObjectDoubleMap<MapCollectionType> majorCandidates = getCandidates(
 					goal.majorDimension, goal.minImprovement);
 
+			MutableObjectDoubleMap<MapCollectionType> bestOptions;
+			
+			if(goal.maxPenalty > 0) {
+			
 			// Get candidates that fulfill the minor performance goal
 			MutableObjectDoubleMap<MapCollectionType> minorCandidates = getCandidates(
 					goal.minorDimension, goal.maxPenalty);
 
-			@SuppressWarnings("serial")
-			MutableObjectDoubleMap<MapCollectionType> bestOptions = majorCandidates
+			bestOptions = majorCandidates
 					.select(new ObjectDoublePredicate<MapCollectionType>() {
 						@Override
 						public boolean accept(MapCollectionType key, double value) {
 							return minorCandidates.containsKey(key);
 						}
 					});
+			
+			} else {
+				bestOptions = majorCandidates;
+			}
 
 			// Get the top implementation - Finding the minimum value
 			// FIXME: Find a better implementation for this

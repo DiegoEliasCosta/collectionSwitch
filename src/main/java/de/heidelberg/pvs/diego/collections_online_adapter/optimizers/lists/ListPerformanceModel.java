@@ -39,7 +39,7 @@ public class ListPerformanceModel {
 
 	public double calculatePerformance(ListMetrics state) {
 
-		int size = state.getSize();
+		int size = state.getMaxSize();
 
 		return populate.value(size) 
 				+ state.getContainsOp() * contains.value(size)

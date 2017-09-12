@@ -19,7 +19,7 @@ import jlibs.core.lang.RuntimeUtil;
 
 public class ListEmpiricalAllocationContextTest {
 
-	private ArrayList<ListPerformanceModel> performanceModel;
+	private ArrayList<ListPerformanceModel> listPerformanceModel;
 	
 	private PerformanceGoal goal;
 
@@ -27,35 +27,35 @@ public class ListEmpiricalAllocationContextTest {
 	@SuppressWarnings("deprecation")
 	public void setup() {
 
-		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 1.2, 0.8);
+		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 1.2, -1);
 		
-		performanceModel = new ArrayList<ListPerformanceModel>();
+		listPerformanceModel = new ArrayList<ListPerformanceModel>();
 
 		// Faster on Contains
 		ListPerformanceModel arraySetModel = new ListPerformanceModel(ListCollectionType.ONLINEADAPTER_ADAPTIVELIST,
 				new double[] { 10, 2 }, new double[] { 10, 1 }, new double[] { 10, 2 }, new double[] { 10, 2 });
 
-		performanceModel.add(arraySetModel);
+		listPerformanceModel.add(arraySetModel);
 
 		// Default
 		ListPerformanceModel hashSetModel = new ListPerformanceModel(ListCollectionType.JDK_ARRAYLIST,
 				new double[] { 10, 2 }, new double[] { 10, 2 }, new double[] { 10, 2 }, new double[] { 10, 2 });
 
-		performanceModel.add(hashSetModel);
+		listPerformanceModel.add(hashSetModel);
 
 		// Faster on iterate
 		ListPerformanceModel gscollectionsModel = new ListPerformanceModel(ListCollectionType.JDK_LINKEDLIST,
 				new double[] { 10, 2 }, new double[] { 10, 2 }, new double[] { 10, 1 }, new double[] { 10, 2 });
 
-		performanceModel.add(gscollectionsModel);
-
+		listPerformanceModel.add(gscollectionsModel);
+		
 	}
 
 	@Test
 	public void testEmpiricalContextInitialization() throws Exception {
 		
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
-		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, listPerformanceModel);
 
 		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 1);
 		ListAllocationContext context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST, optimizer,
@@ -69,7 +69,7 @@ public class ListEmpiricalAllocationContextTest {
 	public void testEmpiricalContextAdaptiveChampion() throws Exception {
 		
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
-		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, listPerformanceModel);
 
 		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 0);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
@@ -89,7 +89,7 @@ public class ListEmpiricalAllocationContextTest {
 	public void testEmpiricalContextLinkedListChampion() throws Exception {
 
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
-		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, listPerformanceModel);
 		
 		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 0);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
@@ -109,7 +109,7 @@ public class ListEmpiricalAllocationContextTest {
 	public void testWithSwitchManager() throws Exception {
 		
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
-		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, listPerformanceModel);
 
 		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 1);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,
@@ -135,7 +135,7 @@ public class ListEmpiricalAllocationContextTest {
 	public void testWithSwitchMultipleStages() throws Exception {
 
 		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
-		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, listPerformanceModel);
 		
 		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 1);
 		ListAllocationContextInfo context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST,

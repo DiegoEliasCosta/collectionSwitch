@@ -49,7 +49,7 @@ public class MapActiveOptimizer implements MapAllocationOptimizer {
 			if (state.hasCollectionFinished()) {
 				amountFinishedCollections++;
 			} 
-			sizes[i] = state.getSize();
+			sizes[i] = state.getMaxSize();
 
 		}
 

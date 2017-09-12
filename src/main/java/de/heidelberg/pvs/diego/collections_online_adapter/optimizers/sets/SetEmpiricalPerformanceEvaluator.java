@@ -1,5 +1,7 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +28,7 @@ public class SetEmpiricalPerformanceEvaluator {
 
 		MutableObjectDoubleMap<SetCollectionType> performanceResult = new ObjectDoubleHashMap<>(setEmpiricalModel.size());
 
-		List<SetPerformanceModel> models = setEmpiricalModel.get(dimension);
+		List<SetPerformanceModel> models = setEmpiricalModel.getOrDefault(dimension, Collections.EMPTY_LIST);
 		
 		// For each monitored collection
 		for (SetMetrics state : collectionsState) {

@@ -5,6 +5,7 @@ import java.lang.ref.WeakReference;
 public class MapMetrics {
 	
 	private int size;
+	private int maxSize;
 	private int containsOp;
 	private int iterationOp;
 	
@@ -19,8 +20,12 @@ public class MapMetrics {
 		return mapReference.get() == null;
 	}
 	
-	public int getSize() {
+	public int getLastSize() {
 		return size;
+	}
+	
+	public int getMaxSize() {
+		return maxSize;
 	}
 
 	public int getContainsOp() {
@@ -33,6 +38,9 @@ public class MapMetrics {
 	
 	public void updateSize(int delta) {
 		size += delta;
+		if(size > maxSize) {
+			maxSize = size;
+		}
 	}
 	
 	public void updateContainsOp(int delta) {

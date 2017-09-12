@@ -22,7 +22,7 @@ public class ListMetrics {
 		return list.get() == null;
 	}
 
-	public int getSize() {
+	public int getLastSize() {
 		return size;
 	}
 
@@ -52,6 +52,9 @@ public class ListMetrics {
 
 	public void updateSize(int delta) {
 		size += delta;
+		if(size > maxSize) {
+			maxSize = size;
+		}
 	}
 
 	public void updateIndexOp(int delta) {

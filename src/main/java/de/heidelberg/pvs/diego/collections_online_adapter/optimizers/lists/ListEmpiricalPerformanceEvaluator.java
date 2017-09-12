@@ -1,5 +1,7 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +26,7 @@ public class ListEmpiricalPerformanceEvaluator {
 
 		MutableObjectDoubleMap<ListCollectionType> performanceResult = new ObjectDoubleHashMap<>(listEmpiricalModel.size());
 
-		List<ListPerformanceModel> models = listEmpiricalModel.get(dimension);
+		List<ListPerformanceModel> models = listEmpiricalModel.getOrDefault(dimension, Collections.EMPTY_LIST);
 		
 		// For each monitored collection
 		for (ListMetrics state : collectionsState) {

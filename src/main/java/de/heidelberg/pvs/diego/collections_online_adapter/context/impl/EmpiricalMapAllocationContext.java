@@ -36,6 +36,7 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 	@Override
 	public void updateCollectionType(MapCollectionType type) {
 		this.type = type;
+		instancesCount = 0; // reset
 
 	}
 

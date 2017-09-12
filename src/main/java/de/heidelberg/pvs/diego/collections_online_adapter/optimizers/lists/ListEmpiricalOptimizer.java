@@ -52,6 +52,7 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 		return new ListActiveFullMonitor<E>(list, state);
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public void analyzeAndOptimize() {
 
@@ -67,20 +68,28 @@ public class ListEmpiricalOptimizer implements ListAllocationOptimizer {
 			// Get candidates from the major performance goal
 			MutableObjectDoubleMap<ListCollectionType> majorCandidates = getCandidates(
 					goal.majorDimension, goal.minImprovement);
+			
+			MutableObjectDoubleMap<ListCollectionType> bestOptions;
 
-			// Get candidates that fulfill the minor performance goal
-			MutableObjectDoubleMap<ListCollectionType> minorCandidates = getCandidates(
-					goal.minorDimension, goal.maxPenalty);
-
-			@SuppressWarnings("serial")
-			MutableObjectDoubleMap<ListCollectionType> bestOptions = majorCandidates
-					.select(new ObjectDoublePredicate<ListCollectionType>() {
-						@Override
-						public boolean accept(ListCollectionType key, double value) {
-							return minorCandidates.containsKey(key);
-						}
-					});
-
+			// FIXME: This should be implemented in a better way
+			if(goal.maxPenalty > 0) {
+			
+				// Get candidates that fulfill the minor performance goal
+				MutableObjectDoubleMap<ListCollectionType> minorCandidates = getCandidates(
+						goal.minorDimension, goal.maxPenalty);
+	
+				bestOptions = majorCandidates
+						.select(new ObjectDoublePredicate<ListCollectionType>() {
+							@Override
+							public boolean accept(ListCollectionType key, double value) {
+								return minorCandidates.containsKey(key);
+							}
+						});
+			
+			} else {
+				bestOptions = majorCandidates;	
+			}
+			
 			// Get the top implementation - Finding the minimum value
 			// FIXME: Find a better implementation for this
 			double min = Double.MAX_VALUE;

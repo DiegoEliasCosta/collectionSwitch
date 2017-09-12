@@ -64,18 +64,25 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 				amountFinishedCollections++;
 		}
 
+		
+		
 		// Only analyze it when
 		if (amountFinishedCollections >= finishedRatio) {
 
 			// Get candidates from the major performance goal
 			MutableObjectDoubleMap<SetCollectionType> majorCandidates = getCandidates(
 					goal.majorDimension, goal.minImprovement);
+		
+			MutableObjectDoubleMap<SetCollectionType> bestOptions;
+			
+			// FIXME: This should be implemented in a better way
+			if(goal.maxPenalty > 0) {
 
 			// Get candidates that fulfill the minor performance goal
 			MutableObjectDoubleMap<SetCollectionType> minorCandidates = getCandidates(
 					goal.minorDimension, goal.maxPenalty);
 
-			MutableObjectDoubleMap<SetCollectionType> bestOptions = majorCandidates
+			bestOptions = majorCandidates
 					.select(new ObjectDoublePredicate<SetCollectionType>() {
 						@Override
 						public boolean accept(SetCollectionType key, double value) {
@@ -83,6 +90,12 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 						}
 					});
 
+			} else {
+				bestOptions = majorCandidates;
+			}
+			
+			
+			
 			// Get the top implementation - Finding the minimum value
 			// FIXME: Find a better implementation for this
 			double min = Double.MAX_VALUE;

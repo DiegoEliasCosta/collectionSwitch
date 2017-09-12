@@ -27,7 +27,7 @@ public class SetEmpiricalAllocationContextTest {
 	@Before
 	public void setup() {
 		
-		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 0.9, 2);
+		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 1.2, -1);
 
 		performanceModel = new ArrayList<SetPerformanceModel>();
 

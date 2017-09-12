@@ -92,6 +92,30 @@ public class ListActiveFullMonitor<E> implements List<E>{
 		return list.set(index, element);
 	}
 	
+	public boolean remove(Object o) {
+		state.updateContainsOp(1);
+		boolean remove = list.remove(o);
+		if(remove) state.updateSize(-1);
+		return remove;
+	}
+
+	public boolean removeAll(Collection<?> c) {
+		state.updateSize(-c.size());
+		return list.removeAll(c);
+	}
+	
+
+	public E remove(int index) {
+		state.updateSize(1);
+		return list.remove(index);
+	}
+	
+	public void clear() {
+		state.updateSize(-size());
+		list.clear();
+	}
+
+	
 	/**
 	 * NON_MONITORED OPERATIONS
 	 */
@@ -111,19 +135,7 @@ public class ListActiveFullMonitor<E> implements List<E>{
 	public <T> T[] toArray(T[] a) {
 		return list.toArray(a);
 	}
-
-	public boolean remove(Object o) {
-		return list.remove(o);
-	}
-
-	public boolean removeAll(Collection<?> c) {
-		return list.removeAll(c);
-	}
-
-	public void clear() {
-		list.clear();
-	}
-
+	
 	public boolean equals(Object o) {
 		return list.equals(o);
 	}
@@ -131,11 +143,6 @@ public class ListActiveFullMonitor<E> implements List<E>{
 	public int hashCode() {
 		return list.hashCode();
 	}
-
-	public E remove(int index) {
-		return list.remove(index);
-	}
-
 	public List<E> subList(int fromIndex, int toIndex) {
 		return list.subList(fromIndex, toIndex);
 	}

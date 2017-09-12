@@ -51,18 +51,26 @@ public class SetActiveFullMonitor<E> implements Set<E> {
 		return set.retainAll(c);
 	}
 	
+	public boolean remove(Object o) {
+		state.updateContainsOp(1);
+		state.updateSize(-1);
+		return set.remove(o);
+	}
+	
+	public boolean removeAll(Collection<?> c) {
+		state.updateSize(-c.size());
+		return set.removeAll(c);
+	}
+	
+	public void clear() {
+		state.updateSize(-size());
+		set.clear();
+	}
 
 	/**
 	 * NON-MONITORED OPERATIONS
 	 */
 	
-	public boolean remove(Object o) {
-		return set.remove(o);
-	}
-	
-	public boolean removeAll(Collection<?> c) {
-		return set.removeAll(c);
-	}
 	
 	public int size() {
 		return set.size();
@@ -79,10 +87,6 @@ public class SetActiveFullMonitor<E> implements Set<E> {
 
 	public <T> T[] toArray(T[] a) {
 		return set.toArray(a);
-	}
-
-	public void clear() {
-		set.clear();
 	}
 
 	public boolean equals(Object o) {

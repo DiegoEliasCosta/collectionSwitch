@@ -44,7 +44,7 @@ public class ListActiveOptimizer implements ListAllocationOptimizer {
 			
 			if(state.hasCollectionFinished()) {
 				amountFinishedCollections++;
-				sizes[i] = state.getSize();
+				sizes[i] = state.getMaxSize();
 			} else {
 				// TODO: IMPLEMENT THIS
 			}

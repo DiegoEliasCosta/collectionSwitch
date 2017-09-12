@@ -29,7 +29,7 @@ public class MapEmpiricalAllocationContextTest {
 
 		performanceModel = new ArrayList<MapPerformanceModel>();
 		
-		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 1.2, 0.8);
+		goal = new PerformanceGoal(PerformanceDimension.TIME, PerformanceDimension.ALLOCATION, 1.2, -1);
 		
 		// Faster on Contains
 		MapPerformanceModel arraySetModel = new MapPerformanceModel(MapCollectionType.NLP_ARRAYMAP,
@@ -80,7 +80,7 @@ public class MapEmpiricalAllocationContextTest {
 		
 		optimizer.setContext(context);
 		
-		buildNLPBestScenario(windowSize, context);
+		buildNLPBestScenario(context, windowSize);
 		
 		optimizer.analyzeAndOptimize();
 		
@@ -105,23 +105,23 @@ public class MapEmpiricalAllocationContextTest {
 		
 		SwitchManager manager = new SwitchManager();
 		manager.addOptimizer(optimizer);
-		manager.configureAndScheduleManager(1, 100, 100);
+		manager.configureAndScheduleManager(1, 100, 50);
 
-		buildNLPBestScenario(10, context);
+		buildNLPBestScenario(context, windowSize);
 
 		RuntimeUtil.gc();
 		Thread.sleep(200);
 
 		Assert.assertEquals(MapCollectionType.NLP_ARRAYMAP, context.getCurrentCollectionType());
 
-		bestScenarioGSCollections(context, 10);
+		bestScenarioGSCollections(context, windowSize);
 
 		RuntimeUtil.gc();
 		Thread.sleep(200);
 
 		Assert.assertEquals(MapCollectionType.GSCOLLECTIONS_UNIFIEDMAP, context.getCurrentCollectionType());
 		
-		bestScenarioHashSet(context, 10);
+		bestScenarioHashSet(context, windowSize);
 
 		RuntimeUtil.gc();
 		Thread.sleep(200);
@@ -129,6 +129,8 @@ public class MapEmpiricalAllocationContextTest {
 		Assert.assertEquals(ListCollectionType.JDK_ARRAYLIST, context.getCurrentCollectionType());
 
 	}
+
+	
 
 	private void bestScenarioHashSet(MapAllocationContextInfo context, int windowSize) {
 		for (int i = 0; i < windowSize; i++) {
@@ -151,7 +153,7 @@ public class MapEmpiricalAllocationContextTest {
 			}
 
 			// Iteration is faster on GSCollections
-			for (int j = 0; j < 10; j++) {
+			for (int j = 0; j < 100; j++) {
 				
 				for(Integer key: map.keySet()) {
 					key += 10;
@@ -163,9 +165,8 @@ public class MapEmpiricalAllocationContextTest {
 		}
 		
 	}
-
-	private void buildNLPBestScenario(int windowSize, MapAllocationContextInfo context) {
-		
+	
+	private void buildNLPBestScenario(MapAllocationContextInfo context, int windowSize) {
 		for (int i = 0; i < windowSize; i++) {
 			Map<Integer, Integer> map = context.createMap();
 

@@ -40,7 +40,8 @@ public class MapPerformanceModel {
 	}
 
 	public double calculatePerformance(MapMetrics state) {
-		int size = state.getSize();
+		// FIXME: Flexibilize here
+		int size = state.getMaxSize();
 
 		return 1 * populate.value(size) 
 				+ state.getContainsOp() * contains.value(size)

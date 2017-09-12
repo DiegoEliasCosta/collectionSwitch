@@ -24,7 +24,7 @@ public class SetPerformanceModel  {
 	
 	public double calculatePerformance(SetMetrics state) {
 		
-		int size = state.getSize();
+		int size = state.getMaxSize();
 		
 		return 1 * populate.value(size) + 
 				state.getContainsOp() * contains.value(size) +

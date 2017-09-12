@@ -5,6 +5,7 @@ import java.lang.ref.WeakReference;
 public class SetMetrics {
 	
 	private int size;
+	private int maxSize;
 	private int containsOp;
 	private int iterationOp;
 	
@@ -19,10 +20,14 @@ public class SetMetrics {
 		return setReference.get() == null;
 	}
 	
-	public int getSize() {
+	public int getLastSize() {
 		return size;
 	}
 
+	public int getMaxSize() {
+		return maxSize;
+	}
+	
 	public int getContainsOp() {
 		return containsOp;
 	}
@@ -33,6 +38,9 @@ public class SetMetrics {
 	
 	public void updateSize(int delta) {
 		size += delta;
+		if(size > maxSize) {
+			maxSize = size;
+		}
 	}
 	
 	public void updateContainsOp(int delta) {
