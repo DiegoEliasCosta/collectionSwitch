@@ -16,7 +16,7 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 	private MapAllocationOptimizer optimizer;
 
 	private MapCollectionType type;
-	
+
 	public EmpiricalMapAllocationContext(MapCollectionType type, MapAllocationOptimizer optimizer, int windowSize) {
 		super();
 		this.type = type;
@@ -24,7 +24,6 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 		this.windowSize = windowSize;
 		this.instancesCount = 0;
 	}
-	
 
 	@Override
 	public void updateCollectionInitialCapacity(int size) {
@@ -47,26 +46,36 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 
 	@Override
 	public <K, V> Map<K, V> createMap(int initialCapacity) {
-		
+
 		Map<K, V> map = type.createMap(initialCapacity);
-		
-		if(instancesCount++ < windowSize) {
+
+		if (instancesCount++ < windowSize) {
 			return this.optimizer.createMonitor(map);
 		}
-		
+
 		return map;
 	}
 
 	@Override
 	public <K, V> Map<K, V> createMap(int initialCapacity, float loadFactor) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<K, V> map = type.createMap(initialCapacity);
+
+		if (instancesCount++ < windowSize) {
+			return this.optimizer.createMonitor(map);
+		}
+
+		return map;
 	}
 
 	@Override
-	public <K, V> Map<K, V> createMap(Map<K, V> map) {
-		// TODO Auto-generated method stub
-		return null;
+	public <K, V> Map<K, V> createMap(Map<K, V> mapToCopy) {
+		Map<K, V> map = type.createMap(mapToCopy);
+
+		if (instancesCount++ < windowSize) {
+			return this.optimizer.createMonitor(map);
+		}
+
+		return map;
 	}
 
 	@Override

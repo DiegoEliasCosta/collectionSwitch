@@ -11,6 +11,19 @@ public class PerformanceGoal {
 		TIME,
 		ALLOCATION,
 		MEMORY_FOOTPRINT;
+
+		public static PerformanceDimension parse(String majorDimension) {
+			
+			if(majorDimension.equalsIgnoreCase("time")){
+				return TIME;
+			}
+			
+			if(majorDimension.equalsIgnoreCase("allocation")){
+				return ALLOCATION;
+			}
+			
+			return null;
+		}
 	}
 	
 	public PerformanceGoal(PerformanceDimension major, PerformanceDimension minor, double minInprovement, double maxPenalty) {
