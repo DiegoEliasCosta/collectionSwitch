@@ -14,7 +14,7 @@ public class MapPerformanceModel {
 	private UnivariateFunction populate;
 	private UnivariateFunction iterate;
 
-	public MapPerformanceModel(MapCollectionType type, double[] contains, double[] populate, double[] iterate) {
+	public MapPerformanceModel(MapCollectionType type, double[] populate, double[] contains, double[] iterate) {
 		super();
 		this.type = type;
 		this.contains = new PolynomialFunction(contains);

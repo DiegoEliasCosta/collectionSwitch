@@ -5,12 +5,8 @@ import java.util.List;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
-import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListEmpiricalPerformanceEvaluator;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListPerformanceModel;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalPerformanceEvaluator;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapPerformanceModel;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalPerformanceEvaluator;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetPerformanceModel;
 
 public class PerformanceModelFactory {
@@ -18,8 +14,9 @@ public class PerformanceModelFactory {
 	// TODO: Hard-coded performance model factory
 	// This should be implemented as an input
 
-	public void buildListPerformanceModelsTime(ListEmpiricalPerformanceEvaluator evaluator) {
+	public static List<ListPerformanceModel> buildListPerformanceModelsTime() {
 
+		// FIXME: Bad implementation - this should return a list of performance models NOT add them into the evaluator
 		List<ListPerformanceModel> performanceModel = new java.util.ArrayList<>();
 
 		// AUTOMATICALLY GENERATED - VARIABLE TIME
@@ -43,11 +40,11 @@ public class PerformanceModelFactory {
 				new double[] { 29.264840, 0.094781, -0.000152 }, new double[] { 2.657610, 4.177008, 0.000677 });
 		performanceModel.add(HashArrayListTime);
 
-		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
-
+		return performanceModel;
+		
 	}
 
-	public void buildListPerformanceModelsAllocation(ListEmpiricalPerformanceEvaluator evaluator) {
+	public static List<ListPerformanceModel> buildListPerformanceModelsAllocation() {
 
 		List<ListPerformanceModel> performanceModel = new java.util.ArrayList<>();
 		// AUTOMATICALLY GENERATED - VARIABLE ·GC.ALLOC.RATE.NORM
@@ -71,11 +68,11 @@ public class PerformanceModelFactory {
 				new double[] { -0.856819, 0.029097, -0.000005 }, new double[] { -0.000016, 0.000006, -0.000000 });
 		performanceModel.add(HashArrayListgcallocratenorm);
 
-		evaluator.addEmpiricalModel(PerformanceDimension.ALLOCATION, performanceModel);
-
+		return performanceModel;
+		
 	}
 
-	public void buildSetsPerformanceModelTime(SetEmpiricalPerformanceEvaluator evaluator) {
+	public static List<SetPerformanceModel> buildSetsPerformanceModelTime() {
 
 		List<SetPerformanceModel> performanceModel = new java.util.ArrayList<>();
 
@@ -115,11 +112,11 @@ public class PerformanceModelFactory {
 				new double[] { -32.038533, 6.133033, 0.002870 });
 		performanceModel.add(AdaptiveSetTime);
 
-		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
-
+		return performanceModel;
+		
 	}
 
-	public void buildSetsPerformanceModelAllocation(SetEmpiricalPerformanceEvaluator evaluator) {
+	public static List<SetPerformanceModel> buildSetsPerformanceModelAllocation() {
 
 		List<SetPerformanceModel> performanceModel = new java.util.ArrayList<>();
 		
@@ -145,12 +142,11 @@ public class PerformanceModelFactory {
 		SetPerformanceModel AdaptiveSetgcallocratenorm = new SetPerformanceModel(SetCollectionType.ONLINEADAPTER_ADAPTIVESET, new double[]{-193.679351,30.844353,-0.024542}, new double[]{-0.856838,0.029098,-0.000005}, new double[]{-0.811248,0.001734,0.000183});
 		performanceModel.add(AdaptiveSetgcallocratenorm);
 
-		evaluator.addEmpiricalModel(PerformanceDimension.ALLOCATION, performanceModel);
-
+		return performanceModel;
+		
 	}
 
-	public void buildMapsPerformanceModelTime(
-			MapEmpiricalPerformanceEvaluator evaluator) {
+	public static List<MapPerformanceModel> buildMapsPerformanceModelTime() {
 
 		List<MapPerformanceModel> performanceModel = new java.util.ArrayList<>();
 
@@ -173,11 +169,12 @@ public class PerformanceModelFactory {
 		MapPerformanceModel NayukiCompactHashMapTime = new MapPerformanceModel(MapCollectionType.NAYUKI_COMPACTHASHMAP, new double[]{19.138060,78.018373,0.018487}, new double[]{44.214786,0.085242,-0.000085}, new double[]{125.838428,32.534349,-0.005407});
 		performanceModel.add(NayukiCompactHashMapTime);
 		
-		evaluator.addEmpiricalModel(PerformanceDimension.TIME, performanceModel);
+		return performanceModel;
+		
 
 	}
 
-	public void buildSetsPerformanceModelAllocation(MapEmpiricalPerformanceEvaluator evaluator) {
+	public static List<MapPerformanceModel> buildMapsPerformanceModelAllocation() {
 
 		List<MapPerformanceModel> performanceModel = new java.util.ArrayList<>();
 
@@ -200,8 +197,8 @@ public class PerformanceModelFactory {
 		MapPerformanceModel NayukiCompactHashMapgcallocratenorm = new MapPerformanceModel(MapCollectionType.NAYUKI_COMPACTHASHMAP, new double[]{5.655551,55.839487,-0.003252}, new double[]{22.640998,0.100559,-0.000174}, new double[]{407.283902,53.565156,0.000359});
 		performanceModel.add(NayukiCompactHashMapgcallocratenorm);
 		
-		evaluator.addEmpiricalModel(PerformanceDimension.ALLOCATION, performanceModel);
-
+		return performanceModel;
+		
 	}
 
 }

@@ -33,7 +33,7 @@ public class MapEmpiricalAllocationContextTest {
 		
 		// Faster on Contains
 		MapPerformanceModel arraySetModel = new MapPerformanceModel(MapCollectionType.NLP_ARRAYMAP,
-				new double[] { 10, 1 }, new double[] { 10, 2 }, new double[] { 10, 2 });
+				new double[] { 10, 2 }, new double[] { 10, 1 }, new double[] { 10, 2 });
 
 		performanceModel.add(arraySetModel);
 
@@ -126,7 +126,7 @@ public class MapEmpiricalAllocationContextTest {
 		RuntimeUtil.gc();
 		Thread.sleep(200);
 
-		Assert.assertEquals(ListCollectionType.JDK_ARRAYLIST, context.getCurrentCollectionType());
+		Assert.assertEquals(MapCollectionType.JDK_HASHMAP, context.getCurrentCollectionType());
 
 	}
 

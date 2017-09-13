@@ -32,6 +32,8 @@ public class LogListAllocationContext implements ListAllocationContext {
 		    writer.println("Collecton Type: " + this.context.getCurrentCollectionType());
 		    writer.flush();
 		} catch (IOException e) {
+			// FIXME: This should be temporary
+			System.out.println(e);
 			if(writer != null) {
 				writer.close();
 			}

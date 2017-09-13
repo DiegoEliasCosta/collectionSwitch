@@ -41,13 +41,13 @@ public class AdaptiveSet<E> implements Set<E> {
 		} 
 	}
 
-	public AdaptiveSet(Collection<? extends E> set) {
+	public AdaptiveSet(Collection<? extends E> setToCopy) {
 
-		if (set.size() < TURNING_POINT) {
+		if (setToCopy.size() < TURNING_POINT) {
 			this.set = new ArraySet<E>();
-			this.set.addAll(set);
+			this.set.addAll(setToCopy);
 		} else  {
-			set = HashObjSets.newMutableSet(set);
+			this.set = HashObjSets.newMutableSet(setToCopy);
 			transformed = true;
 		} 
 

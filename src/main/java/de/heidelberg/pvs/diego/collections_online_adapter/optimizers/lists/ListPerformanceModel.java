@@ -26,7 +26,7 @@ public class ListPerformanceModel {
 		this.index = new PolynomialFunction(index);
 	}
 	
-	public ListPerformanceModel(ListCollectionType type, double[] contains, double[] populate, 
+	public ListPerformanceModel(ListCollectionType type, double[] populate, double[] contains, 
 			double[] iterate) {
 		super();
 		this.type = type;
@@ -43,9 +43,8 @@ public class ListPerformanceModel {
 
 		return populate.value(size) 
 				+ state.getContainsOp() * contains.value(size)
-				+ state.getIterationOp() * iterate.value(size)
-				+ state.getIndexOp() * index.value(size);
-	}
+				+ state.getIterationOp() * iterate.value(size);
+		}
 
 	public ListCollectionType getType() {
 		return type;

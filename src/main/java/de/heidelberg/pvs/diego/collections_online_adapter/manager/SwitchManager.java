@@ -21,10 +21,10 @@ public class SwitchManager {
 	}
 
 	protected void analyzeAllOptimizers() {
-		for(AllocationOptimizer optimizer : optimizers) {
+		for (AllocationOptimizer optimizer : optimizers) {
 			optimizer.analyzeAndOptimize();
 		}
-		
+
 	}
 
 	public void addOptimizer(AllocationOptimizer optimizer) {
@@ -33,9 +33,9 @@ public class SwitchManager {
 	}
 
 	public void configureAndScheduleManager(int threadsNumber, int initialDelay, int delay2) {
-		
-		// FIXME: Use a better singleton implementation 
-		if(scheduler == null) {
+
+		// FIXME: Use a better singleton implementation
+		if (scheduler == null) {
 			// Schedule the Online Adapter Thread
 			scheduler = Executors.newScheduledThreadPool(threadsNumber);
 			scheduler.scheduleAtFixedRate(new Runnable() {
@@ -45,8 +45,26 @@ public class SwitchManager {
 				}
 			}, initialDelay, delay2, TimeUnit.MILLISECONDS);
 		}
-		
-		
+
+	}
+
+	// Only for tests 
+	// FIXME: Should be removed
+	public void configureAndScheduleManagerOnce(int threadsNumber, int initialDelay) {
+
+		// FIXME: Use a better singleton implementation
+		if (scheduler == null) {
+			// Schedule the Online Adapter Thread
+			scheduler = Executors.newScheduledThreadPool(threadsNumber);
+			scheduler.schedule(new Runnable() {
+				@Override
+				public void run() {
+					analyzeAllOptimizers();
+					scheduler.shutdown();
+				}
+			}, initialDelay, TimeUnit.MILLISECONDS);
+		}
+
 	}
 
 }

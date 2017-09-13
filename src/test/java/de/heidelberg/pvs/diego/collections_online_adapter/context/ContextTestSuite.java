@@ -10,7 +10,10 @@ import org.junit.runners.Suite;
 	InitialCapacitySetAllocationContextTest.class,
 	ListEmpiricalAllocationContextTest.class,
 	SetEmpiricalAllocationContextTest.class,
-	MapEmpiricalAllocationContextTest.class
+	MapEmpiricalAllocationContextTest.class,
+	ListCollectionTypeTest.class,
+	SetCollectionTypeTest.class,
+	MapCollectionTypeTest.class
 })
 public class ContextTestSuite {
 

@@ -14,7 +14,7 @@ public class SetPerformanceModel  {
 	private final UnivariateFunction populate;
 	private final UnivariateFunction iterate;
 	
-	public SetPerformanceModel(SetCollectionType type, double[] contains, double[] populate, double[] iterate) {
+	public SetPerformanceModel(SetCollectionType type, double[] populate, double[] contains, double[] iterate) {
 		super();
 		this.type = type;
 		this.contains = new PolynomialFunction(contains);

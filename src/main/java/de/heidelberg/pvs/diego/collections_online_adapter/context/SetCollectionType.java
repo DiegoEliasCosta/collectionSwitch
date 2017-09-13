@@ -24,113 +24,107 @@ public enum SetCollectionType {
 
 	public <E> Set<E> createSet(int initialCapacity) {
 
-		Set<E> set;
-
 		switch (this) {
 
 		case JDK_HASHSET:
-			set = new HashSet<E>(initialCapacity);
+			return new HashSet<E>(initialCapacity);
 
 		case KOLOBOKE_HASHSET:
-			set = HashObjSets.newMutableSet(initialCapacity);
+			return HashObjSets.newMutableSet(initialCapacity);
 
 		case JDK_LINKEDHASHSET:
-			set = new LinkedHashSet<E>(initialCapacity);
+			return new LinkedHashSet<E>(initialCapacity);
 
 		case FASTUTILS_HASHSET:
-			set = new THashSet<E>(initialCapacity);
+			return new THashSet<E>(initialCapacity);
 
 		case GSCOLLECTIONS_UNIFIEDSET:
-			set = new UnifiedSet<E>(initialCapacity);
+			return new UnifiedSet<E>(initialCapacity);
 
 		case NLP_ARRAYSET:
-			set = new ArraySet<E>(initialCapacity);
+			return new ArraySet<E>(initialCapacity);
 
 			// case ONLINEADAPTER_ARRAYSET:
-			// set = new ArraySet_Naive(initialCapacity);
+			// return new ArraySet_Naive(initialCapacity);
 
 		case ONLINEADAPTER_ADAPTIVESET:
-			set = new AdaptiveSet<E>(initialCapacity);
+			return new AdaptiveSet<E>(initialCapacity);
 
 		default:
-			set = new HashSet<>(initialCapacity);
+			return new HashSet<>(initialCapacity);
 		}
 
-		return set;
 	}
 
 	public <E> Set<E> createSet() {
 
-		Set<E> set;
 
 		switch (this) {
 
 		case JDK_HASHSET:
-			set = new HashSet<E>();
+			return new HashSet<E>();
 
 		case KOLOBOKE_HASHSET:
-			set = HashObjSets.newMutableSet();
+			return HashObjSets.newMutableSet();
 
 		case JDK_LINKEDHASHSET:
-			set = new LinkedHashSet<E>();
+			return new LinkedHashSet<E>();
 
 		case FASTUTILS_HASHSET:
-			set = new THashSet<E>();
+			return new THashSet<E>();
 
 		case GSCOLLECTIONS_UNIFIEDSET:
-			set = new UnifiedSet<E>();
+			return new UnifiedSet<E>();
 
 		case NLP_ARRAYSET:
-			set = new ArraySet<E>();
+			return new ArraySet<E>();
 
 			// case ONLINEADAPTER_ARRAYSET:
-			// set = new ArraySet_Naive(initialCapacity);
+			// return new ArraySet_Naive(initialCapacity);
 
 		case ONLINEADAPTER_ADAPTIVESET:
-			set = new AdaptiveSet<E>();
+			return new AdaptiveSet<E>();
 
 		default:
-			set = new HashSet<>();
+			return new HashSet<>();
 		}
 
-		return set;
 	}
 
 	
 	public <E> Set<E> createSet(Collection<? extends E> setToCopy) {
 
-		Set<E> set;
-
 		switch (this) {
 
 		case JDK_HASHSET:
-			set = new HashSet<E>(setToCopy);
+			return new HashSet<E>(setToCopy);
 
 		case KOLOBOKE_HASHSET:
-			set = HashObjSets.newMutableSet(setToCopy);
+			return HashObjSets.newMutableSet(setToCopy);
 
 		case JDK_LINKEDHASHSET:
-			set = new LinkedHashSet<E>(setToCopy);
+			return new LinkedHashSet<E>(setToCopy);
 
 		case FASTUTILS_HASHSET:
-			set = new THashSet<E>(setToCopy);
+			return new THashSet<E>(setToCopy);
 
 		case GSCOLLECTIONS_UNIFIEDSET:
-			set = new UnifiedSet<E>(setToCopy);
+			return new UnifiedSet<E>(setToCopy);
 
 		case NLP_ARRAYSET:
-			set = new ArraySet<E>();
+			Set<E> set2 = new ArraySet<E>();
+			set2.addAll(setToCopy);
+			return set2;
 
 			// case ONLINEADAPTER_ARRAYSET:
-			// set = new ArraySet_Naive(initialCapacity);
+			// return new ArraySet_Naive(initialCapacity);
 
 		case ONLINEADAPTER_ADAPTIVESET:
-			set = new AdaptiveSet<E>(setToCopy);
+			return new AdaptiveSet<E>(setToCopy);
 
 		default:
-			set = new HashSet<>(setToCopy);
+			return new HashSet<>(setToCopy);
 		}
 
-		return set;
 	}
 }

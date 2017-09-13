@@ -16,7 +16,17 @@ import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListMet
 public class ListEmpiricalPerformanceEvaluator {
 
 	private Map<PerformanceDimension, List<ListPerformanceModel>> listEmpiricalModel = new UnifiedMap<>();
+	
+	
 
+	public ListEmpiricalPerformanceEvaluator() {
+		super();
+	}
+	
+	public ListEmpiricalPerformanceEvaluator(PerformanceDimension dimension, List<ListPerformanceModel> performanceModel) {
+		listEmpiricalModel.put(dimension, performanceModel);
+	}
+	
 	public void addEmpiricalModel(PerformanceDimension dimension, List<ListPerformanceModel> performanceModel) {
 		listEmpiricalModel.put(dimension, performanceModel);
 	}

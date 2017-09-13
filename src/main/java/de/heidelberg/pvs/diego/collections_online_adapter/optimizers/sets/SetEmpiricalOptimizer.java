@@ -49,7 +49,7 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 	public <E> Set<E> createMonitor(Set<E> set) {
 		SetMetrics state = new SetMetrics(new WeakReference<Set<E>>(set));
 		collectionsState.add(state);
-		return new SetActiveFullMonitor<>(set, state);
+		return new SetActiveFullMonitor<E>(set, state);
 	}
 
 	@SuppressWarnings("serial")
@@ -64,8 +64,6 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 				amountFinishedCollections++;
 		}
 
-		
-		
 		// Only analyze it when
 		if (amountFinishedCollections >= finishedRatio) {
 

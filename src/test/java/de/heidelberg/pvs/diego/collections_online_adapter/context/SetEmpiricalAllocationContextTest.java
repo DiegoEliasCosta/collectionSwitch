@@ -33,7 +33,7 @@ public class SetEmpiricalAllocationContextTest {
 
 		// Faster on Contains
 		SetPerformanceModel arraySetModel = new SetPerformanceModel(SetCollectionType.NLP_ARRAYSET,
-				new double[] { 10, 1 }, new double[] { 10, 2 }, new double[] { 10, 2 });
+				new double[] { 10, 2 }, new double[] { 10, 1 }, new double[] { 10, 2 });
 
 		performanceModel.add(arraySetModel);
 
