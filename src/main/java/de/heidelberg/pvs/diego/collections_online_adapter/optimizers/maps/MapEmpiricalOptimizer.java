@@ -131,7 +131,7 @@ public class MapEmpiricalOptimizer implements MapAllocationOptimizer {
 	public <K, V> Map<K, V> createMonitor(Map<K, V> map) {
 		MapMetrics metrics = new MapMetrics(new WeakReference<Map<K, V>>(map));
 		collectionsState.add(metrics);
-		return new MapActiveFullMonitor<>(map, metrics);
+		return new MapActiveFullMonitor<K, V>(map, metrics);
 	}
 
 	@Override

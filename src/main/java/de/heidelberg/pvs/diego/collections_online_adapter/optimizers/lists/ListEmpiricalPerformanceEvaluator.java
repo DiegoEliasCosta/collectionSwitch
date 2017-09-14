@@ -15,7 +15,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.monitors.lists.ListMet
 
 public class ListEmpiricalPerformanceEvaluator {
 
-	private Map<PerformanceDimension, List<ListPerformanceModel>> listEmpiricalModel = new UnifiedMap<>();
+	private Map<PerformanceDimension, List<ListPerformanceModel>> listEmpiricalModel = new UnifiedMap<PerformanceDimension, List<ListPerformanceModel>>();
 	
 	
 
@@ -34,7 +34,7 @@ public class ListEmpiricalPerformanceEvaluator {
 	public MutableObjectDoubleMap<ListCollectionType> predictPerformance(List<ListMetrics> collectionsState,
 			PerformanceDimension dimension) {
 
-		MutableObjectDoubleMap<ListCollectionType> performanceResult = new ObjectDoubleHashMap<>(listEmpiricalModel.size());
+		MutableObjectDoubleMap<ListCollectionType> performanceResult = new ObjectDoubleHashMap<ListCollectionType>(listEmpiricalModel.size());
 
 		List<ListPerformanceModel> models = listEmpiricalModel.getOrDefault(dimension, Collections.EMPTY_LIST);
 		

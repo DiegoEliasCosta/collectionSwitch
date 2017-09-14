@@ -28,7 +28,7 @@ public class MapEmpiricalPerformanceEvaluator {
 	public MutableObjectDoubleMap<MapCollectionType> predictPerformance(List<MapMetrics> collectionsState,
 			PerformanceDimension dimension) {
 
-		MutableObjectDoubleMap<MapCollectionType> performanceResult = new ObjectDoubleHashMap<>(empiricalModel.size());
+		MutableObjectDoubleMap<MapCollectionType> performanceResult = new ObjectDoubleHashMap<MapCollectionType>(empiricalModel.size());
 
 		List<MapPerformanceModel> models = empiricalModel.getOrDefault(dimension, Collections.EMPTY_LIST);
 

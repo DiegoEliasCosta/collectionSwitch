@@ -35,7 +35,7 @@ public class AdaptiveList<E> implements List<E> {
 		if (c.size() < TURNING_POINT) {
 			list = new ArrayList<E>(c);
 		} else {
-			list = new HashArrayList<>(c);
+			list = new HashArrayList<E>(c);
 			transformed = true;
 		}
 	}
@@ -43,7 +43,7 @@ public class AdaptiveList<E> implements List<E> {
 	private void manageImplementation(int delta) {
 		int newSize = delta + size();
 		if(!transformed && newSize > TURNING_POINT) {
-			list = new HashArrayList<>(list);
+			list = new HashArrayList<E>(list);
 			transformed = true;
 		}
 	}

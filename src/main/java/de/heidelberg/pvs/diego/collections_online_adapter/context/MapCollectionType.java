@@ -31,34 +31,34 @@ public enum MapCollectionType {
 		switch (this) {
 
 		case JDK_HASHMAP:
-			return new HashMap<>(initialCapacity);
+			return new HashMap<K, V>(initialCapacity);
 			
 		case KOLOBOKE_HASHMAP:
 			return HashObjObjMaps.newMutableMap(initialCapacity);
 			
 		case ONLINEADAPTER_ADAPTIVEMAP:
-			return new AdaptiveMap<>(initialCapacity);
+			return new AdaptiveMap<K, V>(initialCapacity);
 			
 		case JDK_LINKEDHASHMAP:
-			return new LinkedHashMap<>(initialCapacity);
+			return new LinkedHashMap<K, V>(initialCapacity);
 
 		case FASTUTILS_HASHMAP:
-			return new THashMap<>(initialCapacity);
+			return new THashMap<K, V>(initialCapacity);
 
 		case GSCOLLECTIONS_UNIFIEDMAP:
-			return new UnifiedMap<>(initialCapacity);
+			return new UnifiedMap<K, V>(initialCapacity);
 			
 		case GOOGLE_ARRAYMAP:
-			return new com.google.api.client.util.ArrayMap<>();
+			return new com.google.api.client.util.ArrayMap<K, V>();
 			
 		case NLP_ARRAYMAP:
-			return new ArrayMap<>(initialCapacity);
+			return new ArrayMap<K, V>(initialCapacity);
 			
 		case NAYUKI_COMPACTHASHMAP:
 			return new CompactHashMap<K, V>();
 			
 		default:
-			return new HashMap<>(initialCapacity);
+			return new HashMap<K, V>(initialCapacity);
 		}
 
 	}
@@ -69,34 +69,34 @@ public enum MapCollectionType {
 		switch (this) {
 
 		case JDK_HASHMAP:
-			return new HashMap<>();
+			return new HashMap<K, V>();
 			
 		case KOLOBOKE_HASHMAP:
 			return HashObjObjMaps.newMutableMap();
 			
 		case ONLINEADAPTER_ADAPTIVEMAP:
-			return new AdaptiveMap<>();
+			return new AdaptiveMap<K, V>();
 			
 		case JDK_LINKEDHASHMAP:
-			return new LinkedHashMap<>();
+			return new LinkedHashMap<K, V>();
 
 		case FASTUTILS_HASHMAP:
-			return new THashMap<>();
+			return new THashMap<K, V>();
 
 		case GSCOLLECTIONS_UNIFIEDMAP:
-			return new UnifiedMap<>();
+			return new UnifiedMap<K, V>();
 			
 		case GOOGLE_ARRAYMAP:
-			return new com.google.api.client.util.ArrayMap<>();
+			return new com.google.api.client.util.ArrayMap<K, V>();
 			
 		case NLP_ARRAYMAP:
-			return new ArrayMap<>();
+			return new ArrayMap<K, V>();
 			
 		case NAYUKI_COMPACTHASHMAP:
 			return new CompactHashMap<K, V>();
 			
 		default:
-			return new HashMap<>();
+			return new HashMap<K, V>();
 		}
 
 	}
@@ -106,30 +106,30 @@ public enum MapCollectionType {
 		switch (this) {
 
 		case JDK_HASHMAP:
-			return new HashMap<>(mapToCopy);
+			return new HashMap<K, V>(mapToCopy);
 			
 		case KOLOBOKE_HASHMAP:
 			return HashObjObjMaps.newMutableMap(mapToCopy);
 			
 		case ONLINEADAPTER_ADAPTIVEMAP:
-			return new AdaptiveMap<>(mapToCopy);
+			return new AdaptiveMap<K, V>(mapToCopy);
 			
 		case JDK_LINKEDHASHMAP:
-			return new LinkedHashMap<>(mapToCopy);
+			return new LinkedHashMap<K, V>(mapToCopy);
 
 		case FASTUTILS_HASHMAP:
-			return new THashMap<>(mapToCopy);
+			return new THashMap<K, V>(mapToCopy);
 
 		case GSCOLLECTIONS_UNIFIEDMAP:
-			return new UnifiedMap<>(mapToCopy);
+			return new UnifiedMap<K, V>(mapToCopy);
 			
 		case GOOGLE_ARRAYMAP:
-			Map<K, V> map = new com.google.api.client.util.ArrayMap<>();
+			Map<K, V> map = new com.google.api.client.util.ArrayMap<K, V>();
 			map.putAll(mapToCopy);
 			return map;
 			
 		case NLP_ARRAYMAP:
-			return new ArrayMap<>(mapToCopy);
+			return new ArrayMap<K, V>(mapToCopy);
 			
 		case NAYUKI_COMPACTHASHMAP:
 			Map<K, V> map2 = new CompactHashMap<K, V>();
@@ -137,7 +137,7 @@ public enum MapCollectionType {
 			return map2;
 			
 		default:
-			return new HashMap<>(mapToCopy);
+			return new HashMap<K, V>(mapToCopy);
 		}
 
 	}

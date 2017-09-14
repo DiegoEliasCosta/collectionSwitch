@@ -51,7 +51,7 @@ public enum SetCollectionType {
 			return new AdaptiveSet<E>(initialCapacity);
 
 		default:
-			return new HashSet<>(initialCapacity);
+			return new HashSet<E>(initialCapacity);
 		}
 
 	}
@@ -86,7 +86,7 @@ public enum SetCollectionType {
 			return new AdaptiveSet<E>();
 
 		default:
-			return new HashSet<>();
+			return new HashSet<E>();
 		}
 
 	}
@@ -123,7 +123,7 @@ public enum SetCollectionType {
 			return new AdaptiveSet<E>(setToCopy);
 
 		default:
-			return new HashSet<>(setToCopy);
+			return new HashSet<E>(setToCopy);
 		}
 
 	}

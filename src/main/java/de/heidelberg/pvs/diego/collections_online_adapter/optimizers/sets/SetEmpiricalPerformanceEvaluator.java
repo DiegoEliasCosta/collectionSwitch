@@ -15,7 +15,7 @@ import de.heidelberg.pvs.diego.collections_online_adapter.monitors.sets.SetMetri
 
 public class SetEmpiricalPerformanceEvaluator {
 
-	private Map<PerformanceDimension, List<SetPerformanceModel>> setEmpiricalModel = new UnifiedMap<>();
+	private Map<PerformanceDimension, List<SetPerformanceModel>> setEmpiricalModel = new UnifiedMap<PerformanceDimension, List<SetPerformanceModel>>();
 
 	public void addEmpiricalModel(PerformanceDimension dimension, List<SetPerformanceModel> performanceModel) {
 		// FIXME: This method REWRITES the empirical model every time
@@ -26,7 +26,7 @@ public class SetEmpiricalPerformanceEvaluator {
 	public MutableObjectDoubleMap<SetCollectionType> predictPerformance(List<SetMetrics> collectionsState,
 			PerformanceDimension dimension) {
 
-		MutableObjectDoubleMap<SetCollectionType> performanceResult = new ObjectDoubleHashMap<>(setEmpiricalModel.size());
+		MutableObjectDoubleMap<SetCollectionType> performanceResult = new ObjectDoubleHashMap<SetCollectionType>(setEmpiricalModel.size());
 
 		List<SetPerformanceModel> models = setEmpiricalModel.getOrDefault(dimension, Collections.EMPTY_LIST);
 		

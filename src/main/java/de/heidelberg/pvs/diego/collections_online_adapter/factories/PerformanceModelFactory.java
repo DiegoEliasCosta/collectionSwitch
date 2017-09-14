@@ -17,7 +17,7 @@ public class PerformanceModelFactory {
 	public static List<ListPerformanceModel> buildListPerformanceModelsTime() {
 
 		// FIXME: Bad implementation - this should return a list of performance models NOT add them into the evaluator
-		List<ListPerformanceModel> performanceModel = new java.util.ArrayList<>();
+		List<ListPerformanceModel> performanceModel = new java.util.ArrayList<ListPerformanceModel>();
 
 		// AUTOMATICALLY GENERATED - VARIABLE TIME
 		ListPerformanceModel ArrayListTime = new ListPerformanceModel(ListCollectionType.JDK_ARRAYLIST,
@@ -46,7 +46,7 @@ public class PerformanceModelFactory {
 
 	public static List<ListPerformanceModel> buildListPerformanceModelsAllocation() {
 
-		List<ListPerformanceModel> performanceModel = new java.util.ArrayList<>();
+		List<ListPerformanceModel> performanceModel = new java.util.ArrayList<ListPerformanceModel>();
 		// AUTOMATICALLY GENERATED - VARIABLE ·GC.ALLOC.RATE.NORM
 		ListPerformanceModel ArrayListgcallocratenorm = new ListPerformanceModel(ListCollectionType.JDK_ARRAYLIST,
 				new double[] { -119.004257, 19.299468, -0.009556 }, new double[] { -0.856593, 0.029089, -0.000005 },
@@ -74,7 +74,7 @@ public class PerformanceModelFactory {
 
 	public static List<SetPerformanceModel> buildSetsPerformanceModelTime() {
 
-		List<SetPerformanceModel> performanceModel = new java.util.ArrayList<>();
+		List<SetPerformanceModel> performanceModel = new java.util.ArrayList<SetPerformanceModel>();
 
 		// AUTOMATICALLY GENERATED - VARIABLE TIME
 		SetPerformanceModel FastUtilHashSetTime = new SetPerformanceModel(SetCollectionType.FASTUTILS_HASHSET,
@@ -118,7 +118,7 @@ public class PerformanceModelFactory {
 
 	public static List<SetPerformanceModel> buildSetsPerformanceModelAllocation() {
 
-		List<SetPerformanceModel> performanceModel = new java.util.ArrayList<>();
+		List<SetPerformanceModel> performanceModel = new java.util.ArrayList<SetPerformanceModel>();
 		
 		// AUTOMATICALLY GENERATED - VARIABLE ·GC.ALLOC.RATE.NORM
 		SetPerformanceModel FastUtilHashSetgcallocratenorm = new SetPerformanceModel(SetCollectionType.FASTUTILS_HASHSET, new double[]{-227.244994,26.432850,-0.017358}, new double[]{-0.856861,0.029099,-0.000005}, new double[]{-0.000023,0.000008,-0.000000});
@@ -148,7 +148,7 @@ public class PerformanceModelFactory {
 
 	public static List<MapPerformanceModel> buildMapsPerformanceModelTime() {
 
-		List<MapPerformanceModel> performanceModel = new java.util.ArrayList<>();
+		List<MapPerformanceModel> performanceModel = new java.util.ArrayList<MapPerformanceModel>();
 
 		// AUTOMATICALLY GENERATED - VARIABLE TIME
 		MapPerformanceModel UnifiedMapsTime = new MapPerformanceModel(MapCollectionType.GSCOLLECTIONS_UNIFIEDMAP, new double[]{-541.264229,54.608505,-0.018659}, new double[]{32.262985,0.020520,-0.000026}, new double[]{-36.663724,13.466403,-0.001900});
@@ -176,7 +176,7 @@ public class PerformanceModelFactory {
 
 	public static List<MapPerformanceModel> buildMapsPerformanceModelAllocation() {
 
-		List<MapPerformanceModel> performanceModel = new java.util.ArrayList<>();
+		List<MapPerformanceModel> performanceModel = new java.util.ArrayList<MapPerformanceModel>();
 
 		// AUTOMATICALLY GENERATED - VARIABLE ·GC.ALLOC.RATE.NORM
 		MapPerformanceModel UnifiedMapsgcallocratenorm = new MapPerformanceModel(MapCollectionType.GSCOLLECTIONS_UNIFIEDMAP, new double[]{-843.394386,83.392457,-0.048719}, new double[]{0.000043,0.000000,-0.000000}, new double[]{31.999958,24.000018,-0.000000});

@@ -32,7 +32,7 @@ public class SetActiveOptimizer implements SetAllocationOptimizer {
 
 		SetMetrics state = new SetMetrics(new WeakReference<Set<E>>(set));
 		collectionsState.add(state);
-		return new SetActiveFullMonitor<>(set, state);
+		return new SetActiveFullMonitor<E>(set, state);
 	}
 
 	@Override

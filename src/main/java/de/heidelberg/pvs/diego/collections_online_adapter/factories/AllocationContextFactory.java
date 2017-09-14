@@ -9,6 +9,9 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.MapCollectionT
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacitySetAllocationContext;
@@ -24,9 +27,11 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListE
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListEmpiricalPerformanceEvaluator;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalPerformanceEvaluator;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalPerformanceEvaluator;
 
 public class AllocationContextFactory {
@@ -55,7 +60,7 @@ public class AllocationContextFactory {
 		// Default: EMPIRICAL
 		private AllocationContextAlgorithm algorithm = AllocationContextAlgorithm.EMPIRICAL;
 
-		private boolean hasLog;
+		private boolean hasLog = false;
 		private String logFile;
 
 		private int windowSize = WINDOW_SIZE;
@@ -157,12 +162,12 @@ public class AllocationContextFactory {
 		return buildListContext(type, builder, identifier);
 	}
 
-	private synchronized static void bootstrap() {
+	public synchronized static void bootstrap() {
 		
 		// FIXME: This has a big chance of concurrency issues - FIX THIS LATER
 		init = true;
 		
-		parseCommandLine();
+		builder = parseCommandLine();
 
 		listEvaluator = new ListEmpiricalPerformanceEvaluator();
 		listEvaluator.addEmpiricalModel(PerformanceDimension.TIME,
@@ -199,19 +204,19 @@ public class AllocationContextFactory {
 		switch (builder.algorithm) {
 
 		case INITIAL_CAPACITY:
-			// TODO: Put this into the Switch Thread Manager
 			optimizer = new ListActiveOptimizer(builder.windowSize, FINISHED_RATIO);
 
-			manager.addOptimizer(optimizer);
 			context = new InitialCapacityListAllocationContext(optimizer, builder.windowSize, builder.samples);
 			break;
 		case EMPIRICAL:
 		default:
 			optimizer = new ListEmpiricalOptimizer(listEvaluator, type, goal, builder.windowSize,
 					builder.finishedRatio);
-
+			
+			context = new EmpiricalListAllocationContext(type, optimizer, builder.windowSize);
 		}
 
+		manager.addOptimizer(optimizer);
 		// Print the log of the changes
 		if (builder.hasLog) {
 			ListAllocationContext logContext = new LogListAllocationContext(context, identifier, builder.logFile);
@@ -220,9 +225,10 @@ public class AllocationContextFactory {
 
 		} else {
 			optimizer.setContext(context);
+			return context;
 		}
+		
 
-		return context;
 	}
 
 	/*
@@ -240,22 +246,24 @@ public class AllocationContextFactory {
 	public static <E> SetAllocationContext buildSetContext(SetCollectionType type, AllocationContextBuilder builder,
 			String identifier) {
 
-		final SetAllocationOptimizer optimizer;
+		SetAllocationOptimizer optimizer = null;
 		SetAllocationContextInfo context = null;
 
 		// Build the optimizer
 		switch (builder.algorithm) {
 
 		case INITIAL_CAPACITY:
-		default:
-			// TODO: Put this into the Switch Thread Manager
 			optimizer = new SetActiveOptimizer(builder.windowSize, FINISHED_RATIO);
-			manager.addOptimizer(optimizer);
-
 			context = new InitialCapacitySetAllocationContext(optimizer, builder.windowSize);
 			break;
-
+			
+		case EMPIRICAL:
+			optimizer = new SetEmpiricalOptimizer(setEvaluator, type, goal, builder.windowSize, builder.finishedRatio);
+			context = new EmpiricalSetAllocationContext(type, optimizer, builder.windowSize);
+			break;
 		}
+		
+		manager.addOptimizer(optimizer);
 
 		// Print the log of the changes
 		if (builder.hasLog) {
@@ -265,9 +273,10 @@ public class AllocationContextFactory {
 
 		} else {
 			optimizer.setContext(context);
+			return context;
 		}
 
-		return context;
+		
 
 	}
 
@@ -288,20 +297,23 @@ public class AllocationContextFactory {
 			String identifier) {
 
 		// Build the context + optimizer
-		final MapAllocationOptimizer optimizer;
+		MapAllocationOptimizer optimizer = null;
+		MapAllocationContextInfo context = null;
 
 		// Build the optimizer
 		switch (builder.algorithm) {
 
 		case INITIAL_CAPACITY:
-		default:
 			optimizer = new MapActiveOptimizer(builder.windowSize, FINISHED_RATIO);
-			manager.addOptimizer(optimizer);
-
+			context = new InitialCapacityMapAllocationContext(optimizer, builder.samples);
+			break;
+			
+		case EMPIRICAL:
+			optimizer = new MapEmpiricalOptimizer(mapEvaluator, type, goal, builder.windowSize, builder.finishedRatio);
+			context = new EmpiricalMapAllocationContext(type, optimizer, builder.windowSize);
 			break;
 		}
-
-		MapAllocationContextInfo context = new InitialCapacityMapAllocationContext(optimizer, builder.samples);
+		manager.addOptimizer(optimizer);
 
 		// Print the log of the changes
 		if (builder.hasLog) {
@@ -309,9 +321,11 @@ public class AllocationContextFactory {
 			optimizer.setContext(logContext);
 			return logContext;
 
+		} else {
+			optimizer.setContext(context);
+			return context;
 		}
 
-		return context;
 	}
 
 	/*

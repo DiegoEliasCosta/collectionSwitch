@@ -32,7 +32,7 @@ public class MapActiveOptimizer implements MapAllocationOptimizer {
 
 		MapMetrics state = new MapMetrics(new WeakReference<Map<K, V>>(map));
 		collectionsState.add(state);
-		MapActiveFullMonitor<K, V> monitor = new MapActiveFullMonitor<>(map, state);
+		MapActiveFullMonitor<K, V> monitor = new MapActiveFullMonitor<K, V>(map, state);
 		return monitor;
 	}
 

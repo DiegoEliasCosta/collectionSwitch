@@ -50,7 +50,7 @@ public class InitialCapacityListAllocationContext implements ListAllocationConte
 
 	@Override
 	public <E> List<E> createList(Collection<? extends E> c) {
-		return new ArrayList<>(c);
+		return new ArrayList<E>(c);
 	}
 
 	@Override

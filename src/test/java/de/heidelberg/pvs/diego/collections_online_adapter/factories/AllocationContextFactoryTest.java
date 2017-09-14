@@ -21,7 +21,7 @@ public class AllocationContextFactoryTest {
 	public void sanitySetTest() throws Exception {
 		
 		AllocationContextBuilder builder = new AllocationContextBuilder();
-		builder.withLog("data/data-test");
+		//builder.withLog("data/data-test");
 		SetAllocationContext context = AllocationContextFactory.buildSetContext(SetCollectionType.JDK_HASHSET, builder, "SetSanityTest");
 		
 		for (int i = 0; i < 200; i++) {
@@ -40,7 +40,7 @@ public class AllocationContextFactoryTest {
 	public void sanityMapTest() throws Exception {
 		
 		AllocationContextBuilder builder = new AllocationContextBuilder();
-		builder.withLog("data/data-test");
+		//builder.withLog("data/data-test");
 		MapAllocationContext context = AllocationContextFactory.buildMapContext(MapCollectionType.JDK_HASHMAP, builder, "MapSanityTest");
 		
 		for (int i = 0; i < 200; i++) {
