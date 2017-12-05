@@ -71,9 +71,4 @@ public class EmpiricalListAllocationContext implements ListAllocationContextInfo
 	}
 
 
-	@Override
-	public int getAnalyzedInitialCapacity() {
-		return 0;
-	}
-
 }

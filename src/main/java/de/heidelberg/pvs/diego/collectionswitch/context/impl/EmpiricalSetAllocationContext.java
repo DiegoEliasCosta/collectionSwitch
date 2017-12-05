@@ -9,8 +9,6 @@ import de.heidelberg.pvs.diego.collectionswitch.optimizers.sets.SetAllocationOpt
 
 public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo {
 
-	private int analyzedInitialCapacity = 1 << 4;
-	
 	private int windowSize;
 	private int instancesCount;
 
@@ -29,7 +27,7 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 
 	@Override
 	public <E> Set<E> createSet() {
-		return createSet(analyzedInitialCapacity);
+		return createSet();
 		
 	}
 
@@ -56,11 +54,6 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 		return set;
 	}
 
-	@Override
-	public int getAnalyzedInitialCapacity() {
-		return analyzedInitialCapacity; 
-				
-	}
 
 	@Override
 	public String getCurrentCollectionType() {
@@ -69,7 +62,6 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 
 	@Override
 	public void updateCollectionType(SetCollectionType type) {
-//		System.out.println(String.format("Type udated to %s", type));
 		this.type = type;
 		this.instancesCount = 0; // reset
 	}

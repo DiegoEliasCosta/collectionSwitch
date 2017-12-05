@@ -4,7 +4,4 @@ public interface ListAllocationContextInfo extends ListAllocationContext {
 	
 	public ListCollectionType getCurrentCollectionType();
 	
-
-	public int getAnalyzedInitialCapacity();
-
 }

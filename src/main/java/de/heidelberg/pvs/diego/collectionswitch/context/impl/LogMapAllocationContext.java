@@ -36,46 +36,31 @@ public class LogMapAllocationContext implements MapAllocationContext {
 		   // do something
 		}
 	}
-
 	
-
-	
-	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
-		// TODO To implement
+	private void logMapCreation() {
+		count++;
+		if(count % FREQUENCY == 0) {
+			writer.println(String.format("Created %d maps", count));
+			writer.flush();
+		}
 	}
 
 	@Override
 	public <K, V> Map<K, V> createMap() {
-		count++;
-		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
-			writer.flush();
-		}
-		
+		logMapCreation();
 		return context.createMap();
 	}
 
-
 	@Override
 	public <K, V> Map<K, V> createMap(int initialCapacity) {
-		count++;
-		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
-			writer.flush();
-		}
-		
+		logMapCreation();
 		return context.createMap(initialCapacity);
 	}
 
 
 	@Override
 	public <K, V> Map<K, V> createMap(int initialCapacity, float loadFactor) {
-		count++;
-		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
-			writer.flush();
-		}
-		
+		logMapCreation();
 		return context.createMap(initialCapacity, loadFactor);
 	}
 
