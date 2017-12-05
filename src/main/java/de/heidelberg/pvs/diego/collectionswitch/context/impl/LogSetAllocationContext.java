@@ -2,7 +2,10 @@ package de.heidelberg.pvs.diego.collectionswitch.context.impl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 import de.heidelberg.pvs.diego.collectionswitch.context.SetAllocationContext;
@@ -11,9 +14,10 @@ import de.heidelberg.pvs.diego.collectionswitch.context.SetCollectionType;
 
 public class LogSetAllocationContext implements SetAllocationContext {
 	
-	private static final int FREQUENCY = 10;
+	private static final int FREQUENCY = 1000;
 
 	SetAllocationContextInfo context;
+	static Format formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS");
 	
 	PrintWriter writer;
 	
@@ -22,10 +26,10 @@ public class LogSetAllocationContext implements SetAllocationContext {
 	public LogSetAllocationContext(SetAllocationContextInfo context, String identifier, String dir) {
 		super();
 		this.context = context;
-		long currentTimeMillis = System.currentTimeMillis();
+		Date date = new Date(System.currentTimeMillis());
 		
 		try{
-			writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
+			writer = new PrintWriter(dir + "/" + identifier + "__-__" +  formatter.format(date)  + ".txt", "UTF-8");
 		    writer.println("Context initialized");
 		    writer.println("Collecton Type: " + this.context.getCurrentCollectionType());
 		    writer.flush();
@@ -75,8 +79,11 @@ public class LogSetAllocationContext implements SetAllocationContext {
 		context.updateCollectionType(type);
 		String afterState = context.getCurrentCollectionType();
 		
-		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
-		writer.flush();		
+		if(!beforeState.equals(afterState)) {
+			writer.println(String.format("%d sets created so far.", count));
+			writer.println("Type updated from " + beforeState + " -- to --" + afterState);
+			writer.flush();
+		}
 	}
 
 	

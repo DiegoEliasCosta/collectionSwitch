@@ -8,8 +8,6 @@ import de.heidelberg.pvs.diego.collectionswitch.optimizers.maps.MapAllocationOpt
 
 public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 
-	private int analyzedInitialCapacity = 1 << 4;
-
 	private int windowSize;
 	private int instancesCount;
 
@@ -34,7 +32,7 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 
 	@Override
 	public <K, V> Map<K, V> createMap() {
-		return this.createMap(analyzedInitialCapacity);
+		return this.createMap();
 	}
 
 	@Override
@@ -74,11 +72,6 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 	@Override
 	public MapCollectionType getCurrentCollectionType() {
 		return type;
-	}
-
-	@Override
-	public int getAnalyzedInitialCapacity() {
-		return analyzedInitialCapacity;
 	}
 
 }

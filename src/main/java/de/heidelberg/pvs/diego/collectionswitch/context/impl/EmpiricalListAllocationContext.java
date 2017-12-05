@@ -17,7 +17,8 @@ public class EmpiricalListAllocationContext implements ListAllocationContextInfo
 	private ListAllocationOptimizer optimizer;
 	
 	
-	public EmpiricalListAllocationContext(ListCollectionType defaultCollectionType, ListAllocationOptimizer optimizer, int windowSize) {
+	public EmpiricalListAllocationContext(ListCollectionType defaultCollectionType, 
+			ListAllocationOptimizer optimizer, int windowSize) {
 		super();
 		this.type = defaultCollectionType;
 		this.windowSize = windowSize;

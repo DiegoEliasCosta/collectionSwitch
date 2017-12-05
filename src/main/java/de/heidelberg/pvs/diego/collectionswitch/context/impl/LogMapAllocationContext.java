@@ -2,6 +2,9 @@ package de.heidelberg.pvs.diego.collectionswitch.context.impl;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 import de.heidelberg.pvs.diego.collectionswitch.context.MapAllocationContext;
@@ -10,7 +13,8 @@ import de.heidelberg.pvs.diego.collectionswitch.context.MapCollectionType;
 
 public class LogMapAllocationContext implements MapAllocationContext {
 	
-	private static final int FREQUENCY = 10;
+	private static final int FREQUENCY = 1000;
+	static Format formatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS");
 
 	MapAllocationContextInfo context;
 	
@@ -22,10 +26,10 @@ public class LogMapAllocationContext implements MapAllocationContext {
 		super();
 		this.context = context;
 		
-		long currentTimeMillis = System.currentTimeMillis();
+		Date date = new Date(System.currentTimeMillis());
 		
 		try{
-		    writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
+		    writer = new PrintWriter(dir + "/" + identifier + "__-__" +  formatter.format(date)   + ".txt", "UTF-8");
 		    writer.println("Context initialized");
 		    writer.println("Collecton Type: " + this.context.getCurrentCollectionType());
 		    writer.flush();
@@ -67,12 +71,7 @@ public class LogMapAllocationContext implements MapAllocationContext {
 
 	@Override
 	public <K, V> Map<K, V> createMap(Map<K, V> map) {
-		count++;
-		if(count % FREQUENCY == 0) {
-			writer.println(String.format("Created %d maps \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
-			writer.flush();
-		}
-		
+		logMapCreation();
 		return context.createMap(map);
 	}
 
@@ -83,9 +82,11 @@ public class LogMapAllocationContext implements MapAllocationContext {
 		context.updateCollectionType(type);
 		MapCollectionType afterState = context.getCurrentCollectionType();
 		
-		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
-		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
-		writer.flush();		
+		if(!beforeState.equals(afterState)) {
+			writer.println(String.format("%d maps created so far.", count));
+			writer.println("Type updated from " + beforeState + " -- to --" + afterState);
+			writer.flush();
+		}
 		
 	}
 

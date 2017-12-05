@@ -38,6 +38,8 @@ public class SetEmpiricalOptimizer implements SetAllocationOptimizer {
 
 		if (finishedRatio == 0.0) {
 			this.finishedRatio = 0;
+		} else if(finishedRatio > 1) {
+			this.finishedRatio = windowSize;
 		} else {
 			this.finishedRatio = (int) (windowSize / finishedRatio);
 
