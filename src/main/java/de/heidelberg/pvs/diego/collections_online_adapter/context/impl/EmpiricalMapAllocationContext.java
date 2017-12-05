@@ -26,13 +26,6 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 	}
 
 	@Override
-	public void updateCollectionInitialCapacity(int size) {
-		this.analyzedInitialCapacity = size;
-		instancesCount = 0; // reset
-
-	}
-
-	@Override
 	public void updateCollectionType(MapCollectionType type) {
 		this.type = type;
 		instancesCount = 0; // reset

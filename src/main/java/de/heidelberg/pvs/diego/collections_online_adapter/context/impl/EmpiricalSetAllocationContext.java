@@ -26,11 +26,6 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 		this.instancesCount = 0;
 	}
 
-	@Override
-	public void updateCollectionInitialCapacity(int size) {
-		analyzedInitialCapacity = size;
-		instancesCount = 0; // reset
-	}
 
 	@Override
 	public <E> Set<E> createSet() {

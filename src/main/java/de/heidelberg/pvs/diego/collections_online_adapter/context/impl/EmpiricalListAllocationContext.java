@@ -9,9 +9,6 @@ import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListA
 
 public class EmpiricalListAllocationContext implements ListAllocationContextInfo {
 
-	// Default value used for most list implementations
-	private int analyzedInitialCapacity = 10;
-	
 	private ListCollectionType type;
 
 	private int instancesCount;
@@ -28,16 +25,9 @@ public class EmpiricalListAllocationContext implements ListAllocationContextInfo
 		instancesCount = 0;
 	}
 
-
-	@Override
-	public void updateCollectionInitialCapacity(int size) {
-		this.analyzedInitialCapacity = size;
-	}
-	
-
 	@Override
 	public <E> List<E> createList() {
-		return this.createList(analyzedInitialCapacity);
+		return this.createList();
 		
 	}
 

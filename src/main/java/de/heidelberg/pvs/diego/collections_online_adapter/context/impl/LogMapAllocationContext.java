@@ -38,17 +38,6 @@ public class LogMapAllocationContext implements MapAllocationContext {
 	}
 
 	
-	@Override
-	public void updateCollectionInitialCapacity(int size) {
-		int prevInitial = context.getAnalyzedInitialCapacity();
-		context.updateCollectionInitialCapacity(size);
-		int updatedInitialCapacity = context.getAnalyzedInitialCapacity();
-		
-		writer.println("Initial Capacity updated from " + prevInitial + " -- to --" + updatedInitialCapacity);
-		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
-		writer.flush();
-		
-	}
 
 	
 	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
