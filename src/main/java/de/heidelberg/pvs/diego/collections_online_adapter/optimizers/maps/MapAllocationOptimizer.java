@@ -1,15 +1,15 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextUpdatable;
 
-public interface MapAllocationOptimizer {
+import java.util.Map;
 
-	void updateOperationsAndSize(int index, int containsOp, int iterationOp, int size);
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
-	void updateSize(int index, int size);
-
-	int getMonitoringIndex();
-
-	void setContext(AllocationContextUpdatable context);
-
+public interface MapAllocationOptimizer extends AllocationOptimizer {
+	
+	public <K, V> Map<K, V> createMonitor(Map<K, V> map);
+	
+	void setContext(MapAllocationContext context);
+	
 }

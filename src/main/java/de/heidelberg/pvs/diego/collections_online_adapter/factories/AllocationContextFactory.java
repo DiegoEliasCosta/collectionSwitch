@@ -1,75 +1,323 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.factories;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.InactiveMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.MapCollectionType;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InactiveListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionType;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityMapAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacitySetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveMapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.ReactiveSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal;
+import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
+import de.heidelberg.pvs.diego.collections_online_adapter.manager.SwitchManager;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.RuleBasedListOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.STRuleBasedListOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListEmpiricalOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListEmpiricalPerformanceEvaluator;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.RuleBasedMapOptimizer;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.STRuleBasedMapOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalPerformanceEvaluator;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetActiveOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalOptimizer;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalPerformanceEvaluator;
 
 public class AllocationContextFactory {
 
-	// Default Values
-	public static final int WINDOW_SIZE = 5;
-	public static final int CONVERGENCE_RATE = 4;
-	public static final int FULL_ANALYSIS_THRESHOLD = 100;
-	public static final int SLEEPING_FREQUENCY = 10000;
-	public static final int DIVERGENCE_ROUNDS_THRESHOLD = 2;
+	private static final double FINISHED_RATIO = 1;
+	private static final int SAMPLES = 50;
+	private static final int WINDOW_SIZE = 10;
+	private static final int DELAY = 1000;
+	private static final int INITIAL_DELAY = 1000;
+	private static final double DEFAULT_MIN_IMPROVEMENT = 1.2;
+	private static final double DEFAULT_MAX_PENALTY = 0.7;
+	private static final double DEFAULT_FINISHED_RATIO = 0.8;
+	private static final int DEFAULT_THREADS_NUMBER = 1;
+
+	protected static SwitchManager manager = new SwitchManager();
+	private static PerformanceGoal goal;
+	private static boolean init;
+	private static AllocationContextBuilder builder;
+
+	private static ListEmpiricalPerformanceEvaluator listEvaluator;
+	private static SetEmpiricalPerformanceEvaluator setEvaluator;
+	private static MapEmpiricalPerformanceEvaluator mapEvaluator;
+
+	public static class AllocationContextBuilder {
+
+		// Default: EMPIRICAL
+		private AllocationContextAlgorithm algorithm = AllocationContextAlgorithm.EMPIRICAL;
+
+		private boolean hasLog = false;
+		private String logFile;
+
+		private int windowSize = WINDOW_SIZE;
+		private int samples = SAMPLES;
+		private int initialDelay = INITIAL_DELAY;
+		private int delay = DELAY;
+		private int threadsNumber = DEFAULT_THREADS_NUMBER;
+
+		private double finishedRatio = DEFAULT_FINISHED_RATIO;
+		private PerformanceDimension majorDimension = PerformanceDimension.TIME;
+		private PerformanceDimension minorDimension = PerformanceDimension.ALLOCATION;
+		private double maxPenalty = DEFAULT_MAX_PENALTY;
+		private double minImprovement = DEFAULT_MIN_IMPROVEMENT;
+
+		public enum AllocationContextAlgorithm {
+			INITIAL_CAPACITY, EMPIRICAL;
+		}
+
+		public AllocationContextBuilder() {
+		}
+
+		public AllocationContextBuilder withAlgorithm(AllocationContextAlgorithm algorithm) {
+			this.algorithm = algorithm;
+			return this;
+		}
+
+		public AllocationContextBuilder withLog(String logFile) {
+			this.hasLog = true;
+			this.logFile = logFile;
+			return this;
+		}
+
+		public AllocationContextBuilder windowSize(int windowSize) {
+			this.windowSize = windowSize;
+			return this;
+		}
+
+		public AllocationContextBuilder samples(int samples) {
+			this.samples = samples;
+			return this;
+		}
+
+		public AllocationContextBuilder withInitialDelay(int parseInt) {
+			this.initialDelay = parseInt;
+			return this;
+
+		}
+
+		public AllocationContextBuilder withDelay(int parseInt) {
+			this.delay = parseInt;
+			return this;
+
+		}
+
+		public AllocationContextBuilder withThreadsNumber(int parseInt) {
+			this.threadsNumber = parseInt;
+			return this;
+
+		}
+
+		public AllocationContextBuilder withFinishedRatio(double parseDouble) {
+			this.finishedRatio = parseDouble;
+			return this;
+
+		}
+
+		public AllocationContextBuilder withMajorDimension(PerformanceDimension parse) {
+			this.majorDimension = parse;
+			return this;
+		}
+
+		public AllocationContextBuilder withMinorDimension(PerformanceDimension parse) {
+			this.minorDimension = parse;
+			return this;
+
+		}
+
+		public void withMinImprovement(double parseDouble) {
+			this.minImprovement = parseDouble;
+
+		}
+
+		public void withMaxPenalty(double parseDouble) {
+			this.maxPenalty = parseDouble;
+
+		}
+
+	}
 
 	/*
 	 * LISTS
 	 */
-	public static ListAllocationContext buildListContext(CollectionTypeEnum type) {
-		return buildListContext(type, "");
+	public static ListAllocationContext buildListContext(ListCollectionType type, String identifier) {
+
+		if (!init) {
+			bootstrap();
+		}
+
+		return buildListContext(type, builder, identifier);
 	}
 
-	public static ListAllocationContext buildListContext(CollectionTypeEnum type, String identifier) {
+	public synchronized static void bootstrap() {
 		
-		String windowSizeStr = System.getProperty("windowSize");
-		Integer windowSize = windowSizeStr != null? Integer.parseInt(windowSizeStr) : WINDOW_SIZE;
+		// FIXME: This has a big chance of concurrency issues - FIX THIS LATER
+		init = true;
 		
-		String convergencyRateStr = System.getProperty("convergencyRate");
-		Integer convergencyRate = convergencyRateStr != null? Integer.parseInt(convergencyRateStr) : CONVERGENCE_RATE;
-		
-		String sleepingFrequencyStr = System.getProperty("sleepingFrequency");
-		Integer sleepingFrequency = sleepingFrequencyStr != null? Integer.parseInt(sleepingFrequencyStr) : SLEEPING_FREQUENCY;
-		
+		builder = parseCommandLine();
 
-		// No list will be monitored
-		if (System.getProperty("no-lists") != null) {
-			return new InactiveListAllocationContext(type);
-		}
-		
-		ListAllocationOptimizer optimizer;
-		
-		if(System.getProperty("single-thread") != null) {
-			optimizer = new STRuleBasedListOptimizer(windowSize, convergencyRate);
-		} else {
-			optimizer = new RuleBasedListOptimizer(windowSize, convergencyRate);
+		listEvaluator = new ListEmpiricalPerformanceEvaluator();
+		listEvaluator.addEmpiricalModel(PerformanceDimension.TIME,
+				PerformanceModelFactory.buildListPerformanceModelsTime());
+		listEvaluator.addEmpiricalModel(PerformanceDimension.ALLOCATION,
+				PerformanceModelFactory.buildListPerformanceModelsAllocation());
+
+		setEvaluator = new SetEmpiricalPerformanceEvaluator();
+		setEvaluator.addEmpiricalModel(PerformanceDimension.TIME,
+				PerformanceModelFactory.buildSetsPerformanceModelTime());
+		setEvaluator.addEmpiricalModel(PerformanceDimension.ALLOCATION,
+				PerformanceModelFactory.buildSetsPerformanceModelAllocation());
+
+		mapEvaluator = new MapEmpiricalPerformanceEvaluator();
+		mapEvaluator.addEmpiricalModel(PerformanceDimension.TIME,
+				PerformanceModelFactory.buildMapsPerformanceModelTime());
+		mapEvaluator.addEmpiricalModel(PerformanceDimension.ALLOCATION,
+				PerformanceModelFactory.buildMapsPerformanceModelAllocation());
+
+		goal = new PerformanceGoal(builder.majorDimension, builder.minorDimension, builder.minImprovement,
+				builder.maxPenalty);
+
+		manager.configureAndScheduleManager(builder.threadsNumber, builder.initialDelay, builder.delay);
+
+	}
+
+	private static ListAllocationContext buildListContext(ListCollectionType type, AllocationContextBuilder builder,
+			String identifier) {
+
+		final ListAllocationOptimizer optimizer;
+		ListAllocationContextInfo context = null;
+
+		// Build the optimizer
+		switch (builder.algorithm) {
+
+		case INITIAL_CAPACITY:
+			optimizer = new ListActiveOptimizer(builder.windowSize, FINISHED_RATIO);
+
+			context = new InitialCapacityListAllocationContext(optimizer, builder.windowSize, builder.samples);
+			break;
+		case EMPIRICAL:
+		default:
+			optimizer = new ListEmpiricalOptimizer(listEvaluator, type, goal, builder.windowSize,
+					builder.finishedRatio);
 			
+			context = new EmpiricalListAllocationContext(type, optimizer, builder.windowSize);
 		}
 
+		manager.addOptimizer(optimizer);
+		// Print the log of the changes
+		if (builder.hasLog) {
+			ListAllocationContext logContext = new LogListAllocationContext(context, identifier, builder.logFile);
+			optimizer.setContext(logContext);
+			return logContext;
 
-		ListAllocationContext context = new ReactiveListAllocationContext(type, optimizer, windowSize,
-				FULL_ANALYSIS_THRESHOLD, sleepingFrequency, convergencyRate, DIVERGENCE_ROUNDS_THRESHOLD);
+		} else {
+			optimizer.setContext(context);
+			return context;
+		}
+		
+
+	}
+
+	/*
+	 * ------------------------------- SETS -------------------------------
+	 */
+	public static <E> SetAllocationContext buildSetContext(SetCollectionType type, String identifier) {
+
+		if (!init) {
+			bootstrap();
+		}
+		return buildSetContext(type, builder, identifier);
+
+	}
+
+	public static <E> SetAllocationContext buildSetContext(SetCollectionType type, AllocationContextBuilder builder,
+			String identifier) {
+
+		SetAllocationOptimizer optimizer = null;
+		SetAllocationContextInfo context = null;
+
+		// Build the optimizer
+		switch (builder.algorithm) {
+
+		case INITIAL_CAPACITY:
+			optimizer = new SetActiveOptimizer(builder.windowSize, FINISHED_RATIO);
+			context = new InitialCapacitySetAllocationContext(optimizer, builder.windowSize);
+			break;
+			
+		case EMPIRICAL:
+			optimizer = new SetEmpiricalOptimizer(setEvaluator, type, goal, builder.windowSize, builder.finishedRatio);
+			context = new EmpiricalSetAllocationContext(type, optimizer, builder.windowSize);
+			break;
+		}
+		
+		manager.addOptimizer(optimizer);
 
 		// Print the log of the changes
-		if (System.getProperty("log") != null) {
+		if (builder.hasLog) {
+			SetAllocationContext logContext = new LogSetAllocationContext(context, identifier, builder.logFile);
+			optimizer.setContext(logContext);
+			return logContext;
 
-			String dir = System.getProperty("log");
+		} else {
+			optimizer.setContext(context);
+			return context;
+		}
 
-			ListAllocationContext logContext = new LogListAllocationContext(context, identifier, dir);
+		
+
+	}
+
+	/*
+	 * ------------------------------- MAPS -------------------------------
+	 */
+	public static <K, V> MapAllocationContext buildMapContext(MapCollectionType type, String identifier) {
+
+		if (!init) {
+			bootstrap();
+		}
+
+		return buildMapContext(type, builder, identifier);
+
+	}
+
+	public static MapAllocationContext buildMapContext(MapCollectionType type, AllocationContextBuilder builder,
+			String identifier) {
+
+		// Build the context + optimizer
+		MapAllocationOptimizer optimizer = null;
+		MapAllocationContextInfo context = null;
+
+		// Build the optimizer
+		switch (builder.algorithm) {
+
+		case INITIAL_CAPACITY:
+			optimizer = new MapActiveOptimizer(builder.windowSize, FINISHED_RATIO);
+			context = new InitialCapacityMapAllocationContext(optimizer, builder.samples);
+			break;
+			
+		case EMPIRICAL:
+			optimizer = new MapEmpiricalOptimizer(mapEvaluator, type, goal, builder.windowSize, builder.finishedRatio);
+			context = new EmpiricalMapAllocationContext(type, optimizer, builder.windowSize);
+			break;
+		}
+		manager.addOptimizer(optimizer);
+
+		// Print the log of the changes
+		if (builder.hasLog) {
+			MapAllocationContext logContext = new LogMapAllocationContext(context, identifier, builder.logFile);
 			optimizer.setContext(logContext);
 			return logContext;
 
@@ -81,69 +329,73 @@ public class AllocationContextFactory {
 	}
 
 	/*
-	 * SETS
+	 * COMMAND LINE
 	 */
-	public static <E> SetAllocationContext buildSetContext(CollectionTypeEnum type) {
-		return new ReactiveSetAllocationContext(type, WINDOW_SIZE, FULL_ANALYSIS_THRESHOLD, SLEEPING_FREQUENCY,
-				CONVERGENCE_RATE, DIVERGENCE_ROUNDS_THRESHOLD);
-	}
+	public static AllocationContextBuilder parseCommandLine() {
 
-	/*
-	 * MAPS
-	 */
-	public static <K, V> MapAllocationContext buildMapContext(CollectionTypeEnum type) {
+		AllocationContextBuilder builder = new AllocationContextBuilder();
 
-		MapAllocationOptimizer optimizer = new RuleBasedMapOptimizer(WINDOW_SIZE, CONVERGENCE_RATE);
-
-		MapAllocationContext context = new ReactiveMapAllocationContext(type, optimizer, WINDOW_SIZE,
-				FULL_ANALYSIS_THRESHOLD, SLEEPING_FREQUENCY, CONVERGENCE_RATE, DIVERGENCE_ROUNDS_THRESHOLD);
-
-		optimizer.setContext(context);
-
-		return context;
-	}
-
-	/*
-	 * MAPS
-	 */
-	public static <K, V> MapAllocationContext buildMapContext(CollectionTypeEnum type, String identifier) {
-
-		// No maps will be monitored
-		if (System.getProperty("no-maps") != null) {
-			return new InactiveMapAllocationContext(type);
-		}
-		
 		String windowSizeStr = System.getProperty("windowSize");
-		Integer windowSize = windowSizeStr != null? Integer.parseInt(windowSizeStr) : WINDOW_SIZE;
-		
-		String convergencyRateStr = System.getProperty("convergencyRate");
-		Integer convergencyRate = convergencyRateStr != null? Integer.parseInt(convergencyRateStr) : CONVERGENCE_RATE;
-		
-		String sleepingFrequencyStr = System.getProperty("sleepingFrequency");
-		Integer sleepingFrequency = sleepingFrequencyStr != null? Integer.parseInt(sleepingFrequencyStr) : SLEEPING_FREQUENCY;
-		
-		
-		MapAllocationOptimizer optimizer;
-		if(System.getProperty("single-thread") != null) {
-			optimizer = new STRuleBasedMapOptimizer(windowSize, convergencyRate);
-		} else {
-			optimizer = new RuleBasedMapOptimizer(windowSize, convergencyRate);
-			
+		if (windowSizeStr != null) {
+			builder.windowSize(Integer.parseInt(windowSizeStr));
 		}
 
-		MapAllocationContext context = new ReactiveMapAllocationContext(type, optimizer, windowSize,
-				FULL_ANALYSIS_THRESHOLD, sleepingFrequency, convergencyRate, DIVERGENCE_ROUNDS_THRESHOLD);
-
-		if (System.getProperty("log") != null) {
-			String dir = System.getProperty("log");
-
-			MapAllocationContext logcontext = new LogMapAllocationContext(context, identifier, dir);
-			optimizer.setContext(logcontext);
-			return logcontext;
-		} else {
-			optimizer.setContext(context);
-			return context;
+		String sampleStr = System.getProperty("samples");
+		if (sampleStr != null) {
+			builder.samples(Integer.parseInt(sampleStr));
 		}
+
+		String logFile = System.getProperty("log");
+		if (logFile != null) {
+			builder.withLog(logFile);
+		}
+
+		logFile = System.getProperty("logOutput");
+		if (logFile != null) {
+			builder.withLog(logFile);
+		}
+
+		String initialDelay = System.getProperty("initialDelay");
+		if (initialDelay != null) {
+			builder.withInitialDelay(Integer.parseInt(initialDelay));
+		}
+
+		String delay = System.getProperty("delay");
+		if (delay != null) {
+			builder.withDelay(Integer.parseInt(delay));
+		}
+
+		String threads = System.getProperty("threads");
+		if (threads != null) {
+			builder.withThreadsNumber(Integer.parseInt(threads));
+		}
+
+		String finished = System.getProperty("finishedRatio");
+		if (threads != null) {
+			builder.withFinishedRatio(Double.parseDouble(finished));
+		}
+
+		String majorDimension = System.getProperty("majorDimension");
+		if (majorDimension != null) {
+			builder.withMajorDimension(PerformanceGoal.PerformanceDimension.parse(majorDimension));
+		}
+
+		String minImprovement = System.getProperty("minImprovement");
+		if (minImprovement != null) {
+			builder.withMinImprovement(Double.parseDouble(minImprovement));
+		}
+
+		String minorDimension = System.getProperty("minorDimension");
+		if (minorDimension != null) {
+			builder.withMinorDimension(PerformanceGoal.PerformanceDimension.parse(minorDimension));
+		}
+
+		String maxPenalty = System.getProperty("maxPenalty");
+		if (maxPenalty != null) {
+			builder.withMaxPenalty(Double.parseDouble(maxPenalty));
+		}
+
+		return builder;
 
 	}
 

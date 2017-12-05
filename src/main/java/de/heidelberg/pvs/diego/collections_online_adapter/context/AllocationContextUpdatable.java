@@ -1,9 +1,9 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
-public interface AllocationContextUpdatable {
+public interface AllocationContextUpdatable<E> {
 	
-	void optimizeCollectionType(CollectionTypeEnum collecton, int mode, int median);
+	void updateCollectionInitialCapacity(int size);
 	
-	void noCollectionTypeConvergence(int mode, int medianInitialCapacity);
-
+	void updateCollectionType(E type);
+	
 }

@@ -1,15 +1,14 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists;
 
+import java.util.List;
+
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.AllocationOptimizer;
 
-public interface ListAllocationOptimizer {
+public interface ListAllocationOptimizer extends AllocationOptimizer {
 	
-	int getMonitoringIndex();
-
-	void updateOperationsAndSize(int index, int indexOp, int midListOp, int contiansOp, int size);
-
-	void updateSize(int index, int size);
-
-	void setContext(ListAllocationContext context);
+	public <E> List<E> createMonitor(List<E> monitor);
+	
+	public void setContext(ListAllocationContext context);
 
 }

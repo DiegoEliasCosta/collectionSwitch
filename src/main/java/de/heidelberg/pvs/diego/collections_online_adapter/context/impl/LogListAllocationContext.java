@@ -5,31 +5,35 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 
-import de.heidelberg.pvs.diego.collections_online_adapter.context.AllocationContextState;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.CollectionTypeEnum;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListAllocationContextInfo;
+import de.heidelberg.pvs.diego.collections_online_adapter.context.ListCollectionType;
 
 public class LogListAllocationContext implements ListAllocationContext {
 	
-	ListAllocationContext context;
+	private static final int FREQUENCY = 10;
+
+	ListAllocationContextInfo context;
 	
 	PrintWriter writer;
 	
 	int count = 0;
 	
-	public LogListAllocationContext(ListAllocationContext context, String identifier, String dir) {
+	public LogListAllocationContext(ListAllocationContextInfo context, String identifier, String dir) {
 		super();
 		this.context = context;
 		
 		long currentTimeMillis = System.currentTimeMillis();
 		
 		try{
-		    writer = new PrintWriter(dir + "/" +identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
+		    writer = new PrintWriter(dir + "/" + identifier + "__-__" + currentTimeMillis + ".txt", "UTF-8");
 		    writer.println("Context initialized");
-		    writer.println("First Status: " + this.context.getAllocationContextState());
-		    writer.println("Specified collection: " + this.context.getChampion());
+		    writer.println("Collecton Type: " + this.context.getCurrentCollectionType());
 		    writer.flush();
 		} catch (IOException e) {
+			// FIXME: This should be temporary
+			System.out.println(e);
 			if(writer != null) {
 				writer.close();
 			}
@@ -37,56 +41,71 @@ public class LogListAllocationContext implements ListAllocationContext {
 		}
 	}
 
-	public void optimizeCollectionType(CollectionTypeEnum collecton, int mode, int medianInitialCapacity) {
+	
+	@Override
+	public void updateCollectionInitialCapacity(int size) {
+		int prevInitial = context.getAnalyzedInitialCapacity();
+		context.updateCollectionInitialCapacity(size);
+		int updatedInitialCapacity = context.getAnalyzedInitialCapacity();
 		
-		AllocationContextState beforeState = context.getAllocationContextState();
-		context.optimizeCollectionType(collecton, mode,  medianInitialCapacity);
-		AllocationContextState afterState = context.getAllocationContextState();
-		
-		writer.println("State updated from " + beforeState + " -- to --" + afterState);
-		writer.println("Champion choosed: " + context.getChampion());
-		writer.println("Mode Initial Capacity = " + mode);
-		writer.println("Median Initial Capacity = " + medianInitialCapacity);
+		writer.println("Initial Capacity updated from " + prevInitial + " -- to --" + updatedInitialCapacity);
+		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
 		writer.flush();
+		
 	}
 
 	public <E> List<E> createList() {
 		
 		count++;
-		if(count % 100 == 0) {
-			writer.println("Created " + count + " lists");
+		if(count % FREQUENCY == 0) {
+			writer.println(String.format("Created %d lists \n\t-- initialCapacity (analyzed=%d || described=10)  ", count, this.context.getAnalyzedInitialCapacity() ));
 			writer.flush();
 		}
 	
 		
 		return context.createList();
 	}
-
+	
 	public void noCollectionTypeConvergence(int mode, int medianInitialCapacity) {
-		writer.println("No convergence");
-		writer.println("Mode Initial Capacity = " + mode);
-		writer.println("Median Initial Capacity = " + medianInitialCapacity);
-		writer.flush();
-		context.noCollectionTypeConvergence(mode, medianInitialCapacity);
+		
 	}
 
 	public <E> List<E> createList(int initialCapacity) {
+		
+		count++;
+		if(count % FREQUENCY == 0) {
+			writer.println(String.format("Created %d lists \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getAnalyzedInitialCapacity(), initialCapacity));
+			writer.flush();
+		}
+		
 		return context.createList(initialCapacity);
 	}
 
 	public <E> List<E> createList(Collection<? extends E> c) {
+		
+		count++;
+		if(count % FREQUENCY == 0) {
+			writer.println(String.format("Copied %d lists \n\t-- initialCapacity (analyzed=%d || described=%d)  ", count, this.context.getAnalyzedInitialCapacity(), c.size()));
+			writer.flush();
+		}
+		
 		return context.createList(c);
 	}
 
-	@Override
-	public AllocationContextState getAllocationContextState() {
-		return this.context.getAllocationContextState();
-	}
 
 	@Override
-	public CollectionTypeEnum getChampion() {
-		return this.context.getChampion();
+	public void updateCollectionType(ListCollectionType type) {
+		ListCollectionType beforeState = context.getCurrentCollectionType();
+		context.updateCollectionType(type);
+		ListCollectionType afterState = context.getCurrentCollectionType();
+		
+		writer.println("Type updated from " + beforeState + " -- to --" + afterState);
+		writer.println("New Initial Capacity = " + context.getAnalyzedInitialCapacity());
+		writer.flush();
+		
 	}
+
+	
 
 	
 	
