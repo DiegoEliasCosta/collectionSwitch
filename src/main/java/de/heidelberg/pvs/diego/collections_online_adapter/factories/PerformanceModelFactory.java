@@ -16,7 +16,6 @@ public class PerformanceModelFactory {
 
 	public static List<ListPerformanceModel> buildListPerformanceModelsTime() {
 
-		// FIXME: Bad implementation - this should return a list of performance models NOT add them into the evaluator
 		List<ListPerformanceModel> performanceModel = new java.util.ArrayList<ListPerformanceModel>();
 
 		// AUTOMATICALLY GENERATED - VARIABLE TIME

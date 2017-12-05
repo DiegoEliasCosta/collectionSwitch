@@ -5,9 +5,6 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	InitialCapacityListAllocationContextTest.class,
-	InitialCapacityMapAllocationContextTest.class,
-	InitialCapacitySetAllocationContextTest.class,
 	ListEmpiricalAllocationContextTest.class,
 	SetEmpiricalAllocationContextTest.class,
 	MapEmpiricalAllocationContextTest.class,

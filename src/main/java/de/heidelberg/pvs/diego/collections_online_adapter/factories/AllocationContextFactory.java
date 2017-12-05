@@ -12,24 +12,18 @@ import de.heidelberg.pvs.diego.collections_online_adapter.context.SetCollectionT
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalSetAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityListAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacityMapAllocationContext;
-import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.InitialCapacitySetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogMapAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.LogSetAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal.PerformanceDimension;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.SwitchManager;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListEmpiricalOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.lists.ListEmpiricalPerformanceEvaluator;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.maps.MapEmpiricalPerformanceEvaluator;
-import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetActiveOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetAllocationOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalOptimizer;
 import de.heidelberg.pvs.diego.collections_online_adapter.optimizers.sets.SetEmpiricalPerformanceEvaluator;
@@ -76,7 +70,7 @@ public class AllocationContextFactory {
 		private double minImprovement = DEFAULT_MIN_IMPROVEMENT;
 
 		public enum AllocationContextAlgorithm {
-			INITIAL_CAPACITY, EMPIRICAL;
+			EMPIRICAL;
 		}
 
 		public AllocationContextBuilder() {
@@ -203,11 +197,6 @@ public class AllocationContextFactory {
 		// Build the optimizer
 		switch (builder.algorithm) {
 
-		case INITIAL_CAPACITY:
-			optimizer = new ListActiveOptimizer(builder.windowSize, FINISHED_RATIO);
-
-			context = new InitialCapacityListAllocationContext(optimizer, builder.windowSize, builder.samples);
-			break;
 		case EMPIRICAL:
 		default:
 			optimizer = new ListEmpiricalOptimizer(listEvaluator, type, goal, builder.windowSize,
@@ -252,11 +241,6 @@ public class AllocationContextFactory {
 		// Build the optimizer
 		switch (builder.algorithm) {
 
-		case INITIAL_CAPACITY:
-			optimizer = new SetActiveOptimizer(builder.windowSize, FINISHED_RATIO);
-			context = new InitialCapacitySetAllocationContext(optimizer, builder.windowSize);
-			break;
-			
 		case EMPIRICAL:
 			optimizer = new SetEmpiricalOptimizer(setEvaluator, type, goal, builder.windowSize, builder.finishedRatio);
 			context = new EmpiricalSetAllocationContext(type, optimizer, builder.windowSize);
@@ -302,11 +286,6 @@ public class AllocationContextFactory {
 
 		// Build the optimizer
 		switch (builder.algorithm) {
-
-		case INITIAL_CAPACITY:
-			optimizer = new MapActiveOptimizer(builder.windowSize, FINISHED_RATIO);
-			context = new InitialCapacityMapAllocationContext(optimizer, builder.samples);
-			break;
 			
 		case EMPIRICAL:
 			optimizer = new MapEmpiricalOptimizer(mapEvaluator, type, goal, builder.windowSize, builder.finishedRatio);
