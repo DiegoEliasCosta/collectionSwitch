@@ -1,11 +1,14 @@
 package de.heidelberg.pvs.diego.collections_online_adapter.context;
 
+import static org.junit.Assert.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openjdk.jol.info.GraphLayout;
 
 import de.heidelberg.pvs.diego.collections_online_adapter.context.impl.EmpiricalListAllocationContext;
 import de.heidelberg.pvs.diego.collections_online_adapter.manager.PerformanceGoal;
@@ -48,6 +51,29 @@ public class ListEmpiricalAllocationContextTest {
 				new double[] { 10, 2 }, new double[] { 10, 2 }, new double[] { 10, 1 }, new double[] { 10, 2 });
 
 		listPerformanceModel.add(gscollectionsModel);
+		
+	}
+	
+	@Test
+	public void testMemoryConsumption() throws Exception {
+		
+		
+		ListEmpiricalPerformanceEvaluator evaluator = new ListEmpiricalPerformanceEvaluator();
+		evaluator.addEmpiricalModel(PerformanceDimension.TIME, listPerformanceModel);
+
+		ListAllocationOptimizer optimizer = new ListEmpiricalOptimizer(evaluator, ListCollectionType.JDK_ARRAYLIST, goal, 10, 1);
+		ListAllocationContext context = new EmpiricalListAllocationContext(ListCollectionType.JDK_ARRAYLIST, optimizer,
+				10);
+		
+		System.out.println(GraphLayout.parseInstance(context).totalSize());
+		System.out.println(GraphLayout.parseInstance(context).toFootprint());
+		
+		System.out.println(GraphLayout.parseInstance(optimizer).totalSize());
+		System.out.println(GraphLayout.parseInstance(optimizer).toFootprint());
+		
+		System.out.println(GraphLayout.parseInstance(context).toPrintable());
+		
+		
 		
 	}
 
