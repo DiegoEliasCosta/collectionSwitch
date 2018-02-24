@@ -32,7 +32,7 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 
 	@Override
 	public <K, V> Map<K, V> createMap() {
-		return this.createMap();
+		return type.createMap();
 	}
 
 	@Override

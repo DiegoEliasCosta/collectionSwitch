@@ -27,7 +27,7 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 
 	@Override
 	public <E> Set<E> createSet() {
-		return createSet();
+		return type.createSet();
 		
 	}
 

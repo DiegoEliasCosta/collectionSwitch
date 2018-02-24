@@ -28,7 +28,7 @@ public class EmpiricalListAllocationContext implements ListAllocationContextInfo
 
 	@Override
 	public <E> List<E> createList() {
-		return this.createList();
+		return type.createList();
 		
 	}
 
