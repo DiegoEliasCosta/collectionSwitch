@@ -43,5 +43,5 @@ List<T> list = ctx.createList();
 
 * **Diego Costa** - [] 
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
 
