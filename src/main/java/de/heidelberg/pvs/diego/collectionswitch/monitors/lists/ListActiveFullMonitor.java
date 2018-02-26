@@ -10,10 +10,10 @@ public class ListActiveFullMonitor<E> implements List<E>{
 	private List<E> list;
 	private ListMetrics state;
 
-	public ListActiveFullMonitor(List<E> list, ListMetrics optimizer) {
+	public ListActiveFullMonitor(List<E> list, ListMetrics metrics) {
 		super();
 		this.list = list;
-		this.state = optimizer;
+		this.state = metrics;
 		state.updateSize(list.size()); // First Record
 	}
 

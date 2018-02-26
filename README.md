@@ -2,89 +2,46 @@
 
 A framework for Efficient and Dynamic Collection Selection.
 
-Documentation in progress (below paragraphs only a placeholder).
+The current version of this framework is a proof-of-concept for our paper at [CGO'18](https://www.researchgate.net/publication/322438185_CollectionSwitch_A_Framework_for_Efficient_and_Dynamic_Collection_Selection).
 
+**We will soon be releasing a stable release version for everyones use.** We are currentl fixing some rough edges :)
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+This instructions will get you to build and use CollectionsSwitch in your application.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+To build and run Collections-Bench you need:
 
 ```
-Give examples
+Java >= 8
+Maven
 ```
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+You can simply install the CollectionSwitch by running `mvn install` in the project.
 
-Say what the step will be
+## Using CollectionSwitch Context
 
-```
-Give the example
-```
+The entry point of the CollectionSwitch adaptation is the `AllocationContext`.
+To instantiate the context with a default type as JDK ArrayList, you can call the factory method.
 
-And repeat
-
-```
-until finished
+```java
+static ListAllocationContext ctx = AllocationContextFactory.buildListContext(ListCollectionType.JDK_ARRAYLIST, "myContextName");
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+We recommend you to only use the context as a `static` member of a class.
 
-## Running the tests
+To enable the adaptive behavior, you should allow the collection instantiation to be performed by the context, as follows:
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+```java
+List<T> list = ctx.createList();
 
 ```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Diego Costa** - [] 
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone who's code was used
-* Inspiration
-* etc
