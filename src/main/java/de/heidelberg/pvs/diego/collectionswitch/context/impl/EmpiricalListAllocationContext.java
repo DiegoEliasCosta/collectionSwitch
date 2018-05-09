@@ -28,7 +28,13 @@ public class EmpiricalListAllocationContext implements ListAllocationContextInfo
 
 	@Override
 	public <E> List<E> createList() {
-		return type.createList();
+		List<E> list = type.createList();
+		
+		if(instancesCount++ < windowSize) {
+			return optimizer.createMonitor(list);
+		}
+		
+		return list;
 		
 	}
 

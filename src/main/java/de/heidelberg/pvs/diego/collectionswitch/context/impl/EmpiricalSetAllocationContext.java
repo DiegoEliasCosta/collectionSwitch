@@ -27,7 +27,13 @@ public class EmpiricalSetAllocationContext  implements SetAllocationContextInfo 
 
 	@Override
 	public <E> Set<E> createSet() {
-		return type.createSet();
+		Set<E> set = type.createSet();
+		
+		if(instancesCount++ < windowSize) {
+			return this.optimizer.createMonitor(set);
+		}
+		
+		return set;
 		
 	}
 

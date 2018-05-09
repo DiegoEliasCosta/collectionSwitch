@@ -32,7 +32,14 @@ public class EmpiricalMapAllocationContext implements MapAllocationContextInfo {
 
 	@Override
 	public <K, V> Map<K, V> createMap() {
-		return type.createMap();
+		
+		Map<K, V> map = type.createMap();
+
+		if (instancesCount++ < windowSize) {
+			return this.optimizer.createMonitor(map);
+		}
+
+		return map;
 	}
 
 	@Override
