@@ -188,7 +188,7 @@ public class AllocationContextFactory {
 
 	}
 
-	private static ListAllocationContext buildListContext(ListCollectionType type, AllocationContextBuilder builder,
+	public static ListAllocationContext buildListContext(ListCollectionType type, AllocationContextBuilder builder,
 			String identifier) {
 
 		final ListAllocationOptimizer optimizer;

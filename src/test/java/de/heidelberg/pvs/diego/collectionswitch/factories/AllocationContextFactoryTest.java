@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -12,6 +13,8 @@ import de.heidelberg.pvs.diego.collectionswitch.context.MapAllocationContext;
 import de.heidelberg.pvs.diego.collectionswitch.context.MapCollectionType;
 import de.heidelberg.pvs.diego.collectionswitch.context.SetAllocationContext;
 import de.heidelberg.pvs.diego.collectionswitch.context.SetCollectionType;
+import de.heidelberg.pvs.diego.collectionswitch.context.ListAllocationContext;
+import de.heidelberg.pvs.diego.collectionswitch.context.ListCollectionType;
 import de.heidelberg.pvs.diego.collectionswitch.factories.AllocationContextFactory;
 import de.heidelberg.pvs.diego.collectionswitch.factories.AllocationContextFactory.AllocationContextBuilder;
 import jlibs.core.lang.RuntimeUtil;
@@ -55,5 +58,26 @@ public class AllocationContextFactoryTest {
 		Thread.sleep(1000);
 		
 	}
+
+        @Test
+        public void sanityListTest() throws Exception {
+
+		AllocationContextBuilder builder = new AllocationContextBuilder();
+		ListAllocationContext context = AllocationContextFactory.buildListContext(
+                    ListCollectionType.JDK_ARRAYLIST,
+                    builder,
+                    "ListSanityTest");
+		
+		for (int i = 0; i < 200; i++) {
+			List<Integer> createList = context.createList();
+			assertNotNull(createList);
+			createList.add(i);
+		}
+
+		RuntimeUtil.gc();
+		RuntimeUtil.gc();
+		Thread.sleep(1000);
+
+        }
 
 }
