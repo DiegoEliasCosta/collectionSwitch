@@ -1,5 +1,7 @@
 # CollectionSwitch
 
+[![Build Pass Status](https://github.com/DiegoEliasCosta/collectionSwitch/workflows/Java CI with Maven/badge.svg)](https://github.com/DiegoEliasCosta/collectionSwitch/actions)
+
 A framework for Efficient and Dynamic Collection Selection.
 
 The current version of this framework is a proof-of-concept for our paper at [CGO'18](https://www.researchgate.net/publication/322438185_CollectionSwitch_A_Framework_for_Efficient_and_Dynamic_Collection_Selection).
