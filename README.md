@@ -1,6 +1,6 @@
 # CollectionSwitch
 
-[![Java CI with Maven Actions Status](https://github.com/DiegoEliasCosta/collectionSwitch/workflows/maven/badge.svg)](https://github.com/DiegoEliasCosta/collectionSwitch/actions)
+[![Java CI with Maven Actions Status](https://github.com/DiegoEliasCosta/collectionSwitch/workflows/Java CI with Maven/badge.svg)](https://github.com/DiegoEliasCosta/collectionSwitch/actions)
 
 A framework for Efficient and Dynamic Collection Selection.
 
